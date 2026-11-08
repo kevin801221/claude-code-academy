@@ -1,0 +1,587 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<base href="/claude-code-academy/">
+<title>找不到這一頁｜Kevin 的 Claude Code 互動學院</title><!--cc-meta-->
+<meta name="description" content="找不到這一頁。">
+<meta property="og:title" content="找不到這一頁｜Kevin 的 Claude Code 互動學院">
+<meta property="og:description" content="找不到這一頁。">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Kevin 的 Claude Code 互動學院">
+<meta name="theme-color" content="#c65f3c">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%23d9734e'/%3E%3Cstop offset='1' stop-color='%237c4ddb'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='64' height='64' rx='16' fill='url(%23g)'/%3E%3Ctext x='32' y='42' font-family='Arial,Helvetica,sans-serif' font-size='26' font-weight='800' fill='white' text-anchor='middle'%3ECC%3C/text%3E%3C/svg%3E">
+<!--/cc-meta-->
+<script>document.documentElement.classList.add('js');try{var t=localStorage.getItem('cm-theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
+<style>
+:root{
+  --sans:-apple-system,BlinkMacSystemFont,"PingFang TC","Noto Sans TC","Microsoft JhengHei","Segoe UI",sans-serif;
+  --mono:"SF Mono",ui-monospace,Menlo,Consolas,"Liberation Mono",monospace;
+  --bg:#faf7f2; --surface:#ffffff; --surface-2:#f3eee6; --text:#1d1915; --muted:#6b635a; --border:#e6ded2;
+  --accent:#c65f3c; --accent-2:#e8916a; --accent-soft:#fbe8de;
+  --green:#1f8456; --green-soft:#dbf1e5;
+  --blue:#2c6bc4; --blue-soft:#e0eafa;
+  --purple:#7646d6; --purple-soft:#ece4fc;
+  --red:#c2364a; --red-soft:#fbe0e4;
+  --yellow:#c9922a;
+  --term-bg:#1b1815; --term-text:#efe9e0; --term-muted:#9a9187;
+  --shadow:0 1px 2px rgba(40,30,20,.05),0 8px 24px rgba(40,30,20,.07);
+  --mod:var(--accent); --mod-soft:var(--accent-soft); --mod-2:var(--purple);
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#13110f; --surface:#1c1916; --surface-2:#262220; --text:#efe9e0; --muted:#a59c91; --border:#37302a;
+    --accent:#e8845c; --accent-2:#f2a581; --accent-soft:#3a251b;
+    --green:#4cc38a; --green-soft:#16302a; --blue:#6ea4f0; --blue-soft:#182a44;
+    --purple:#ab8cf6; --purple-soft:#2a2142; --red:#f06b7d; --red-soft:#3d1c22; --yellow:#e0b252;
+    --term-bg:#0c0b0a; --shadow:0 1px 2px rgba(0,0,0,.3),0 10px 30px rgba(0,0,0,.35);
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#13110f; --surface:#1c1916; --surface-2:#262220; --text:#efe9e0; --muted:#a59c91; --border:#37302a;
+  --accent:#e8845c; --accent-2:#f2a581; --accent-soft:#3a251b;
+  --green:#4cc38a; --green-soft:#16302a; --blue:#6ea4f0; --blue-soft:#182a44;
+  --purple:#ab8cf6; --purple-soft:#2a2142; --red:#f06b7d; --red-soft:#3d1c22; --yellow:#e0b252;
+  --term-bg:#0c0b0a; --shadow:0 1px 2px rgba(0,0,0,.3),0 10px 30px rgba(0,0,0,.35);
+  color-scheme:dark;
+}
+body.m-teams{--mod:var(--blue);--mod-soft:var(--blue-soft);--mod-2:var(--purple)}
+body.m-goal{--mod:var(--green);--mod-soft:var(--green-soft);--mod-2:var(--blue)}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:70px}
+body{margin:0;background:var(--bg);color:var(--text);font:16px/1.75 var(--sans);-webkit-font-smoothing:antialiased;transition:background .3s,color .3s}
+main{overflow-x:clip}
+.wrap{max-width:1100px;margin:0 auto;padding-left:max(20px,env(safe-area-inset-left,0px));padding-right:max(20px,env(safe-area-inset-right,0px))}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:55;background:var(--bg)}
+h1,h2,h3,h4{line-height:1.3;margin:0}
+p{margin:0 0 1em}
+a{color:var(--mod)}
+code{font-family:var(--mono);font-size:.86em;background:var(--surface-2);border:1px solid var(--border);padding:.05em .4em;border-radius:6px;word-break:break-word}
+.c-accent{--c:var(--accent);--c-soft:var(--accent-soft)}
+.c-green{--c:var(--green);--c-soft:var(--green-soft)}
+.c-blue{--c:var(--blue);--c-soft:var(--blue-soft)}
+.c-purple{--c:var(--purple);--c-soft:var(--purple-soft)}
+.c-red{--c:var(--red);--c-soft:var(--red-soft)}
+.hint{font-weight:400;font-size:12.5px;color:var(--muted)}
+.ic{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex:none}
+
+/* top bar */
+.progress{position:fixed;top:env(safe-area-inset-top,0px);left:0;right:0;height:3px;z-index:60;pointer-events:none}
+.progress span{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--mod),var(--mod-2))}
+.topbar{position:sticky;top:env(safe-area-inset-top,0px);z-index:50;background:color-mix(in srgb,var(--bg) 86%,transparent);backdrop-filter:saturate(1.4) blur(10px);-webkit-backdrop-filter:saturate(1.4) blur(10px);border-bottom:1px solid var(--border)}
+.topbar-inner{display:flex;align-items:center;gap:12px;height:58px}
+.brand{display:flex;align-items:center;gap:10px;font-weight:700;color:var(--text);text-decoration:none;white-space:nowrap;flex:none}
+.brand-mark{width:30px;height:30px;border-radius:9px;background:linear-gradient(135deg,var(--accent),var(--purple));color:#fff;display:grid;place-items:center;font:800 11.5px var(--mono)}
+.crumb{flex:none;color:var(--mod);font-weight:700;font-size:14px;white-space:nowrap}
+.chapters{display:flex;gap:2px;overflow-x:auto;scrollbar-width:none;flex:1;min-width:0}
+.chapters::-webkit-scrollbar{display:none}
+.chapters a{flex:none;padding:5px 11px;border-radius:999px;color:var(--muted);text-decoration:none;font-size:13.5px;white-space:nowrap;transition:color .2s,background .2s}
+.chapters a:hover{color:var(--text);background:var(--surface-2)}
+.chapters a.on{color:var(--mod);background:var(--mod-soft);font-weight:600}
+.icon-btn{flex:none;width:36px;height:36px;border-radius:10px;border:1px solid var(--border);background:var(--surface);color:var(--text);cursor:pointer;display:grid;place-items:center}
+.icon-btn svg{width:18px;height:18px}
+@media (max-width:760px){.brand-text{display:none}}
+
+/* buttons */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:10px 18px;border-radius:999px;border:1px solid var(--border);background:var(--surface);color:var(--text);font:600 15px/1.2 var(--sans);cursor:pointer;text-decoration:none;transition:transform .15s,background .2s,box-shadow .2s,border-color .2s}
+.btn:hover:not(:disabled){transform:translateY(-1px);box-shadow:var(--shadow)}
+.btn.primary{background:var(--mod);border-color:var(--mod);color:#fff}
+.btn.small{padding:6px 13px;font-size:13px}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+button:focus-visible,.btn:focus-visible,[role="button"]:focus-visible,a:focus-visible,input:focus-visible{outline:2px solid var(--mod);outline-offset:2px}
+
+/* hero */
+.hero{padding:68px 0 64px;position:relative}
+.hero::before{content:"";position:absolute;inset:0;background-image:radial-gradient(var(--border) 1.2px,transparent 1.2px);background-size:22px 22px;-webkit-mask-image:radial-gradient(ellipse at 72% 40%,#000 15%,transparent 68%);mask-image:radial-gradient(ellipse at 72% 40%,#000 15%,transparent 68%);animation:drift 40s linear infinite;pointer-events:none}
+@keyframes drift{to{background-position:220px 110px}}
+.hero-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:48px;align-items:center;position:relative}
+.eyebrow{display:inline-block;font:700 12.5px var(--sans);letter-spacing:.06em;color:var(--mod);background:var(--mod-soft);padding:4px 12px;border-radius:999px;margin-bottom:18px}
+.hero h1{font-size:clamp(34px,5.6vw,60px);letter-spacing:-.02em;margin-bottom:18px}
+.grad{background:linear-gradient(90deg,var(--mod),var(--mod-2));-webkit-background-clip:text;background-clip:text;color:transparent}
+.lead{font-size:18px;color:var(--muted);max-width:32em}
+.hero-cta{display:flex;flex-wrap:wrap;gap:10px;margin:26px 0 22px}
+.meta{display:flex;flex-wrap:wrap;gap:8px 18px;font-size:13px;color:var(--muted)}
+.meta span{display:inline-flex;align-items:center;gap:6px}
+
+/* chapters */
+.chapter{padding:84px 0;border-top:1px solid var(--border)}
+.ch-head{display:flex;gap:18px;align-items:flex-start;margin-bottom:34px}
+.ch-num{font:800 14px var(--mono);color:var(--mod);background:var(--mod-soft);padding:6px 10px;border-radius:10px;flex:none;margin-top:5px}
+.ch-head h2{font-size:clamp(25px,3.4vw,36px);letter-spacing:-.01em}
+.ch-head p{margin:.45em 0 0;color:var(--muted);max-width:46em}
+.js .reveal{transition:transform .7s cubic-bezier(.2,.7,.2,1)}.js .reveal:not(.in){transform:translateY(14px)}
+
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:32px;align-items:start}
+.panel-card{background:var(--surface);border:1px solid var(--border);border-radius:18px;padding:22px;box-shadow:var(--shadow)}
+.panel-title{display:flex;justify-content:space-between;align-items:baseline;gap:4px 10px;flex-wrap:wrap;font-weight:700;font-size:14px;margin-bottom:10px}
+.sub-h{font-size:20px;margin:0 0 12px}
+.callout{display:flex;gap:12px;align-items:flex-start;padding:14px 18px;border-radius:14px;background:var(--c-soft,var(--mod-soft));border:1px solid var(--c,var(--mod));font-size:15px;margin-top:18px}
+.callout b{color:var(--c,var(--mod))}
+.callout a{color:var(--c,var(--mod));font-weight:700}
+.seg{display:inline-flex;flex-wrap:wrap;gap:4px;padding:4px;background:var(--surface-2);border-radius:12px;border:1px solid var(--border)}
+.seg button{border:0;background:transparent;color:var(--muted);font:600 14px var(--sans);padding:8px 14px;border-radius:9px;cursor:pointer;transition:.2s}
+.seg button.on{background:var(--surface);color:var(--mod);box-shadow:var(--shadow)}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip-btn{border:1px solid var(--border);background:var(--surface);color:var(--muted);font:600 13px var(--sans);padding:5px 12px;border-radius:999px;cursor:pointer;transition:.2s}
+.chip-btn.on{border-color:var(--c,var(--mod));color:var(--c,var(--mod));background:var(--c-soft,var(--mod-soft))}
+.empty{color:var(--muted);font-size:13px;border:1px dashed var(--border);border-radius:10px;padding:22px 12px;text-align:center}
+
+/* terminal */
+.term{background:var(--term-bg);border-radius:14px;overflow:hidden;font:13px/1.75 var(--mono);color:var(--term-text);min-width:0}
+.term-bar{display:flex;align-items:center;gap:7px;padding:10px 14px;background:rgba(255,255,255,.05)}
+.term-bar i{width:11px;height:11px;border-radius:50%;background:#ff5f57}
+.term-bar i:nth-child(2){background:#febc2e}.term-bar i:nth-child(3){background:#28c840}
+.term-bar span{margin-left:8px;color:var(--term-muted);font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.term-body{padding:14px 16px 16px}
+.tl{white-space:pre-wrap;word-break:break-word}
+.tl .ps{color:#f2a581}
+.tl.ok{color:#7ee2a8}.tl.warn{color:#f5c26b}.tl.muted{color:var(--term-muted)}.tl.info{color:#8ab8ff}.tl.bad{color:#ff8a98}.tl.hl{color:#d3b8ff}
+.caret{display:inline-block;width:8px;height:1.05em;background:var(--term-text);vertical-align:-2px;margin-left:1px;animation:blink 1s steps(1) infinite}
+.hero .term{box-shadow:0 24px 60px rgba(20,10,0,.28);transform:rotate(-.6deg);animation:float 7s ease-in-out infinite}
+.hero .term .term-body{min-height:260px;font-size:13.5px}
+
+/* code block */
+.code{border-radius:12px;overflow:hidden;background:var(--term-bg);color:var(--term-text);margin:12px 0}
+.code-bar{display:flex;justify-content:space-between;align-items:center;padding:6px 8px 6px 14px;background:rgba(255,255,255,.06);font:12px var(--mono);color:var(--term-muted)}
+.copy{border:1px solid rgba(255,255,255,.18);background:transparent;color:var(--term-text);font:600 12px var(--sans);padding:3px 10px;border-radius:7px;cursor:pointer}
+.copy:hover{background:rgba(255,255,255,.1)}
+.code pre{margin:0;padding:12px 16px 14px;font:13.5px/1.8 var(--mono);white-space:pre-wrap;word-break:break-word}
+.code .cm{color:var(--term-muted)}
+.code .ps{color:#f2a581}
+
+/* quiz */
+.quiz{max-width:780px;margin:0 auto;padding:26px}
+.q-anim{animation:slideIn .45s cubic-bezier(.2,.7,.2,1)}
+.q-top{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:14px;font-size:13.5px;color:var(--muted)}
+.q-dots{display:flex;gap:6px}
+.q-dots i{width:10px;height:10px;border-radius:50%;background:var(--border);transition:.3s}
+.q-dots i.ok{background:var(--green)}.q-dots i.no{background:var(--red)}
+.q-dots i.cur{outline:2px solid var(--mod);outline-offset:2px}
+.q-text{font-size:clamp(18px,2.2vw,21px);font-weight:700;margin:0 0 18px;line-height:1.55}
+.q-opts{display:flex;flex-direction:column;gap:10px}
+.q-opt{text-align:left;padding:12px 16px;border-radius:12px;border:1px solid var(--border);background:var(--bg);color:var(--text);font:15px/1.55 var(--sans);cursor:pointer;display:flex;gap:12px;align-items:center;transition:transform .2s,border-color .2s,background .2s}
+.q-opt .k{font:700 13px var(--mono);width:28px;height:28px;border-radius:8px;background:var(--surface-2);display:grid;place-items:center;flex:none;transition:.2s}
+.q-opt:hover:not(:disabled){border-color:var(--mod);transform:translateX(4px)}
+.q-opt.correct{border-color:var(--green);background:var(--green-soft)}
+.q-opt.correct .k{background:var(--green);color:#fff}
+.q-opt.wrong{border-color:var(--red);background:var(--red-soft);animation:shake .4s}
+.q-opt.wrong .k{background:var(--red);color:#fff}
+.q-opt:disabled{cursor:default}
+.q-exp{margin-top:14px;padding:12px 16px;border-radius:12px;background:var(--surface-2);font-size:14.5px;display:none}
+.q-exp.show{display:block;animation:popIn .35s}
+.q-next{margin-top:16px}
+.q-result{text-align:center;padding:10px 0}
+.ring{width:150px;height:150px;margin:0 auto 10px;position:relative}
+.ring svg{width:100%;height:100%;transform:rotate(-90deg)}
+.ring circle{fill:none;stroke-width:12}
+.ring .bg{stroke:var(--surface-2)}
+.ring .fg{stroke:var(--mod);stroke-linecap:round;transition:stroke-dashoffset 1.3s cubic-bezier(.2,.7,.2,1)}
+.ring .val{position:absolute;inset:0;display:grid;place-items:center;font:800 32px var(--sans)}
+.q-result h3{font-size:22px;margin:8px 0}
+.q-result p{color:var(--muted)}
+.q-result .row-btns{display:flex;flex-wrap:wrap;gap:10px;justify-content:center}
+
+/* module nav */
+.mod-nav{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:8px}
+.mod-nav a{display:block;padding:18px 20px;border-radius:16px;border:1px solid var(--border);background:var(--surface);color:var(--text);text-decoration:none;transition:.2s}
+.mod-nav a:hover{border-color:var(--mod);transform:translateY(-2px);box-shadow:var(--shadow)}
+.mod-nav small{display:block;color:var(--muted);font-size:13px}
+.mod-nav b{font-size:17px}
+.mod-nav .next{text-align:right}
+
+footer{padding:56px 0 70px;border-top:1px solid var(--border);color:var(--muted);font-size:14.5px}
+footer h3{color:var(--text);font-size:17px;margin:0 0 10px}
+footer ul{padding-left:20px;margin:0 0 18px}
+footer li{margin:4px 0}
+.confetti{position:fixed;width:8px;height:12px;border-radius:2px;pointer-events:none;z-index:100}
+
+@keyframes popIn{from{opacity:0;transform:translateY(5px)}}
+@keyframes blink{50%{opacity:0}}
+@keyframes bump{40%{transform:scale(1.13)}}
+@keyframes shake{20%{transform:translateX(-6px)}40%{transform:translateX(6px)}60%{transform:translateX(-4px)}80%{transform:translateX(3px)}}
+@keyframes chipIn{from{opacity:0;transform:scale(.85)}}
+@keyframes slideIn{from{opacity:0;transform:translateX(18px)}}
+@keyframes float{50%{transform:rotate(-.6deg) translateY(-8px)}}
+@keyframes pulse{50%{box-shadow:0 0 0 6px var(--c-soft,var(--mod-soft))}}
+
+@media (max-width:900px){
+  .hero-grid,.grid-2{grid-template-columns:1fr}
+  .hero-grid{gap:36px}
+}
+@media (max-width:600px){
+  .wrap{padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+  .chapter{padding:60px 0}
+  .hero{padding:44px 0 48px}
+  .panel-card,.quiz{padding:16px}
+  .ch-head{gap:12px}
+  .mod-nav{grid-template-columns:1fr}
+  .crumb{font-size:13px}
+}
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}
+}
+
+
+.nf{padding:90px 0 110px;text-align:center}
+.nf .big{font:800 clamp(72px,14vw,140px)/1 var(--mono);background:linear-gradient(90deg,var(--accent),var(--purple));-webkit-background-clip:text;background-clip:text;color:transparent;margin-bottom:14px}
+.nf h1{font-size:clamp(26px,4vw,40px);margin-bottom:10px}
+.nf .lead{margin:0 auto 26px}
+.nf .hero-cta{justify-content:center}
+.nf-links{justify-content:center;margin-top:10px}
+.nf-links a{text-decoration:none}
+/*cc-site-css*/
+.ccp-ov{position:fixed;inset:0;z-index:300;background:rgba(12,10,8,.55);-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px);display:flex;justify-content:center;align-items:flex-start;padding:calc(env(safe-area-inset-top,0px) + 9vh) max(16px,env(safe-area-inset-right,0px)) 16px max(16px,env(safe-area-inset-left,0px))}
+.ccp-ov[hidden]{display:none}
+.ccp{width:min(680px,100%);max-height:min(74vh,660px);display:flex;flex-direction:column;border-radius:18px;background:var(--surface);color:var(--text);border:1px solid var(--border);box-shadow:0 30px 80px rgba(0,0,0,.35);overflow:hidden;animation:ccpIn .22s cubic-bezier(.2,.8,.3,1)}
+@keyframes ccpIn{from{opacity:0;transform:translateY(-10px) scale(.98)}}
+.ccp-top{display:flex;align-items:center;gap:10px;padding:14px 16px;border-bottom:1px solid var(--border);color:var(--muted)}
+.ccp-top svg{width:18px;height:18px;flex:none}
+.ccp-top input{flex:1;min-width:0;border:0;background:transparent;color:var(--text);font:16px var(--sans);outline:none}
+.ccp-top input::-webkit-search-cancel-button{display:none}
+.ccp kbd{font:600 11px var(--mono);padding:2px 6px;border-radius:6px;border:1px solid var(--border);color:var(--muted);background:var(--surface-2);white-space:nowrap}
+.ccp-list{overflow-y:auto;padding:6px 8px 10px;overscroll-behavior:contain}
+.ccp-g{font:700 11.5px var(--sans);color:var(--muted);letter-spacing:.06em;padding:12px 10px 4px}
+.ccp-i{display:flex;gap:10px;align-items:center;padding:8px 10px;border-radius:10px;color:var(--text);text-decoration:none}
+.ccp-i.on{background:var(--surface-2);box-shadow:inset 3px 0 0 var(--c,var(--accent))}
+.ccp-ic{width:30px;height:30px;border-radius:9px;display:grid;place-items:center;font:800 12px var(--sans);background:var(--c-soft,var(--surface-2));color:var(--c,var(--muted));flex:none}
+.ccp-i .tx{min-width:0;flex:1}
+.ccp-i b{display:block;font-size:14.5px;font-weight:600;line-height:1.35}
+.ccp-i small{display:block;font-size:12px;color:var(--muted);line-height:1.45;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ccp-i mark{background:color-mix(in srgb,var(--c,var(--accent)) 28%,transparent);color:inherit;border-radius:3px;padding:0 1px}
+.ccp-empty{padding:30px 12px;text-align:center;color:var(--muted);font-size:14px}
+.ccp-foot{display:flex;gap:14px;flex-wrap:wrap;padding:9px 16px;border-top:1px solid var(--border);font-size:12px;color:var(--muted)}
+.cc-credit{font-size:13px;color:var(--muted);border-top:1px solid var(--border);margin:22px 0 0;padding-top:16px}
+.cc-credit a{color:inherit}
+@media (max-width:600px){.ccp-foot .ccp-k{display:none}.ccp-ov{padding-top:calc(env(safe-area-inset-top,0px) + 12px)}.ccp{max-height:calc(100vh - 40px)}}
+/*/cc-site-css*/</style>
+</head>
+<body>
+<div class="progress"><span id="progressBar"></span></div>
+<header class="topbar">
+  <div class="wrap topbar-inner">
+    <a class="brand" href="index.html"><span class="brand-mark">CC</span><span class="brand-text">Kevin 的互動學院</span></a>
+    <span class="crumb">› 404</span>
+    <nav class="chapters" id="chapterNav" aria-label="網站">
+      <a href="tips.html">心法集</a>
+      <a href="demos.html">功能演示館</a>
+      <a href="workflows.html">方法論館</a>
+    </nav>
+    <button class="icon-btn" id="ccSearchBtn" aria-label="搜尋全站（⌘K）" title="搜尋全站（⌘K）"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg></button>
+    <button class="icon-btn" id="themeBtn" aria-label="切換深色／淺色"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="8"/><path d="M12 4a8 8 0 0 0 0 16z" fill="currentColor"/></svg></button>
+  </div>
+</header>
+<main>
+<section class="nf">
+  <div class="wrap">
+    <div class="big">404</div>
+    <h1>這一頁不存在</h1>
+    <p class="lead">可能是網址打錯，或頁面已經搬家。搜尋全站找找看，或從下面挑一個地方開始。</p>
+    <div class="hero-cta"><a class="btn primary" href="index.html">回到首頁</a><button class="btn" id="nfSearch">搜尋全站</button></div>
+    <div class="chips nf-links">
+      <a class="chip-btn" href="memory.html">01 Memory</a>
+      <a class="chip-btn" href="agent-teams.html">02 Agent Teams</a>
+      <a class="chip-btn" href="goal.html">03 /goal</a>
+      <a class="chip-btn" href="tips.html">心法集</a>
+      <a class="chip-btn" href="demos.html">功能演示館</a>
+      <a class="chip-btn" href="workflows.html">方法論館</a>
+    </div>
+  </div>
+</section>
+</main>
+<footer>
+  <div class="wrap"><p>找不到想要的內容？到首頁看完整的學習路線。</p></div>
+<!--cc-credit--><div class="wrap"><p class="cc-credit">Kevin 的 Claude Code 互動學院 · <a href="https://github.com/kevin801221/claude-code-academy" target="_blank" rel="noopener">GitHub 原始碼</a> · 任何頁面按 ⌘K（或 Ctrl+K）搜尋全站</p></div><!--/cc-credit--></footer>
+<script>
+(() => {
+'use strict';
+const $ = (s, r = document) => r.querySelector(s);
+const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
+const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+const sleep = ms => new Promise(r => setTimeout(r, reduced ? Math.min(ms, 40) : ms));
+const restart = (el, cls) => { el.classList.remove(cls); void el.offsetWidth; el.classList.add(cls); };
+const root = document.documentElement;
+
+/* theme */
+const tb = $('#themeBtn');
+if (tb) tb.addEventListener('click', () => {
+  const cur = root.dataset.theme || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+  const next = cur === 'dark' ? 'light' : 'dark';
+  root.dataset.theme = next;
+  try { localStorage.setItem('cm-theme', next); } catch (e) {}
+});
+
+/* scroll progress */
+const bar = $('#progressBar');
+const onScroll = () => {
+  if (!bar) return;
+  const h = document.documentElement;
+  bar.style.width = (h.scrollTop / Math.max(1, h.scrollHeight - h.clientHeight) * 100).toFixed(2) + '%';
+};
+addEventListener('scroll', onScroll, { passive: true }); onScroll();
+
+/* chapter nav highlight */
+const nav = $('#chapterNav');
+if (nav) {
+  const links = $$('a', nav);
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (!e.isIntersecting) return;
+      links.forEach(a => {
+        const on = a.getAttribute('href') === '#' + e.target.id;
+        a.classList.toggle('on', on);
+        if (on && nav.scrollTo) nav.scrollTo({ left: a.offsetLeft - nav.clientWidth / 2 + a.clientWidth / 2, behavior: reduced ? 'auto' : 'smooth' });
+      });
+    });
+  }, { rootMargin: '-45% 0px -50% 0px' });
+  $$('section[id]').forEach(s => obs.observe(s));
+}
+
+/* reveal */
+const revObs = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (!e.isIntersecting) return;
+    e.target.classList.add('in');
+    revObs.unobserve(e.target);
+    e.target.dispatchEvent(new CustomEvent('revealed'));
+  });
+}, { threshold: 0.12 });
+$$('.reveal').forEach(el => revObs.observe(el));
+
+/* confetti */
+function confetti(el) {
+  if (reduced || !el) return;
+  const r = el.getBoundingClientRect();
+  const x = r.left + r.width / 2, y = r.top + r.height / 2;
+  const colors = ['var(--accent)', 'var(--green)', 'var(--blue)', 'var(--purple)', '#f2c14e'];
+  for (let i = 0; i < 40; i++) {
+    const p = document.createElement('i');
+    p.className = 'confetti';
+    p.style.left = x + 'px'; p.style.top = y + 'px';
+    p.style.background = colors[i % colors.length];
+    document.body.appendChild(p);
+    const ang = Math.random() * Math.PI * 2, dist = 70 + Math.random() * 150;
+    const dx = Math.cos(ang) * dist, dy = Math.sin(ang) * dist - 70;
+    p.animate([
+      { transform: 'translate(0,0) rotate(0deg)', opacity: 1 },
+      { transform: 'translate(' + dx + 'px,' + (dy + 140) + 'px) rotate(' + (Math.random() * 720) + 'deg)', opacity: 0 }
+    ], { duration: 1100 + Math.random() * 600, easing: 'cubic-bezier(.2,.6,.4,1)' }).finished.then(() => p.remove());
+  }
+}
+
+/* copy buttons */
+function copyText(text) {
+  if (navigator.clipboard && window.isSecureContext !== false) {
+    return navigator.clipboard.writeText(text).catch(() => fallbackCopy(text));
+  }
+  return fallbackCopy(text);
+}
+function fallbackCopy(text) {
+  return new Promise(res => {
+    const ta = document.createElement('textarea');
+    ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
+    document.body.appendChild(ta); ta.select();
+    try { document.execCommand('copy'); } catch (e) {}
+    ta.remove(); res();
+  });
+}
+document.addEventListener('click', e => {
+  const b = e.target.closest('[data-copy]');
+  if (!b) return;
+  const src = b.dataset.copy ? document.getElementById(b.dataset.copy) : b.closest('.code').querySelector('pre');
+  if (!src) return;
+  copyText(src.innerText.trim()).then(() => {
+    const old = b.dataset.label || b.textContent;
+    b.dataset.label = old;
+    b.textContent = '已複製 ✓';
+    setTimeout(() => { b.textContent = old; }, 1500);
+  });
+});
+
+/* progress storage (shared across pages) */
+function getProgress() {
+  try { return JSON.parse(localStorage.getItem('cca-progress') || '{}') || {}; } catch (e) { return {}; }
+}
+function saveProgress(key, score, total) {
+  try {
+    const p = getProgress();
+    if (!p[key] || score >= p[key].score) p[key] = { score, total };
+    localStorage.setItem('cca-progress', JSON.stringify(p));
+  } catch (e) {}
+}
+
+/* quiz engine */
+function quiz(box, QUIZ, key, nextLink) {
+  let qi = 0, qScore = 0, qRes = [];
+  function render() {
+    if (qi >= QUIZ.length) return result();
+    const Q = QUIZ[qi];
+    box.innerHTML = '<div class="q-anim"><div class="q-top"><span>第 ' + (qi + 1) + ' / ' + QUIZ.length + ' 題</span><div class="q-dots">' +
+      QUIZ.map((_, i) => '<i class="' + (qRes[i] === true ? 'ok' : qRes[i] === false ? 'no' : '') + (i === qi ? ' cur' : '') + '"></i>').join('') + '</div></div>' +
+      '<p class="q-text">' + Q.q + '</p><div class="q-opts">' +
+      Q.o.map((o, i) => '<button class="q-opt" data-i="' + i + '"><span class="k">' + 'ABCD'[i] + '</span><span>' + o + '</span></button>').join('') +
+      '</div><div class="q-exp"></div><button class="btn primary q-next" hidden>' + (qi === QUIZ.length - 1 ? '看結果' : '下一題') + ' →</button></div>';
+  }
+  function answer(i) {
+    const Q = QUIZ[qi], ok = i === Q.a;
+    const opts = $$('.q-opt', box);
+    opts.forEach(o => { o.disabled = true; });
+    opts[Q.a].classList.add('correct');
+    if (!ok) opts[i].classList.add('wrong');
+    qRes[qi] = ok; if (ok) qScore++;
+    $$('.q-dots i', box)[qi].classList.add(ok ? 'ok' : 'no');
+    const exp = $('.q-exp', box);
+    exp.innerHTML = (ok ? '<b style="color:var(--green)">✓ 答對了！</b> ' : '<b style="color:var(--red)">✕ 差一點。</b> ') + Q.e;
+    exp.classList.add('show');
+    const nx = $('.q-next', box); nx.hidden = false; nx.focus({ preventScroll: true });
+  }
+  function result() {
+    const pct = qScore / QUIZ.length, C = 2 * Math.PI * 60;
+    saveProgress(key, qScore, QUIZ.length);
+    const msg = qScore === QUIZ.length ? '滿分！這個模組你已經完全掌握。'
+      : pct >= 0.7 ? '很棒！回頭看看答錯的題目，就更完整了。'
+      : '建議再玩一次上面的互動區，加深印象後再挑戰。';
+    box.innerHTML = '<div class="q-anim q-result"><div class="ring"><svg viewBox="0 0 140 140"><circle class="bg" cx="70" cy="70" r="60"/><circle class="fg" cx="70" cy="70" r="60" stroke-dasharray="' + C + '" stroke-dashoffset="' + C + '"/></svg><div class="val">' + qScore + '/' + QUIZ.length + '</div></div>' +
+      '<h3>' + (qScore === QUIZ.length ? '完美通關' : '測驗完成') + '</h3><p>' + msg + '</p><div class="row-btns"><button class="btn q-retry">↻ 再測一次</button>' +
+      (nextLink ? '<a class="btn primary" href="' + nextLink[0] + '">' + nextLink[1] + ' →</a>' : '') + '</div></div>';
+    requestAnimationFrame(() => requestAnimationFrame(() => { $('.ring .fg', box).style.strokeDashoffset = C * (1 - pct); }));
+    if (pct >= 0.7) setTimeout(() => confetti($('.ring', box)), 700);
+  }
+  box.addEventListener('click', e => {
+    const o = e.target.closest('.q-opt');
+    if (o && !o.disabled) return answer(+o.dataset.i);
+    if (e.target.closest('.q-next')) { qi++; render(); return; }
+    if (e.target.closest('.q-retry')) { qi = 0; qScore = 0; qRes = []; render(); }
+  });
+  render();
+}
+
+/* typing helper for terminals */
+async function typeInto(el, text, speed) {
+  for (const ch of text) { el.textContent += ch; await sleep(speed || 45); }
+}
+
+window.CC = { $, $$, reduced, sleep, restart, confetti, quiz, getProgress, saveProgress, typeInto, copyText };
+})();
+</script>
+<script>document.getElementById('nfSearch').addEventListener('click', function () { if (window.CCSearch) window.CCSearch.open(); });</script>
+<!--cc-site-->
+<script>window.CC_INDEX={"items":[["page","首頁","Kevin 的 Claude Code 互動學院","index.html","學院 home"],["page","學習路線：入門 → 進階 → 高手","六站學完，不知道從哪開始就從這裡","index.html#path","路線 roadmap 新手"],["page","名詞速查","各模組與館的關鍵名詞","index.html#glossary","glossary 名詞"],["page","模組 01：Claude Memory","CLAUDE.md 的載入機制、monorepo 模擬器","memory.html","memory claude.md 記憶"],["page","模組 02：Agent Teams 實作","多個 session 組隊、Command → Agent → Skill","agent-teams.html","agent teams 隊友 團隊"],["page","模組 03：/goal 實作","跨回合持續工作直到條件成立","goal.html","goal 目標"],["page","心法集","124 條實戰心法，每一步都有終端機模擬","tips.html","tips 技巧 心法"],["page","心法集：新手先看這 10 條","從 124 條裡挑出的基本功","tips.html#c-start","新手 入門 精選"],["page","功能演示館","13 個核心功能的逐步動畫","demos.html","demos 功能 演示"],["page","方法論館","6 套社群工作流的流程鏈動畫與比較","workflows.html","workflow 方法論 工作流 superpowers matt pocock"],["mod","CLAUDE.md 是什麼？","模組 01","memory.html#ch1",""],["mod","兩種載入機制","模組 01","memory.html#ch2",""],["mod","Monorepo 載入實驗室","模組 01","memory.html#ch3",""],["mod","情境題：先猜，再揭曉","模組 01","memory.html#ch4",""],["mod","重點整理","模組 01","memory.html#ch5",""],["mod","官方文件補充：還有這些記憶機制","模組 01","memory.html#docs-memory",""],["mod","最佳實踐：這條指令該放哪？","模組 01","memory.html#ch6",""],["mod","小測驗","模組 01","memory.html#ch7",""],["mod","Agent Teams vs 子代理","模組 02","agent-teams.html#t1",""],["mod","成品怎麼跑：Command → Agent → Skill","模組 02","agent-teams.html#t2",""],["mod","實作步驟：自己用 agent team 建一次","模組 02","agent-teams.html#t3",""],["mod","官方文件補充：實際用 Agent Teams 前要知道的事","模組 02","agent-teams.html#docs-teams",""],["mod","團隊協調流程","模組 02","agent-teams.html#t4",""],["mod","檔案結構：誰負責哪個檔案？","模組 02","agent-teams.html#t5",""],["mod","小測驗","模組 02","agent-teams.html#t6",""],["mod","/goal 怎麼運作？","模組 03","goal.html#g1",""],["mod","用法","模組 03","goal.html#g2",""],["mod","/goal、/loop、auto 模式","模組 03","goal.html#g3",""],["mod","社群技巧一：請代理自己提出目標","模組 03","goal.html#g4",""],["mod","社群技巧二：讓代理幫你草擬 /goal prompt","模組 03","goal.html#g5",""],["mod","小測驗","模組 03","goal.html#g6",""],["demo","Hooks：擋下對 .env 的修改","Hooks 是在 Claude Code 生命週期特定時點自動執行的指令，讓「一定要發生的事」不靠模型記得。這個情境用 PreToolUse","demos.html#hooks","Hooks 寫一支 hook 腳本 讓腳本可以執行 在 settings.json 註冊 用 /hooks 確認 觸發：請 Claude 改 .env 腳本從 stdin 收到事件 JSON exit 2：擋下這次編輯 對照：一般檔案照常通過"],["demo","Plugins：從做一個到分享給隊友","Plugin 把 skills、agents、hooks、MCP servers 等元件打包成一個單位安裝與載入。這個情境從零做一個 plu","demos.html#plugins","Plugins 建立 plugin 與 manifest 加一個 skill 驗證 plugin 本機測試 建立市集 加入市集並試裝 推上 Git 主機 隊友安裝"],["demo","Skills：讓 Claude 學會一套做法","把做法寫進 SKILL.md，Claude 會在相關時自動使用，你也能用 /skill-name 直接叫用。這個情境做一個「摘要目前變更並標","demos.html#skills","Skills 建立 skill 資料夾 寫 SKILL.md 描述常駐在脈絡裡 你提出問題 先執行動態指令 Claude 回覆 也能手動叫用 設成只能手動觸發"],["demo","Subagents：把任務交給專門的助手","子代理有自己的系統提示、可用工具與權限，在獨立的脈絡視窗裡工作，只把結果帶回來。這個情境建立一個 code-reviewer 子代理。","demos.html#subagents","Subagents 定義子代理 自動偵測新檔 交辦任務 在全新脈絡中工作 在背景執行 只帶回摘要 接續同一個子代理"],["demo","MCP：讓 Claude 連上外部服務","MCP（Model Context Protocol）是開放標準，讓 Claude Code 連接外部工具、資料庫與 API。這個情境照官方","demos.html#mcp","MCP 加入遠端 MCP 伺服器 查看狀態 用 /mcp 認證 連線成功 提出問題 結果回到 Claude 分享給團隊"],["demo","權限模式：Plan、Accept edits、Auto 與規則","權限模式決定 Claude 哪些事可以不問就做。這個情境從 Plan 模式擬計畫開始，接著放寬到自動編輯與 Auto 模式，並用規則守住敏感","demos.html#permissions","權限模式 以 Plan 模式啟動 探索並擬定計畫 核准計畫 切到 accept edits 寫權限規則 deny 擋下讀取 .env 切到 Auto 模式 破壞性操作被擋下"],["demo","Checkpoints：改壞了就倒回去","每次送出 prompt 前，Claude Code 都會自動建立檢查點。改壞了不用一路修補，直接倒回到改壞之前。","demos.html#checkpoints","Checkpoints 送出第一個 prompt 送出第二個 prompt 發現測試壞了 打開 /rewind 選擇倒回方式 還原程式碼與對話 修改 prompt 後重送"],["demo","/goal：持續工作直到條件成立","設定一個完成條件，Claude 一回合接一回合做下去，每回合結束由另一個模型判斷條件是否成立。","demos.html#goal","/goal 設定目標 回合結束，交給評估模型 尚未達成，繼續下一回合 把條件寫得可驗證 隨時查看狀態 條件成立，自動結束 其他結束方式與無人值守"],["demo","/loop：定時重跑 prompt","在 session 開著的時候，隔一段時間就重跑同一個 prompt。適合盯部署、顧 PR、等長時間的 build。","demos.html#loop","/loop 固定間隔排程 時間到，在回合之間執行 不給間隔：讓 Claude 決定 什麼都不給：內建維護 重跑一個 skill 停止 loop 知道它的極限"],["demo","脈絡管理：讓長 session 保持清爽","脈絡視窗裝著 Claude 對這個 session 所知的一切：你的指示、它讀過的檔案、它自己的回覆，還有終端機上看不到的內容。這個情境走過","demos.html#context","脈絡管理 還沒打字就有內容 讀檔讓脈絡變滿 用 /context 看用量 大量讀檔交給子代理 快滿時自動壓縮 /compact 指定重點 壓縮後留下什麼 換任務就 /clear"],["demo","Headless：在腳本和 CI 裡跑 Claude","加上 -p（或 --print），Claude Code 就以非互動模式執行：跑完就結束、結果印到 stdout，適合放進腳本、管線和 CI","demos.html#headless","Headless 一行指令跑完就結束 用管線餵資料 輸出成 JSON 需要核准的動作被拒 預先放行工具 設定權限模式 接續同一段對話 CI 用 --bare"],["demo","Sessions：接續昨天的對話，再分支試別條路","Session 是綁在專案目錄上的對話，Claude Code 會邊做邊存在本機，所以能隨時接續、分支或切換。這個情境替一次重構命名、隔天接","demos.html#sessions","Sessions 啟動時就取名 用 --continue 接回 開分支試另一種做法 分支繼承了什麼 用 /resume 回到原路線 用選擇器切換工作 從 PR 找回 session 紀錄存在哪裡"],["demo","Worktrees：一邊做功能，一邊修 bug","Worktree 是同一個 repo 的另一個工作目錄，有自己的檔案和分支，但共用 repo 歷史與 remote。這個情境開兩個平行的 C","demos.html#worktrees","Worktrees 列出要帶過去的檔案 用 --worktree 啟動 另開終端機並行修 bug 在 worktree 裡裝好環境 主 checkout 受保護 子代理各用一個 worktree 離開時先檢查 之後回到同一個 worktree"],["wf","BMad Method","敏捷式 AI 驅動開發方法：用專業代理人與工作流程，把點子或變更需求變成可運作的軟體，同時不放棄思考。","workflows.html#bmad","BMad Code, LLC (bmad-code-org) 流程大小隨工作調整（right-sized） 決策明確，並作為持久脈絡往後傳遞 需要時引入產品、架構、UX、開發、測試等專業視角 引導式協作，判斷權留在人手上 從早期思考到審查、修正與學習的單一交付路徑 npx skills add bmad-code-org/BMAD-METHOD --skill '*' claude"],["stage","BMad Method・探索與驗證點子","階段 1 · /bmad-forge-idea","workflows.html#bmad","/bmad-forge-idea 釐清需求 在寫需求之前，用腦力激盪、壓力測試與研究把模糊的點子變成可行動的意圖（此步可選）。 forge-report.html、forge-<slug>.md（點子成形時）；或 brainstorm-<topic>.md、research-<topic>.md"],["stage","BMad Method・PM 撰寫 PRD","階段 2 · /bmad-agent-pm","workflows.html#bmad","/bmad-agent-pm 釐清需求 由產品經理 John 寫下「要做什麼、為什麼」，讓多人與多個 epic 對齊同一份產品定義。 prd-<slug>.md（位於 _bmad-output 中作用中 initiative 的 prd-<slug>/ 資料夾）；驗證時產生 review-*.md"],["stage","BMad Method・UX 與架構設計","階段 3 · /bmad-architecture","workflows.html#bmad","/bmad-architecture 規劃 記錄跨 epic 必須一致的體驗與技術決策，避免不同代理人或 session 各做各的選擇。 architecture-<slug>.md（架構 spine）；跑 bmad-ux 時另有 DESIGN.md、EXPERIENCE.md"],["stage","BMad Method・PO 切分故事","階段 4 · /bmad-agent-po","workflows.html#bmad","/bmad-agent-po 規劃 由產品負責人 Sofia 把文件轉成需求，並把 initiative 切成 epic、再把 epic 切成依建置順序排列的 story。 initiative／epic 檔案中的 Requirements 與 Constraints、.memlog.md、tickets/tickets.toml"],["stage","BMad Method・逐一建置故事","階段 5 · /bmad-build","workflows.html#bmad","/bmad-build 實作 一次 session 建置一個 story：釐清、規劃、實作、獨立審查並修正，最後在本地 commit。 修改後的程式碼與本地 commit、story-<slug>-plan.md（狀態 built）、deferred-work.md"],["stage","BMad Method・審查與測試","階段 6 · /bmad-code-review","workflows.html#bmad","/bmad-code-review 驗證 用多位獨立審查者深度檢查變更並分流處理，再為完成的功能補上 API 與端到端測試。 計畫中追加的 ## Code Review 區塊與修補；專案 E2E 測試位置中的新測試檔"],["stage","BMad Method・Epic 回顧","階段 7 · /bmad-retrospective","workflows.html#bmad","/bmad-retrospective 回顧 epic 的 ticket 全部完成後，依據 diff、commit 與計畫等證據，整體判斷是否達成驗收條件。 epic 資料夾中的 epic-<slug>-retrospective.md，verdict 為 accepted、accepted-with-open-items 或 rejected"],["wf","Compound Engineering","讓每一單位工程工作都比上一次更輕鬆的 AI 技能外掛。","workflows.html#compound","Every (EveryInc) · Kieran Klaassen & Trevin Chow 每一單位工程工作都應讓後續工作更容易 80% 規劃與審查、20% 執行 把知識寫下來，讓它可以重複使用 維持高品質，讓未來的變更更容易 重點是槓桿，不是儀式 /plugin marketplace add EveryInc/compound-engineering-plugin /plugin install compound-engineering"],["stage","Compound Engineering・腦力激盪需求","階段 1 · /ce-brainstorm","workflows.html#compound","/ce-brainstorm 釐清需求 透過一問一答釐清「要做什麼」，寫出 ce-plan 能直接接手、不必再猜產品行為的需求文件。 requirements-only unified plan：docs/plans/YYYY-MM-DD-HHMM-<type>-<topic>-plan.md（輕量工作只在對話中產出一段摘要）"],["stage","Compound Engineering・規劃實作","階段 2 · /ce-plan","workflows.html#compound","/ce-plan 規劃 把需求擴充成可直接實作的計畫，記下決策、範圍、實作單元、檔案、測試情境與風險，但不預寫程式碼。 同一份 unified plan 從 artifact_readiness: requirements-only 升級為 implementation-ready（docs/plans/YYYY-MM-DD-HHMM-<type>-<name>-plan.md）"],["stage","Compound Engineering・執行計畫","階段 3 · /ce-work","workflows.html#compound","/ce-work 實作 依計畫的護欄實作並持續測試，產出經本地驗證的變更，審查後交給 commit 與 PR 流程。 commits 與 PR（透過 ce-commit-push-pr）；計畫檔全程唯讀不修改"],["stage","Compound Engineering・精簡程式碼","階段 4 · /ce-simplify-code","workflows.html#compound","/ce-simplify-code 驗證 在審查前精簡剛寫好的程式，提升清晰度、重用性與效率，並刪掉沒有價值的測試與註解，同時完全保留行為。 精簡後的程式＋依 reuse / quality / efficiency / tests / comments 分類的修改摘要"],["stage","Compound Engineering・多代理程式審查","階段 5 · /ce-code-review","workflows.html#compound","/ce-code-review 驗證 依 diff 實際碰到的風險挑選審查角色平行審查，合併去重成一份有嚴重度分級的報告。 結構化審查報告（P0–P3 嚴重度；gated_auto / manual / advisory 分類）；預設只報告、不修改"],["stage","Compound Engineering・沉澱學習","階段 6 · /ce-compound","workflows.html#compound","/ce-compound 回顧 把已解決、已驗證問題中無法從程式碼看出的推理寫成文件，讓下一輪規劃自動參考。 docs/solutions/[category]/[filename].md（附 YAML frontmatter）"],["wf","GSD Core (Get Shit Done)","用固定的階段循環加上全新 context 子代理，對抗 context rot 的規格驅動開發系統。","workflows.html#gsd","Open GSD (open-gsd)；原版 get-shit-done 由 TÂCHES 建立 重活交給全新 context 的子代理 先討論實作決策，再規劃 用 .planning/ 產物跨 session 保存記憶 寫完不等於能用：出貨前必驗證 階段範圍拿不準就拆小 npx @opengsd/gsd-core@latest npx @opengsd/gsd-core@latest --claude --global"],["stage","GSD Core (Get Shit Done)・建立專案藍圖","階段 1 · /gsd-new-project","workflows.html#gsd","/gsd-new-project 釐清需求 透過深度提問蒐集脈絡，產出專案說明、需求清單與分階段路線圖。 .planning/PROJECT.md、REQUIREMENTS.md、ROADMAP.md、STATE.md、config.json（可選 research/）"],["stage","GSD Core (Get Shit Done)・討論實作決策","階段 2 · /gsd-discuss-phase","workflows.html#gsd","/gsd-discuss-phase 釐清需求 在規劃之前，把這個階段「要怎麼做」的實作決策問清楚並寫下來。 .planning/phases/<NN>-<name>/<NN>-CONTEXT.md（另有 DISCUSSION-LOG.md 稽核紀錄）"],["stage","GSD Core (Get Shit Done)・研究與規劃","階段 3 · /gsd-plan-phase","workflows.html#gsd","/gsd-plan-phase 規劃 研究、拆解並驗證計畫，產出每份都能放進全新 context window 的任務計畫。 <NN>-RESEARCH.md、<NN>-<N>-PLAN.md、<NN>-VALIDATION.md"],["stage","GSD Core (Get Shit Done)・平行波次執行","階段 4 · /gsd-execute-phase","workflows.html#gsd","/gsd-execute-phase 實作 以 wave 平行執行所有計畫，每個執行者都在全新的 200k context 裡寫程式並原子化 commit。 每份計畫的 <NN>-<N>-SUMMARY.md、git commits；全部完成時產出 <NN>-VERIFICATION.md"],["stage","GSD Core (Get Shit Done)・使用者驗收","階段 5 · /gsd-verify-work","workflows.html#gsd","/gsd-verify-work 驗證 用對話式 UAT 一次一項確認做出來的東西真的能用，有問題就自動診斷並產出修正計畫。 <NN>-UAT.md；若發現問題則另有經驗證的修正計畫"],["stage","GSD Core (Get Shit Done)・開 PR 出貨","階段 6 · /gsd-ship","workflows.html#gsd","/gsd-ship 交付 驗證通過後推送分支並建立 PR，PR 內文自動由規劃產物組成。 內文自動生成的 GitHub PR，並更新 STATE.md"],["stage","GSD Core (Get Shit Done)・里程碑收尾","階段 7 · /gsd-complete-milestone","workflows.html#gsd","/gsd-complete-milestone 回顧 所有階段出貨後，稽核里程碑是否達成目標，再歸檔並打上版本 tag。 稽核報告、MILESTONES.md 條目與 git tag"],["wf","Matt Pocock's Skills (Skills For Real Engineers)","把軟體工程基本功拆成小而可組合的技能，讓你保有 AI 開發的主導權。","workflows.html#mattpocock","Matt Pocock 動手前先被逼問，對齊需求 建立共用語言（GLOSSARY.md） 回饋速度就是你的速度上限 每天投資系統設計，打造深模組 技能小而可組合，主控權在你 claude plugin install mattpocock-skills@claude-plugins-official /setup-matt-pocock-skills"],["stage","Matt Pocock's Skills (Skills For Real Engineers)・逼問對齊需求","階段 1 · /grill-with-docs","workflows.html#mattpocock","/grill-with-docs 釐清需求 透過一輪輪追問把想法磨到雙方都理解，同時建立專案的共用語言與決策紀錄。 雙方確認的共識；GLOSSARY.md 與 docs/adr/ 下的 ADR（有需要時才建立）"],["stage","Matt Pocock's Skills (Skills For Real Engineers)・整理成規格","階段 2 · /to-spec","workflows.html#mattpocock","/to-spec 規劃 不再訪談，直接把剛才的對話與程式碼理解綜合成一份 spec，發佈到 issue tracker。 發佈到 issue tracker 的 spec（標上 ready-for-agent 標籤）"],["stage","Matt Pocock's Skills (Skills For Real Engineers)・拆解垂直切片票","階段 3 · /to-tickets","workflows.html#mattpocock","/to-tickets 規劃 把 spec 拆成一組 tracer-bullet 垂直切片票，每張都標明被哪些票阻擋。 本機模式：.scratch/<feature-slug>/issues/<NN>-<slug>.md（一票一檔）；或真實 tracker 上帶原生 blocking 連結的 issues"],["stage","Matt Pocock's Skills (Skills For Real Engineers)・TDD 實作","階段 4 · /implement","workflows.html#mattpocock","/implement 實作 依票或 spec 實作，在事先約定的接縫用 TDD 紅綠循環一小片一小片推進。 通過測試與審查的程式碼，commit 到目前分支"],["stage","Matt Pocock's Skills (Skills For Real Engineers)・雙軸程式審查","階段 5 · /code-review","workflows.html#mattpocock","/code-review（由 /implement 收尾時自動觸發） 驗證 比較固定點之後的 diff，分 Standards 與 Spec 兩軸、用兩個平行子代理獨立審查。 分列 ## Standards 與 ## Spec 的審查報告"],["stage","Matt Pocock's Skills (Skills For Real Engineers)・撰寫 PR 內文","階段 6 · pr","workflows.html#mattpocock","pr（自動觸發：代理撰寫 PR 內文時套用） 交付 讓 PR 內文用最小的視覺說清楚改動、附上前後證據，並評估合併風險。 含 ## Summary、## Evidence、## Merge Danger 三段的 PR body"],["stage","Matt Pocock's Skills (Skills For Real Engineers)・回顧改善環境","階段 7 · /retro","workflows.html#mattpocock","/retro 回顧 回看這次 session，提出改善代理「環境」而非程式碼的建議，依嚴重度排序。 依嚴重度排序的環境改善建議清單"],["wf","Spec Kit","讓 AI 程式代理依「規格 → 計畫 → 任務 → 實作」結構化流程開發的開源工具包。","workflows.html#speckit","GitHub 規格是主要產物，程式碼只是它的表達 規格要精確、完整、無歧義到足以產生系統 一致性驗證持續進行，而非一次性關卡 以專案憲章（constitution）治理每個階段 規格階段只談做什麼與為什麼，不談技術棧 uv tool install specify-cli specify init my-project --integration claude cd my-project"],["stage","Spec Kit・制定專案憲章","階段 1 · /speckit-constitution","workflows.html#speckit","/speckit-constitution 規劃 建立整個專案的指導原則，之後每個階段都會依它檢查。 .specify/memory/constitution.md"],["stage","Spec Kit・撰寫功能規格","階段 2 · /speckit-specify","workflows.html#speckit","/speckit-specify 釐清需求 把自然語言的功能描述轉成結構化、可測試的功能規格。 specs/<NNN-short-name>/spec.md、checklists/requirements.md、.specify/feature.json"],["stage","Spec Kit・釐清模糊處","階段 3 · /speckit-clarify","workflows.html#speckit","/speckit-clarify 釐清需求 在做計畫前，用最多 5 個精準問題消除規格中的模糊與缺漏。 更新後的 spec.md（新增 ## Clarifications 與 ### Session YYYY-MM-DD）"],["stage","Spec Kit・技術實作計畫","階段 4 · /speckit-plan","workflows.html#speckit","/speckit-plan 規劃 根據規格與你指定的技術棧，產出實作計畫與設計文件。 specs/<feature>/plan.md、research.md、data-model.md、contracts/、quickstart.md"],["stage","Spec Kit・拆解任務清單","階段 5 · /speckit-tasks","workflows.html#speckit","/speckit-tasks 規劃 把計畫拆成依相依順序排列、可直接執行的任務清單。 specs/<feature>/tasks.md"],["stage","Spec Kit・跨文件一致性","階段 6 · /speckit-analyze","workflows.html#speckit","/speckit-analyze 驗證 在實作前以唯讀方式檢查 spec、plan、tasks 之間的衝突、缺口與模糊處。 Specification Analysis Report（只輸出報告，不修改任何檔案）"],["stage","Spec Kit・依任務實作","階段 7 · /speckit-implement","workflows.html#speckit","/speckit-implement 實作 依 tasks.md 的階段與相依順序執行所有任務，產出可運作的程式碼。 程式碼與設定檔；tasks.md 中完成的任務標記為 [X]"],["stage","Spec Kit・收斂驗證","階段 8 · /speckit-converge","workflows.html#speckit","/speckit-converge 驗證 比對程式碼與 spec、plan、tasks，找出遺漏並追加任務，直到完全收斂。 Converged 結果，或在 tasks.md 末尾追加 ## Phase N: Convergence 任務"],["wf","Superpowers","讓 coding agent 自動遵循完整軟體開發流程的技能框架。","workflows.html#superpowers","Jesse Vincent (obra) · Prime Radiant 測試驅動開發：永遠先寫測試 系統化勝過臨場發揮 降低複雜度，以簡潔為首要目標 證據勝過宣稱：驗證後才說完成 YAGNI、DRY、小步頻繁 commit /plugin install superpowers@claude-plugins-official"],["stage","Superpowers・腦力激盪釐清需求","階段 1 · brainstorming","workflows.html#superpowers","brainstorming（自動觸發） 釐清需求 在動手之前透過提問找出你真正想要什麼、為什麼，並寫成經你核准的設計文件。 經核准的設計文件：docs/superpowers/specs/YYYY-MM-DD-<topic>-design.md（小改動則是對話中確認的簡短設計）"],["stage","Superpowers・建立隔離工作區","階段 2 · using-git-worktrees","workflows.html#superpowers","using-git-worktrees（自動觸發） 規劃 在新分支的隔離工作區中開工，裝好依賴並確認測試基準是乾淨的。 隔離的 worktree（預設在專案根目錄的 .worktrees/ 下）＋通過的基準測試"],["stage","Superpowers・撰寫實作計畫","階段 3 · writing-plans","workflows.html#superpowers","writing-plans（自動觸發） 規劃 把核准的設計拆成一口大小的任務，寫成連沒看過這份程式碼的工程師都能照做的計畫。 docs/superpowers/plans/YYYY-MM-DD-<feature-name>.md"],["stage","Superpowers・子代理逐項實作","階段 4 · subagent-driven-development","workflows.html#superpowers","subagent-driven-development（自動觸發；選 Native 時改用 executing-plans） 實作 每個任務派一個全新的實作子代理，完成後立刻審查規格符合度與程式品質，全部做完再做整支分支的最終審查。 每個任務一組 commit；進度記錄在 <repo-root>/.superpowers/sdd/ 下此計畫的 progress.md（ledger）"],["stage","Superpowers・測試驅動開發","階段 5 · test-driven-development","workflows.html#superpowers","test-driven-development（自動觸發） 實作 在實作過程中強制 RED-GREEN-REFACTOR：沒有先失敗的測試，就不寫任何正式程式碼。 先失敗、後通過的測試＋剛好夠用的實作＋commit"],["stage","Superpowers・請求程式碼審查","階段 6 · requesting-code-review","workflows.html#superpowers","requesting-code-review（自動觸發） 驗證 派一個只拿到精準脈絡的審查子代理，對照計畫檢查成果，在問題擴散前抓出來。 依嚴重度分級的審查結果（Critical / Important / Minor）與整體評估"],["stage","Superpowers・收尾開發分支","階段 7 · finishing-a-development-branch","workflows.html#superpowers","finishing-a-development-branch（自動觸發） 交付 確認測試全綠後提供合併、開 PR 或保留分支等選項，由你決定如何整合，再清理工作區。 本地合併、已推送的 Pull Request，或保留原狀的分支；必要時移除 worktree"],["tip","設定你的終端機","Boris：12 種客製方式：先把終端機調好，Claude Code 用起來更順手。","tips.html#t-boris-12-1","客製化 用 /config 設定主題 啟用通知 執行 /terminal-setup 執行 /vim 開啟 Vim 模式 /config  /terminal-setup /vim"],["tip","調整努力等級","Boris：12 種客製方式：用 /model 選努力等級，在速度與智慧之間取捨。","tips.html#t-boris-12-2","客製化 執行 /model 了解三個等級 選擇你偏好的等級 /model  "],["tip","安裝外掛、MCP 與 Skills","Boris：12 種客製方式：用外掛一次裝好 LSP、MCP、skills、代理與自訂 hook。","tips.html#t-boris-12-3","工具與整合 Skills 客製化 執行 /plugin 從官方市集安裝 建立公司自己的市集 commit settings.json 給團隊 /plugin   "],["tip","建立自訂代理","Boris：12 種客製方式：在 .claude/agents 放 .md 檔，就能打造專屬代理。","tips.html#t-boris-12-4","客製化 自動化 執行 /agents 放 .md 檔到 .claude/agents 設定代理屬性 設定主對話預設代理 /agents   "],["tip","預先核准常見權限","Boris：12 種客製方式：用 /permissions 預先核准常用命令，少被權限提示打斷。","tips.html#t-boris-12-5","權限與安全 了解權限系統 執行 /permissions 善用萬用字元 commit 進團隊 settings.json  /permissions Bash(bun run *)\nEdit(/docs/**) "],["tip","啟用沙箱","Boris：12 種客製方式：開啟沙箱，更安全的同時也減少權限提示。","tips.html#t-boris-12-6","權限與安全 執行 /sandbox 了解隔離範圍 照常工作 /sandbox  "],["tip","加上狀態列","Boris：12 種客製方式：在輸入框正下方顯示你工作時最在意的資訊。","tips.html#t-boris-12-7","客製化 脈絡管理 決定要顯示什麼 執行 /statusline 依個人習慣調整  /statusline "],["tip","客製你的快捷鍵","Boris：12 種客製方式：每個鍵位都能重新對應，改完立刻生效。","tips.html#t-boris-12-8","客製化 執行 /keybindings 重新對應按鍵 立即試用並微調 /keybindings  "],["tip","設定 Hooks","Boris：12 種客製方式：用 hooks 確定性地掛進 Claude 的生命週期。","tips.html#t-boris-12-9","Hooks 自動化 請 Claude 幫你加 hook 自動導向權限請求 回合結尾推它繼續 前後處理工具呼叫    "],["tip","客製你的轉圈動詞","Boris：12 種客製方式：把等待時的轉圈動詞換成或加上你自己的詞。","tips.html#t-boris-12-10","客製化 準備你的動詞清單 替換或擴充預設清單 commit settings.json 共享   "],["tip","使用輸出風格","Boris：12 種客製方式：用 /config 切換輸出風格，改變 Claude 的語氣與格式。","tips.html#t-boris-12-11","客製化 學習心態 執行 /config 新 codebase 用 Explanatory 想動手學選 Learning 建立 Custom 風格 /config   "],["tip","把所有東西都客製一遍","Boris：12 種客製方式：真要客製時，把 settings.json commit 進 git，讓團隊一起受益。","tips.html#t-boris-12-12","客製化 先用預設 選對設定層級 用 env 欄位設環境變數 settings.json 進 git    "],["tip","平行跑 5 個 Claude","Boris：13 個技巧：在終端機同時開 5 個 Claude，自己負責調度與切換。","tips.html#t-boris-13-1","平行工作 開 5 個終端機分頁 把分頁編號 1–5 啟用系統通知 依通知輪流回應    "],["tip","用 claude.ai/code 擴大平行度","Boris：13 個技巧：除了本機，再到 claude.ai/code 上平行跑 5–10 個 Claude。","tips.html#t-boris-13-2","平行工作 Session 在網頁開多個 session 把本機 session 交接到網頁 在 Chrome 手動啟動 session 在兩邊之間 teleport    "],["tip","所有事情都用帶思考的 Opus","Boris：13 個技巧：選最強的模型並開啟 thinking，整體完成時間反而更短。","tips.html#t-boris-13-3","客製化 預設使用 Opus 4.5 開啟 thinking 減少手動引導 用總完成時間衡量    "],["tip","團隊共用一份 CLAUDE.md","Boris：13 個技巧：每當 Claude 犯錯，就把教訓寫進團隊共用的 CLAUDE.md。","tips.html#t-boris-13-4","脈絡管理 客製化 在 repo 建一份 CLAUDE.md commit 進 git Claude 做錯就補一條 讓團隊每週持續貢獻    "],["tip","在 PR 上標記 @claude","Boris：13 個技巧：Code review 時把學到的教訓交給 @claude 寫進 CLAUDE.md，讓知識複利累積。","tips.html#t-boris-13-5","Code Review 脈絡管理 工具與整合 安裝 GitHub action review 時找出值得記的事 在 PR 上標記 @claude 讓更新隨 PR 一起合併    "],["tip","多數 session 從 Plan 模式開始","Boris：13 個技巧：先跟 Claude 把計畫談到滿意，再讓它一次寫完。","tips.html#t-boris-13-6","規劃 按兩次 shift+tab 說明目標 來回討論計畫 切到 auto-accept edits 確認一次到位的成果     "],["tip","用 slash command 處理內迴圈","Boris：13 個技巧：一天要做很多次的流程，就做成 slash command。","tips.html#t-boris-13-7","自動化 客製化 找出內迴圈工作流 在 .claude/commands/ 建命令 commit 進 git 用命令取代重打 prompt    /commit-push-pr"],["tip","用子代理自動化常見工作流","Boris：13 個技巧：把固定的收尾工作交給專門的子代理。","tips.html#t-boris-13-8","自動化 驗證與品質 客製化 找出常做的收尾工作 在 .claude/agents/ 建子代理 建 code-simplifier 建 verify-app 固定在流程中使用     "],["tip","PostToolUse hook 自動格式化","Boris：13 個技巧：用 hook 在每次寫檔後自動格式化，補上最後 10%。","tips.html#t-boris-13-9","Hooks 自動化 驗證與品質 確認專案的格式化命令 新增 PostToolUse hook 讓 Claude 照常寫程式 避免 CI 格式錯誤  \"PostToolUse\": [\n  {\n    \"matcher\": \"Write|Edit\",\n    \"hooks\": [\n      { \"type\": \"command\", \"command\": \"bun run format || true\" }\n    ]\n  }\n]  "],["tip","預先允許權限，別跳過檢查","Boris：13 個技巧：不要用 --dangerously-skip-permissions，改為預先允許確定安全的命令。","tips.html#t-boris-13-10","權限與安全 別用跳過權限的旗標 列出常用的安全命令 用 /permissions 預先允許 寫進 settings.json 共享   /permissions "],["tip","透過 MCP 串起所有工具","Boris：13 個技巧：讓 Claude 直接使用你日常的 Slack、BigQuery、Sentry 等工具。","tips.html#t-boris-13-11","工具與整合 接上 Slack MCP server 讓 Claude 用 bq CLI 從 Sentry 抓錯誤日誌 把 MCP 設定寫進 .mcp.json    "],["tip","用背景代理驗證長時間任務","Boris：13 個技巧：非常長的任務，結束時要有代理自動檢查成果。","tips.html#t-boris-13-12","驗證與品質 Hooks 自動化 在 prompt 要求自我驗證 改用 Stop hook 更確定 或使用 ralph-wiggum 外掛 檢視驗證結果    "],["tip","給 Claude 驗證自己工作的方法","Boris：13 個技巧：給 Claude 一個回饋迴圈，讓它能自己檢查成果。","tips.html#t-boris-13-13","驗證與品質 準備驗證方式 讓 Claude 使用它 依回饋反覆修正 每筆變更都要測    "],["tip","用行動 App 寫程式","Boris：15 個隱藏功能：打開手機 Claude App 的 Code 分頁，不開筆電也能做變更。","tips.html#t-boris-15-1","工具與整合 Session 下載 Claude App 切到左側 Code 分頁 在手機上審查變更 核准 PR 並繼續寫程式    "],["tip","跨裝置搬動 session","Boris：15 個隱藏功能：用 teleport 把雲端 session 拉回本機，用 remote-control 從手機或網頁操控本機 sess","tips.html#t-boris-15-2","Session 工具與整合 把雲端 session 拉到本機 從其他裝置遙控本機 為所有 session 開啟遙控 claude --teleport /remote-control /config"],["tip","/loop 與 /schedule 排程","Boris：15 個隱藏功能：把工作流做成 skill，再用 loop 讓 Claude 以固定間隔自動執行。","tips.html#t-boris-15-3","自動化 Skills 把工作流做成 skill 定時護送 PR 上線 自動把回饋變成 PR 補上漏掉的審查留言 定期清理過期 PR  /loop 5m /babysit /loop 30m /slack-feedback /loop /post-merge-sweeper /loop 1h /pr-pruner"],["tip","用 Hooks 確定性執行邏輯","Boris：15 個隱藏功能：把每次都必須發生的事接進代理生命週期的 hooks，而不是寄望模型記得。","tips.html#t-boris-15-4","Hooks 自動化 啟動時動態載入脈絡 記錄每個 bash 命令 把權限提示轉到手機 Claude 停下時推它一把 SessionStart PreToolUse PermissionRequest Stop"],["tip","用 Cowork Dispatch 委派雜務","Boris：15 個隱藏功能：Dispatch 是桌面 App 的安全遠端控制，讓你從任何地方把非寫程式的任務交給 Claude。","tips.html#t-boris-15-5","工具與整合 自動化 認識 Dispatch 授權它使用你的工具 委派 Slack 與 email 遠端管理檔案與筆電    "],["tip","前端用 Chrome 擴充套件驗證","Boris：15 個隱藏功能：給 Claude 一個驗證輸出的方法；做前端就給它瀏覽器，它會迭代到好看為止。","tips.html#t-boris-15-6","驗證與品質 工具與整合 先確保有驗證手段 處理網頁時接上瀏覽器 讓 Claude 自己迭代 優先選 Chrome 擴充套件    "],["tip","桌面 App 自動起 server 測試","Boris：15 個隱藏功能：讓桌面 App 自動執行你的 web server，並在內建瀏覽器中測試。","tips.html#t-boris-15-7","驗證與品質 工具與整合 在桌面 App 做網頁開發 讓 Claude 啟動 web server 在內建瀏覽器中測試 CLI／VSCode 用擴充套件    "],["tip","Fork 你的 session","Boris：15 個隱藏功能：用 /branch 或 --fork-session 分岔出新對話，原本的 session 隨時可以回去。","tips.html#t-boris-15-8","Session 脈絡管理 在 session 中執行 /branch 或從 CLI fork 需要時回到原本 session /branch claude --resume <session-id> --fork-session claude -r <original-session-id>"],["tip","用 /btw 問支線問題","Boris：15 個隱藏功能：代理工作時，用 /btw 問快速問題，不打斷它目前的任務。","tips.html#t-boris-15-9","Session 脈絡管理 讓代理繼續主任務 用 /btw 提出問題 閱讀回答 關閉回答回到工作  /btw how do I spell dachshund?  "],["tip","用 Git Worktrees 平行工作","Boris：15 個隱藏功能：讓每個 Claude 在自己的 worktree 裡工作，同一個 repo 就能同時跑很多個。","tips.html#t-boris-15-10","平行工作 Hooks 用 claude -w 開新 session 或在桌面 App 勾選 worktree 同時開多個 Claude 非 git 用 hook 自訂 claude -w   WorktreeCreate"],["tip","用 /batch 扇出大規模變更","Boris：15 個隱藏功能：讓 /batch 先訪談你，再把工作扇出給大量 worktree 代理平行完成。","tips.html#t-boris-15-11","平行工作 規劃 挑出可平行化的工作 執行 /batch 回答它的訪談 讓工作扇出給代理 各代理獨立完成  /batch   "],["tip","用 --bare 加速 SDK 啟動","Boris：15 個隱藏功能：非互動用途時加上 --bare，不自動搜尋本機設定，改成明確指定要載入的東西。","tips.html#t-boris-15-12","自動化 工具與整合 辨識非互動用途 加上 --bare 旗標 明確指定要載入什麼 留意未來的預設變更  claude -p \"summarize this codebase\" \\\n    --output-format=stream-json \\\n    --verbose \\\n    --bare  "],["tip","用 --add-dir 存取多個 repo","Boris：15 個隱藏功能：在一個 repo 啟動 Claude，再用 --add-dir 讓它看見並能操作另一個 repo。","tips.html#t-boris-15-13","脈絡管理 權限與安全 在其中一個 repo 啟動 加入另一個 repo 了解它同時給予權限 團隊設定永久載入  /add-dir  \"additionalDirectories\""],["tip","用 --agent 自訂代理","Boris：15 個隱藏功能：在 .claude/agents/ 定義自訂代理，用 --agent 以專屬 system prompt 與工具啟動。","tips.html#t-boris-15-14","客製化 權限與安全 在 .claude/agents/ 定義代理 設定工具、描述與模型 用 --agent 啟動 依用途建專門代理   claude --agent=<your agent's name> "],["tip","用 /voice 語音輸入","Boris：15 個隱藏功能：用說的取代打字，把需求直接說給 Claude 聽。","tips.html#t-boris-15-15","工具與整合 在 CLI 執行 /voice 按住空白鍵說話 桌面版按語音按鈕 iOS 啟用聽寫 /voice   "],["tip","Code Review 代理團隊抓 bug","Boris：Code Review 與測試時運算：PR 一開啟就讓一組代理團隊深度檢視，抓出人眼容易漏掉的 bug。","tips.html#t-boris-2-mar10-1","Code Review 驗證與品質 平行工作 確認審查是不是瓶頸 開啟 PR 觸發代理團隊 逐一確認回報的問題 實際用上幾週看成效    "],["tip","測試時運算：多開脈絡視窗","Boris：Code Review 與測試時運算：丟給問題越多 token 結果越好；用彼此獨立的脈絡視窗，讓一個代理寫、另一個代理找 bug。","tips.html#t-boris-2-mar10-2","脈絡管理 驗證與品質 平行工作 願意投入更多 token 用子代理開獨立脈絡 一個代理寫、另一個審 比照工程團隊互相審查 預設使用多個不相關脈絡     "],["tip","一律 squash merge","Boris：Squash Merge 與小 PR：每個 PR 壓成目標分支上的一個 commit，讓歷史乾淨線性、好 revert、好 bisect。","tips.html#t-boris-2-mar25-1","Code Review 工具與整合 合併時選擇 squash 一個 PR 對應一個 commit 不必整理分支內的 commit 用 git bisect 追問題    git bisect"],["tip","讓 PR 保持小","Boris：Squash Merge 與小 PR：把變更切成聚焦的小 PR，中位數一百多行，大 PR 只是偶爾的例外。","tips.html#t-boris-2-mar25-2","Code Review 規劃 以 118 行為參考中位數 多數 PR 壓在 500 行內 接受偶爾的大 PR 搭配 squash 乾淨回退 用分布檢視自己的 PR     "],["tip","用 Auto 模式取代權限提示","Boris：讓 Opus 4.7 發揮更多的 6 個技巧：讓模型驅動的分類器替你判斷命令是否安全，你就不必一直盯著 Claude。","tips.html#t-boris-6-1","權限與安全 平行工作 自動化 確認方案與模型 在 CLI 按 Shift+Tab 切換 或在 Desktop／VS Code 選單選 只在分類器暫停時回應 把注意力切到下一個 Claude  Shift+Tab   "],["tip","用 Skill 減少權限提示","Boris：讓 Opus 4.7 發揮更多的 6 個技巧：讓 skill 從你的 session 歷史找出安全卻一直跳提示的命令，直接加進白名單。","tips.html#t-boris-6-2","權限與安全 Skills 執行這個 skill 讓它掃描 session 歷史 檢視建議清單 加入權限白名單 /fewer-permission-prompts   "],["tip","用 Recaps 快速接回長任務","Boris：讓 Opus 4.7 發揮更多的 6 個技巧：離開一陣子再回來時，先看 recap 就知道代理做了什麼、下一步是什麼。","tips.html#t-boris-6-3","Session 脈絡管理 讓長任務自己跑 回來先讀 recap 依 Next 提供所需資訊 不需要時到 /config 停用  * Cogitated for 6m 27s\n\n* recap: Fixing the post-submit transcript shift bug. The styling-flash\n  part is shipped as PR #29869 (auto-merge on, posted to stamps). Next:\n  I need a screen recording of the remaining horizontal rewrap on `cc -c`\n  to target that separate cause. (disable recaps in /config)  /config"],["tip","用 Focus 模式只看結果","Boris：讓 Opus 4.7 發揮更多的 6 個技巧：當你信任模型會做對事，就隱藏中間過程，只看最終結果。","tips.html#t-boris-6-4","客製化 挑你信任模型的任務 輸入 /focus 開啟 只檢視最終結果 想看過程時再關掉  /focus  /focus"],["tip","依任務設定努力等級","Boris：讓 Opus 4.7 發揮更多的 6 個技巧：Opus 4.7 用 effort 決定想多想少：要快就調低，要聰明就調高。","tips.html#t-boris-6-5","客製化 了解 effort 取代思考預算 認識五個等級 要快、要省就調低 要最強能力就調高  low · medium · high · xhigh · max  "],["tip","讓 Claude 驗證自己的工作","Boris：讓 Opus 4.7 發揮更多的 6 個技巧：確保 Claude 有辦法自己端到端測試成果，回來時才知道程式碼真的能動。","tips.html#t-boris-6-6","驗證與品質 Skills 自動化 後端：讓 Claude 跑服務 前端：給 Claude 瀏覽器 桌面 App：用 Computer Use 做一個 /go skill 在 prompt 結尾加上 /go     Claude do blah blah /go"],["tip","為六個月後的模型而建","Boris Cherny：職涯成長與 Claude Code 工作法：不要只為今天的模型能力設計，要預想六個月後的模型能做到什麼。","tips.html#t-boris-career-1","學習心態 規劃 記下模型現在做不到的事 新模型推出就重試 觀察 AI 寫程式的比例 把指數曲線納入規劃    "],["tip","AI 寫的程式，同一套標準","Boris Cherny：職涯成長與 Claude Code 工作法：不論程式碼是人寫還是模型寫，能不能合併的標準完全一樣。","tips.html#t-boris-career-2","Code Review 驗證與品質 用同一份標準審查 不合格就叫模型改 別一次交付太大的任務   "],["tip","依任務切換三種寫法","Boris Cherny：職涯成長與 Claude Code 工作法：拋棄式程式用 vibe coding，一般工作跟模型結對，關鍵程式親手寫。","tips.html#t-boris-career-3","規劃 驗證與品質 原型與拋棄式程式用 vibe code 日常工作先進 plan 模式 看程式碼並要求清理 核心程式親手寫  shift+tab  "],["tip","同時跑一堆 Claude，當編排者","Boris Cherny：職涯成長與 Claude Code 工作法：現在的生產力關鍵是學會平行跑多個 Claude，你的角色從手寫程式變成編排。","tips.html#t-boris-career-4","平行工作 自動化 權限與安全 早上先啟動幾個代理 讓代理燉幾小時再交 PR 用任務看板分派工作 在隔離環境放寬權限 檢查後合併或拉回微調     "],["tip","重複的問題就自動化","Boris Cherny：職涯成長與 Claude Code 工作法：同一類問題碰到兩三次，就把它自動化，並看看別人是否也有同樣的問題。","tips.html#t-boris-career-5","自動化 Code Review 記錄重複出現的評論 超過幾次就寫 lint 規則 用 Claude 自動化苦工 環顧四周找同樣的痛 持續寫程式以錨定現實     "],["tip","快速 scoping，設好時間盒","Boris Cherny：職涯成長與 Claude Code 工作法：技術 scoping 最大的敵人是陷進細節，先在 30 分鐘內做出粗略版本。","tips.html#t-boris-career-6","規劃 設定時間盒 讓 Claude Code 盤點系統 列出專家並逐一請教 帶稻草人方案去討論  牽涉到哪些系統？  "],["tip","順著潛在需求打造","Boris Cherny：職涯成長與 Claude Code 工作法：你無法讓人去做他們還沒在做的事，只能找出既有的意圖並加以引導。","tips.html#t-boris-career-7","學習心態 保留讓人 hack 的空間 觀察大家實際怎麼用 圍繞既有意圖強化 先為自己打造    "],["tip","用型別思考","Boris Cherny：職涯成長與 Claude Code 工作法：程式碼裡最重要的是型別簽章，把它弄對就會導向乾淨的程式碼。","tips.html#t-boris-career-8","Code Review 規劃 先對齊型別再寫實作 審查時先看簽章 讀一本函數式程式書   "],["tip","委派你熟悉且喜歡的事","Boris Cherny：職涯成長與 Claude Code 工作法：永遠委派你想做、而且很熟的事，這樣你才能監看進度。","tips.html#t-boris-career-9","平行工作 驗證與品質 挑你最熟的工作交出去 交出去後定期 check in 隨信任增加逐步放手   "],["tip","研究只要事實，先藏起需求","Dex：從 RPI 到 CRISPY 的脈絡工程：做 codebase 研究時，不要讓模型知道你要做什麼，才能拿到客觀事實而不是意見。","tips.html#t-dex-context-1","脈絡管理 規劃 先把票轉成研究問題 開全新脈絡做研究 要求客觀、不給實作建議 用子代理做垂直切片  research codebase  "],["tip","寫計畫前，先讓代理問你","Dex：從 RPI 到 CRISPY 的脈絡工程：別讓代理拿了票就直接寫計畫，要先就未決問題與大綱來回討論。","tips.html#t-dex-context-2","規劃 明確要求先來回討論 逐題選擇設計選項 調整階段順序再核准 把提問步驟內建進流程 在寫計畫之前，先從你的未決問題與大綱開始跟我來回討論。   "],["tip","管好你的指令預算","Dex：從 RPI 到 CRISPY 的脈絡工程：模型能穩定遵循的指令有上限，prompt、CLAUDE.md、工具與 MCP 加起來太多，就等於在擲骰子。","tips.html#t-dex-context-3","脈絡管理 客製化 工具與整合 盤點所有指令來源 移除用不到的 MCP 拆小過長的 prompt 跳步時先減指令    "],["tip","能用控制流，就別用 prompt","Dex：從 RPI 到 CRISPY 的脈絡工程：與其在一個 prompt 裡寫一堆 if 情境，不如先分類，再交給更小、更聚焦的 prompt。","tips.html#t-dex-context-4","Skills 自動化 客製化 找出 prompt 裡的分支 先分類再路由 把工作流拆成多階段 持續縮小每一步    "],["tip","少用脈絡，重點寫進文件","Dex：從 RPI 到 CRISPY 的脈絡工程：脈絡視窗用得越少結果越好；把重要內容存成靜態文件，就不必依賴壓縮。","tips.html#t-dex-context-5","脈絡管理 Session 新手維持在 40% 以下 依任務複雜度調整 每個階段產出一份文件 從文件接續而非壓縮 追求更小的脈絡     "],["tip","用短設計文件先對齊","Dex：從 RPI 到 CRISPY 的脈絡工程：寫計畫與程式之前，先讓代理產出約 200 行的設計討論，把它的理解全部攤開給你修正。","tips.html#t-dex-context-6","規劃 脈絡管理 產出設計討論文件 糾正錯誤的參考模式 回答它不知道的問題 對齊後才進下一步    "],["tip","寫縱向計畫，別寫橫向計畫","Dex：從 RPI 到 CRISPY 的脈絡工程：按功能切片逐步打通，而不是先做完整層資料庫，再做整層服務、API 和前端。","tips.html#t-dex-context-7","規劃 驗證與品質 先產出結構大綱 把大綱當 C 標頭檔 按縱向切片排順序 在敏感處設檢查點 不放心就要更多細節     "],["tip","不讀長計畫，要讀程式碼","Dex：從 RPI 到 CRISPY 的脈絡工程：計畫只抽查，把深度審查留給真正的程式碼，並為自己出貨的程式負責。","tips.html#t-dex-context-8","Code Review 驗證與品質 計畫只做抽查 深度審查實際程式碼 目標設在 2 到 3 倍 依風險決定審查標準    "],["tip","把對齊文件交給隊友審","Dex：從 RPI 到 CRISPY 的脈絡工程：把設計討論與結構大綱交給隊友或 code owner 看，在寫程式之前就攔下壞決定。","tips.html#t-dex-context-9","Code Review 規劃 把設計討論寄給 owner 附上結構大綱 當成輕量架構審查 讓 code review 變確認    "],["tip","原子任務靠 prompt 就夠","為什麼 Harness 很重要：單次原子任務，輸出品質幾乎就等於 prompt 品質，harness 幫不上忙。","tips.html#t-harness-1","學習心態 判斷是不是原子任務 專心把 prompt 寫好 只需這樣就用聊天機器人 碰到真實 codebase 就換腦袋  輸出品質 ≈ prompt 品質  "],["tip","分清兩種「prompt」","為什麼 Harness 很重要：你打的幾個 token 和模型推論時看到的上萬 token 是兩回事，輸出品質取決於後者。","tips.html#t-harness-2","脈絡管理 學習心態 區分 (a) 與 (b) 盤點 (b) 裡有什麼 把心力放在充實 (b) 別混淆看到與做到  模型在推論時實際看到的：\n  ├── CLAUDE.md（專案慣例）\n  ├── 符合的 .claude/rules/*.md（透過 paths: frontmatter 載入）\n  ├── 模組化 system prompt 片段\n  ├── 工具定義\n  ├── 環境脈絡（cwd、git status、平台）\n  ├── 先前回合歷史\n  ├── 模型透過 Read/Grep 工具讀到的檔案\n  └── 使用者那 6 個 token 的請求  "],["tip","讓 harness 組脈絡、跑迴圈","為什麼 Harness 很重要：非瑣碎任務的品質取決於有效脈絡、模型能力與迭代迴圈；使用者只控制其中一小片，其餘大多由 harness 掌握。","tips.html#t-harness-3","驗證與品質 脈絡管理 記住品質公式 用 CLAUDE.md 宣告慣例 讓 Claude 讀相鄰檔案 讓 Claude 跑測試迭代 輸出品質 = f(有效脈絡, 模型能力, 迭代迴圈)   "],["tip","用強制機制取代 prompt 勸告","為什麼 Harness 很重要：prompt 指令只是勸告，模型可以忽略；hooks、工具限制與權限分類器則無法被忽略。","tips.html#t-harness-4","Hooks 權限與安全 必做的事寫成 hook 用 hook 阻擋工具呼叫 用工具限制設下硬界線 開 auto 權限模式    "],["tip","用子代理隔離與平行","為什麼 Harness 很重要：一個 prompt 只能填滿一個視窗；N 個平行子代理大約提供 N 倍的有效脈絡。","tips.html#t-harness-5","平行工作 脈絡管理 把工作拆給子代理 讓多個子代理同時跑 由 harness 收集結果   "],["tip","規則延遲載入、記憶跨 session","為什麼 Harness 很重要：讓規則只在碰到相關路徑時才載入，讓記憶跨對話保存下來。","tips.html#t-harness-6","脈絡管理 客製化 規則加上 paths: frontmatter 子目錄放後代 CLAUDE.md 用記憶系統跨 session 保存   "],["tip","為代理指定模型與預載 Skill","為什麼 Harness 很重要：用 model: 決定由哪個模型回答，用 skills: 把 skill 預先塞進子代理的起始脈絡。","tips.html#t-harness-7","客製化 Skills 在代理設定 model: 用 skills: 預載 skill 把這些當 harness 原語 model: haiku  "],["tip","Prompt 與 harness 互補","為什麼 Harness 很重要：強 prompt 是必要條件但不充分：prompt 決定要模型做什麼，harness 決定系統在模型搆不到的層次做什麼。","tips.html#t-harness-8","學習心態 持續寫好 prompt 功能用在 prompt 做不到的事 識破化約推理 用食譜與廚房檢查    "],["tip","寫給代理的文字就是程式","Karpathy：從 Vibe Coding 到 Agentic Engineering：在 Software 3.0 裡，prompt 與脈絡就是程式，LLM 則是詮釋它的直譯器。","tips.html#t-karpathy-1","客製化 Skills 自動化 找出臃腫的設定腳本 改寫成貼給代理的指令 讓代理觀察環境並除錯 整理成可重用的 skill    "],["tip","別只加速舊做法，先重新框定","Karpathy：從 Vibe Coding 到 Agentic Engineering：先問這件事在新典範下還需不需要一個 App，而不是只用 AI 把舊做法做快一點。","tips.html#t-karpathy-2","學習心態 規劃 動工前先試最直接的做法 檢查哪些程式可以不寫 跳出結構化資料的框架 列出以前不可能的點子 用 Nanobanana 把那些東西疊到菜單上   "],["tip","摸清鋸齒狀智慧的邊界","Karpathy：從 Vibe Coding 到 Agentic Engineering：模型在可驗證、且實驗室重視的領域能力飆高，在那之外可能出奇地笨，你要知道自己的任務落在哪裡。","tips.html#t-karpathy-3","驗證與品質 學習心態 用最新模型重新評估 判斷任務在不在分布內 分布外就多留在迴圈裡 可驗證領域考慮自建環境 保持懷疑、持續摸索     "],["tip","加速，但不降低品質標準","Karpathy：從 Vibe Coding 到 Agentic Engineering：Vibe coding 提高了人人能做的地板；agentic engineering 則是在加速的同時守住專業軟體的品質","tips.html#t-karpathy-4","驗證與品質 Code Review 分清 vibe coding 的場合 預設代理會出錯 親自審查資料與邏輯設計 讓代理試著攻破成果    "],["tip","投資你的工具與設定","Karpathy：從 Vibe Coding 到 Agentic Engineering：AI 原生的工程師會盡可能榨出手上工具的價值，用好所有功能，並持續投資自己的設定。","tips.html#t-karpathy-5","客製化 工具與整合 把 Claude Code 當主力鑽研 持續投資自己的設定 用大型專案練習工具鏈   "],["tip","人寫規格，代理負責填空","Karpathy：從 Vibe Coding 到 Agentic Engineering：與代理一起寫出非常詳細的規格文件，由你負責監督與頂層決策，代理處理底層細節。","tips.html#t-karpathy-6","規劃 脈絡管理 和代理共寫詳細規格 由你定下關鍵設計決策 把 API 細節交出去 保留底層基本功    "],["tip","守住品味，別讓臃腫程式過關","Karpathy：從 Vibe Coding 到 Agentic Engineering：代理寫的程式能動，但常臃腫、重複，美感與簡潔仍要由你把關。","tips.html#t-karpathy-7","Code Review 驗證與品質 真的去讀產出的程式碼 點出重複與壞抽象 簡化卡關時親自接手 把品味當成你的職責    "],["tip","把文件與流程做成 Agent 原生","Karpathy：從 Vibe Coding 到 Agentic Engineering：多數文件仍是寫給人看的；基礎設施應該先對代理描述清楚，讓代理能直接接手。","tips.html#t-karpathy-8","工具與整合 自動化 為專案寫給代理的說明 用 LLM 易讀的結構整理資料 找出還要手動點選的環節 用一句 prompt 檢驗    build MenuGen"],["tip","可外包思考，不能外包理解","Karpathy：從 Vibe Coding 到 Agentic Engineering：你可以讓代理替你思考與處理，但理解必須留在自己腦中，因為沒有理解就無法指揮代理。","tips.html#t-karpathy-9","學習心態 脈絡管理 先搞懂要做什麼與為什麼 建立個人 LLM 知識庫 從不同角度投影資訊 確認自己真的懂    "],["tip","更多事情平行做","Claude Code 團隊：10 個技巧：同時開 3–5 個 git worktree，每個各跑一個 Claude。","tips.html#t-team-10-1","平行工作 開 3–5 個 git worktree 每個 worktree 跑一個 Claude 為 worktree 命名並設 shell 別名 留一個分析用 worktree 或用桌面 App 原生支援     "],["tip","複雜任務從 Plan 模式開始","Claude Code 團隊：10 個技巧：把精力灌注在計畫上，讓 Claude 一次搞定實作。","tips.html#t-team-10-2","規劃 驗證與品質 先在 plan 模式寫計畫 開第二個 Claude 審查 走偏就切回 plan 模式 為驗證步驟也做計畫    "],["tip","投資你的 CLAUDE.md","Claude Code 團隊：10 個技巧：每次糾正後，叫 Claude 自己把規則寫進 CLAUDE.md。","tips.html#t-team-10-3","脈絡管理 客製化 糾正後要它更新 CLAUDE.md 無情地編修 維護任務筆記目錄 在 CLAUDE.md 指向筆記 更新你的 CLAUDE.md，這樣你就不會再犯同樣的錯。   "],["tip","建立 Skills 並 commit","Claude Code 團隊：10 個技巧：一天做超過一次的事，就變成 skill 或命令，跨專案重複使用。","tips.html#t-team-10-4","Skills 自動化 客製化 找出一天做超過一次的事 建 /techdebt 命令 做一個脈絡同步命令 打造分析工程師代理 commit 進 git  /techdebt   "],["tip","大多數 bug 讓 Claude 自己修","Claude Code 團隊：10 個技巧：把問題來源交給 Claude，然後放手讓它修。","tips.html#t-team-10-5","工具與整合 驗證與品質 啟用 Slack MCP 貼上 bug 討論串說 fix 叫它修失敗的 CI 指向 docker 日誌  fix 去修好失敗的 CI 測試 "],["tip","升級你的 prompt 功力","Claude Code 團隊：10 個技巧：讓 Claude 挑戰你、要求優雅解法，並給它詳細規格。","tips.html#t-team-10-6","驗證與品質 Code Review 規劃 讓 Claude 質問你 要它證明能動 平庸修正後要求重做 交付前寫詳細規格 把這些變更拿來質問我，在我通過你的測試前不要開 PR。 證明給我看這能動 以你現在知道的全部，把這個丟掉，實作那個優雅的解法。 "],["tip","終端機與環境設定","Claude Code 團隊：10 個技巧：打造能同時駕馭多個 Claude 的終端機環境。","tips.html#t-team-10-7","客製化 平行工作 脈絡管理 試試 Ghostty 用 /statusline 客製狀態列 為分頁上色與命名 使用語音聽寫  /statusline  "],["tip","使用子代理","Claude Code 團隊：10 個技巧：用子代理投入更多運算，同時保持主代理脈絡乾淨。","tips.html#t-team-10-8","脈絡管理 Hooks 權限與安全 在請求後加 use subagents 把個別任務交給子代理 用 hook 把權限請求導向 Opus use subagents  "],["tip","用 Claude 做資料與分析","Claude Code 團隊：10 個技巧：讓 Claude 透過 CLI 即時拉資料、跑分析，不用自己寫 SQL。","tips.html#t-team-10-9","工具與整合 Skills 讓 Claude 用 bq CLI 建一個 BigQuery skill 直接在 Claude Code 提問 延伸到其他資料庫    "],["tip","用 Claude 學習","Claude Code 團隊：10 個技巧：把 Claude 當老師，讓它解釋、畫圖、追問你的理解。","tips.html#t-team-10-10","學習心態 客製化 Skills 在 /config 開學習型風格 請它做 HTML 簡報 請它畫 ASCII 圖 打造間隔重複學習 skill /config   "],["tip","認識脈絡腐敗與壓縮","Thariq：Session 管理與 1M 脈絡：脈絡越長模型越不聰明，1M 視窗不代表就該把它塞滿。","tips.html#t-thariq-sessions-1","脈絡管理 學習心態 搞懂脈絡裡裝了什麼 留意 30–40 萬 token 區間 知道視窗是硬性截斷 需要時自己觸發壓縮    /compact"],["tip","每個回合都是分歧點","Thariq：Session 管理與 1M 脈絡：Claude 結束一回合時先停一下，從五個選項中挑最適合的，而不是反射性地繼續。","tips.html#t-thariq-sessions-2","Session 脈絡管理 脈絡仍相關就繼續 走錯方向就倒回 塞滿過時雜訊就壓縮 真正的新任務就 /clear 只要結論就用子代理  /rewind /compact <提示> /clear "],["tip","新任務就開新 session","Thariq：Session 管理與 1M 脈絡：開始新任務時就開新 session，即使脈絡還沒用完。","tips.html#t-thariq-sessions-3","Session 脈絡管理 判斷這是不是新任務 是新任務就 /clear 相關任務先評估成本 低智慧需求可留原 session  /clear  "],["tip","用倒回取代糾正","Thariq：Session 管理與 1M 脈絡：Claude 走錯時，倒回到失敗之前帶著新認知重下 prompt，而不是說「不對，改試 B」。","tips.html#t-thariq-sessions-4","脈絡管理 Session 發現走錯先別急著糾正 連按兩下 Esc 或 /rewind 回到剛讀完檔案那一刻 帶著學到的東西重下 prompt 需要時先產生交接訊息  /rewind  不要用方向 A，foo 模組沒有暴露那個 —— 直接用 B。 summarize from here"],["tip","壓縮與全新 session 怎麼選","Thariq：Session 管理與 1M 脈絡：任務進行中用 /compact 保持動能；下一步事關重大，就 /clear 並由你親手寫簡報。","tips.html#t-thariq-sessions-5","脈絡管理 Session 判斷下一步的重要性 進行中：/compact 並給指示 事關重大：先 /clear 親手寫一份簡報  /compact focus on the auth refactor, drop the test debugging /clear 我們在重構 auth middleware，限制是 X，重要的檔案是 A 和 B，我們已排除方向 Y"],["tip","避免糟糕的壓縮","Thariq：Session 管理與 1M 脈絡：趁模型還清醒時主動 /compact，並說明接下來要做什麼，別等 autocompact。","tips.html#t-thariq-sessions-6","脈絡管理 辨識高風險情境 別依賴 autocompact 主動 /compact 並附下一步 利用 1M 的餘裕提早做   /compact <提示> "],["tip","用子代理隔離脈絡","Thariq：Session 管理與 1M 脈絡：只需要結論、不需要過程時，把工作交給有全新脈絡的子代理，只拉回最終報告。","tips.html#t-thariq-sessions-7","脈絡管理 先做心法測試 用子代理驗證成果 用子代理研究別的 codebase 用子代理寫文件 只把最終報告帶回來  開一個子代理，依照下面這份 spec 檔驗證這份工作的結果 開一個子代理讀過另一個 codebase，摘要它怎麼實作 auth 流程，然後你自己用同樣方式實作 開一個子代理，根據我的 git 變更為這個功能寫文件 "],["tip","類型：函式庫與 API 參考","Thariq：Anthropic 怎麼用 Skills：把正確使用某個函式庫、CLI 或 SDK 的方法寫成 skill，附上參考片段與陷阱清單。","tips.html#t-thariq-skills-1","Skills 客製化 挑出 Claude 常卡住的庫 放一個參考片段資料夾 列出寫腳本時的陷阱 讓 skill 只做這一類    "],["tip","類型：產品驗證","Thariq：Anthropic 怎麼用 Skills：把「怎麼測試、驗證程式碼真的能動」寫成 skill，確保 Claude 的輸出正確。","tips.html#t-thariq-skills-2","Skills 驗證與品質 描述驗證流程 搭配外部工具 為關鍵流程各做一個 投入時間打磨    "],["tip","類型：資料擷取與分析","Thariq：Anthropic 怎麼用 Skills：把資料與監控堆疊接進 skill，讓 Claude 知道去哪裡、用什麼方式取數。","tips.html#t-thariq-skills-3","Skills 工具與整合 連接資料與監控堆疊 附上抓資料的函式庫 記下特定儀表板 ID 說明常見工作流    "],["tip","類型：業務流程自動化","Thariq：Anthropic 怎麼用 Skills：把重複的團隊工作流自動化成一個命令。","tips.html#t-thariq-skills-4","Skills 自動化 挑出重複的工作流 寫成簡單的指令 理清對其他工具的相依 把結果存進日誌檔    "],["tip","類型：程式碼鷹架與範本","Thariq：Anthropic 怎麼用 Skills：為 codebase 中的特定功能產生樣板，並補上程式碼無法涵蓋的自然語言需求。","tips.html#t-thariq-skills-5","Skills 客製化 找出常重複的樣板 結合可組合的腳本 寫下自然語言需求   "],["tip","類型：程式碼品質與審查","Thariq：Anthropic 怎麼用 Skills：用 skill 在組織內落實程式碼品質規範，並協助審查。","tips.html#t-thariq-skills-6","Skills Code Review 驗證與品質 整理組織的品質規範 加入確定性腳本或工具 建立審查型 skill 放進 hooks 或 CI 自動跑    "],["tip","類型：CI/CD 與部署","Thariq：Anthropic 怎麼用 Skills：讓 skill 協助你在 codebase 中擷取、推送與部署程式碼。","tips.html#t-thariq-skills-7","Skills 自動化 涵蓋擷取、推送與部署 依服務或流程分別建立 參照其他 skills 蒐集資料   "],["tip","類型：Runbooks","Thariq：Anthropic 怎麼用 Skills：從一個症狀出發，走過多工具調查流程，產出結構化報告。","tips.html#t-thariq-skills-8","Skills 自動化 工具與整合 定義輸入的症狀 寫下多工具調查流程 產出結構化報告 依情境命名    "],["tip","類型：基礎設施維運","Thariq：Anthropic 怎麼用 Skills：把例行維護與維運程序寫成 skill，並為破壞性動作加上護欄。","tips.html#t-thariq-skills-9","Skills 權限與安全 挑出例行維運程序 標出破壞性動作 為這些動作加上護欄 把最佳實踐寫進流程    "],["tip","技巧：別講顯而易見的事","Thariq：Anthropic 怎麼用 Skills：只寫能把 Claude 推離慣常思路的資訊。","tips.html#t-thariq-skills-10","Skills 假設 Claude 已懂基本功 聚焦在反慣性的資訊 針對它的老套預設 透過反覆迭代改進    "],["tip","技巧：建立 Gotchas 段落","Thariq：Anthropic 怎麼用 Skills：記錄 Claude 使用這個 skill 時常犯的失敗點，這是 skill 裡訊號最強的內容。","tips.html#t-thariq-skills-11","Skills 學習心態 從幾行字和一個陷阱開始 加入 Gotchas 段落 觀察 Claude 的失敗點 隨時間持續補充    "],["tip","技巧：善用漸進式揭露","Thariq：Anthropic 怎麼用 Skills：把 skill 當成資料夾，拆出參考檔，讓 Claude 在需要時才去讀。","tips.html#t-thariq-skills-12","Skills 脈絡管理 把 skill 當成資料夾 拆出詳細參考檔 告訴 Claude 有哪些檔案 擴充成多個資料夾  references/api.md  "],["tip","技巧：別把 Claude 綁死","Thariq：Anthropic 怎麼用 Skills：給目標與限制，而不是規定式的逐步指令。","tips.html#t-thariq-skills-13","Skills 客製化 給足必要資訊 改寫成目標與限制 保留調整彈性 檢查是否過度具體    "],["tip","技巧：想清楚設定流程","Thariq：Anthropic 怎麼用 Skills：把使用者專屬的設定存在 config.json，尚未設定時讓 Claude 主動詢問。","tips.html#t-thariq-skills-14","Skills 客製化 找出需要使用者提供的脈絡 存在 skill 目錄的 config 未設定時向使用者詢問 用 AskUserQuestion 提問  config.json  "],["tip","技巧：description 寫給模型","Thariq：Anthropic 怎麼用 Skills：description 不是摘要，而是描述「何時該觸發」這個 skill。","tips.html#t-thariq-skills-15","Skills 理解 Claude 怎麼挑 skill 寫觸發條件而非摘要 以模型為讀者   "],["tip","技巧：讓 skill 有記憶","Thariq：Anthropic 怎麼用 Skills：在 skill 中儲存資料讓它有記憶，並放在升級也不會被刪的穩定資料夾。","tips.html#t-thariq-skills-16","Skills 脈絡管理 選擇儲存形式 別存在 skill 目錄下 改用穩定的外掛資料夾   ${CLAUDE_PLUGIN_DATA}"],["tip","技巧：附上腳本讓它組合","Thariq：Anthropic 怎麼用 Skills：給 Claude 腳本與函式庫，讓它把回合花在組合，而不是重建樣板。","tips.html#t-thariq-skills-17","Skills 自動化 把常用功能寫成腳本 放進 skill 資料夾 讓 Claude 專注決定下一步 讓它即時產生組合腳本    "],["tip","技巧：按需 Hooks","Thariq：Anthropic 怎麼用 Skills：在 skill 裡放只有被呼叫時才啟用的 hooks，用於不想常駐的強勢規則。","tips.html#t-thariq-skills-18","Skills Hooks 權限與安全 找出偶爾才需要的 hook 把 hook 放進 skill 用 /careful 封鎖危險命令 用 /freeze 鎖定編輯範圍   /careful /freeze"],["tip","散佈 Skills 給團隊","Thariq：Anthropic 怎麼用 Skills：小團隊直接 commit 進 repo，規模變大就改用外掛市集讓團隊自選。","tips.html#t-thariq-skills-19","Skills 脈絡管理 小團隊 commit 進 repo 留意脈絡負擔 規模變大時做成外掛 建立內部外掛市集 .claude/skills   "],["tip","有機地管理市集","Thariq：Anthropic 怎麼用 Skills：不設中央團隊把關，讓 skill 先在沙箱獲得關注，再提 PR 進市集。","tips.html#t-thariq-skills-20","Skills 學習心態 先上傳到沙箱資料夾 在 Slack 或論壇分享 由擁有者判斷是否受關注 提 PR 搬進市集 釋出前做好策展     "],["tip","組合多個 Skills","Thariq：Anthropic 怎麼用 Skills：在 skill 中直接用名稱參照其他 skills，把它們串起來用。","tips.html#t-thariq-skills-21","Skills 自動化 拆出可重用的 skill 在另一個 skill 用名稱參照 確認被參照的已安裝   "],["tip","衡量 Skills 的使用","Thariq：Anthropic 怎麼用 Skills：用 PreToolUse hook 記錄 skill 使用狀況，找出熱門與觸發不足的 skill。","tips.html#t-thariq-skills-22","Skills Hooks 用 hook 記錄 skill 使用 找出受歡迎的 skills 找出觸發率偏低的 skills PreToolUse  "],["term","CLAUDE.md","寫給 Claude 的 Markdown 指令檔，提供持久脈絡。結構良好的 CLAUDE.md 是改善 Claude Code 表現最有效的","memory.html",""],["term","祖先載入","啟動時從當前工作目錄往上走到檔案系統根目錄，立即載入沿途找到的每一個 CLAUDE.md。","memory.html",""],["term","後代載入（延遲載入）","子目錄的 CLAUDE.md 不在啟動時載入，等 Claude 在 session 中讀取該子目錄的檔案時才納入。","memory.html",""],["term","兄弟目錄","位於目錄樹另一個分支的 CLAUDE.md，例如在 frontend/ 工作時的 backend/CLAUDE.md，預設不會進入脈絡。","memory.html",""],["term","~/.claude/CLAUDE.md","全域 CLAUDE.md，放在家目錄，套用到所有 Claude Code session，不分專案。","memory.html",""],["term","CLAUDE.local.md","放不該分享給團隊的個人偏好指令；記得把它加進 .gitignore。","memory.html",""],["term","Agent Teams","由 lead session 生成多個獨立的 Claude Code session（隊友），透過共享任務清單與互相傳訊協調。","agent-teams.html",""],["term","子代理（Subagent）","在單一 session 內、有自己脈絡的助手，做完把結果回傳給主對話；和 Agent Teams 的獨立 session 不同。","agent-teams.html",""],["term","隊友（Teammate）","Agent Teams 的成員，每位都有自己完整的脈絡視窗，並自動載入 CLAUDE.md、MCP server 與 skills。","agent-teams.html",""],["term","共享任務清單","隊友之間協調的地方，例如議定元件之間的資料契約。","agent-teams.html",""],["term","Command → Agent → Skill","時間編排工作流的架構：command 編排流程、agent 抓取資料、skill 產出 SVG 卡片。","agent-teams.html",""],["term","資料契約","元件之間傳遞的資料介面；本例為 {time, timezone, formatted}。","agent-teams.html",""],["term","CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS","設為 1（shell 環境變數或 settings.json 的 env）即可開啟實驗性的 Agent Teams 功能。","agent-teams.html",""],["term","tmux","終端多工器。Agent Teams 預設是 in-process 模式；在 tmux 裡把 teammateMode 設為 auto 或 t","agent-teams.html",""],["term","/goal <condition>","讓 Claude 跨回合持續工作，直到條件成立。需要 Claude Code v2.1.139+。","goal.html",""],["term","/goal clear","清除目前的目標。","goal.html",""],["term","Haiku 評估","/goal 的條件是否成立，由 Haiku 評估。","goal.html",""],["term","/loop","時間驅動；與條件驅動的 /goal 互補。","goal.html",""],["term","auto 模式","逐工具運作；與 /goal、/loop 互補。","goal.html",""],["term","Hooks","在 Claude Code 生命週期特定時點自動執行的指令，提供確定性控制，例如每次編輯後自動格式化、擋下對 .env 的修改。","demos.html#hooks",""],["term","PreToolUse","工具執行前觸發的 hook 事件；hook 以 exit 2 結束就能阻擋這次工具呼叫。","demos.html#hooks",""],["term","Plugin","把 skills、agents、hooks、MCP servers 等元件打包成一個單位安裝與載入的資料夾。","demos.html#plugins",""],["term","Marketplace（市集）","含 .claude-plugin/marketplace.json 的資料夾或 repo，列出 plugin 與取得位置。","demos.html#plugins",""],["term","Skills（SKILL.md）","把做法寫進 SKILL.md，Claude 在相關時自動使用，也能用 /skill-name 叫用；描述常駐脈絡，內容用到才載入。","demos.html#skills",""],["term","MCP","Model Context Protocol：讓 Claude Code 連接外部工具、資料庫與 API 的開放標準，用 claude mc","demos.html#mcp",""],["term","Plan 模式","只讀檔與探索、先擬計畫，核准後才開始修改程式碼的權限模式。","demos.html#permissions",""],["term","Checkpoints（/rewind）","每次送出 prompt 前自動建立的檢查點；用 /rewind 或連按兩下 Esc 倒回程式碼或對話。","demos.html#checkpoints",""],["term","BMad Method","敏捷式 AI 驅動開發方法：用專業代理人與工作流程，把點子或變更需求變成可運作的軟體，同時不放棄思考。","workflows.html#bmad",""],["term","Compound Engineering","讓每一單位工程工作都比上一次更輕鬆的 AI 技能外掛。","workflows.html#compound",""],["term","GSD Core (Get Shit Done)","用固定的階段循環加上全新 context 子代理，對抗 context rot 的規格驅動開發系統。","workflows.html#gsd",""],["term","Matt Pocock's Skills (Skills For Real Engineers)","把軟體工程基本功拆成小而可組合的技能，讓你保有 AI 開發的主導權。","workflows.html#mattpocock",""],["term","Spec Kit","讓 AI 程式代理依「規格 → 計畫 → 任務 → 實作」結構化流程開發的開源工具包。","workflows.html#speckit",""],["term","Superpowers","讓 coding agent 自動遵循完整軟體開發流程的技能框架。","workflows.html#superpowers",""],["term","@ 匯入（@path）","CLAUDE.md 可用 @path/to/file 匯入其他檔案（最多 4 層）；匯入的內容在啟動時就會載入。","memory.html",""],["term",".claude/rules/","把指令拆成規則檔；frontmatter 設了 paths 的規則，只在讀到相符檔案時才載入。","memory.html",""],["term","自動記憶（MEMORY.md）","Claude 會自己記下建置指令、除錯心得等；每次對話開始載入 MEMORY.md 的前 200 行或 25KB，可用 /memory 開關","memory.html",""],["term","teammateMode","Agent Teams 的顯示模式：in-process（預設）、auto、tmux、iterm2；分割窗格需要 tmux 或 iTerm2","agent-teams.html",""],["term","Worktree（--worktree）","同一個 repo 的另一個工作目錄；用 claude --worktree <名稱> 啟動時，會在 .claude/worktrees/<名","demos.html#worktrees",""],["term","Session（--continue／--resume）","綁定專案目錄、存成本機紀錄的一段對話；可用 claude --continue、claude --resume 或 /resume 接續，也","demos.html#sessions",""],["term","/compact 與 /clear","/compact 把對話換成結構化摘要、騰出脈絡空間並繼續對話，可附上要保留的重點；/clear 以空白脈絡開始新對話，舊對話可用 /res","demos.html#context",""],["term","Headless（claude -p）","加上 -p（--print）以非互動模式執行：送出 prompt、把結果以 text、json 或 stream-json 印到 stdou","demos.html#headless",""]],"map":[{"name":"開始","items":[["page","首頁","Kevin 的 Claude Code 互動學院","index.html"],["page","學習路線：入門 → 進階 → 高手","六站學完，不知道從哪開始就從這裡","index.html#path"],["page","名詞速查","各模組與館的關鍵名詞","index.html#glossary"]]},{"name":"三個模組","items":[["page","模組 01：Claude Memory","CLAUDE.md 的載入機制、monorepo 模擬器","memory.html"],["page","模組 02：Agent Teams 實作","多個 session 組隊、Command → Agent → Skill","agent-teams.html"],["page","模組 03：/goal 實作","跨回合持續工作直到條件成立","goal.html"]]},{"name":"心法集・功能演示館・方法論館","items":[["page","心法集","124 條實戰心法，每一步都有終端機模擬","tips.html"],["page","心法集：新手先看這 10 條","從 124 條裡挑出的基本功","tips.html#c-start"],["page","功能演示館","13 個核心功能的逐步動畫","demos.html"],["page","方法論館","6 套社群工作流的流程鏈動畫與比較","workflows.html"]]},{"name":"新手先看這 10 條","items":[["tip","多數 session 從 Plan 模式開始","Boris：13 個技巧","tips.html#t-boris-13-6"],["tip","團隊共用一份 CLAUDE.md","Boris：13 個技巧","tips.html#t-boris-13-4"],["tip","給 Claude 驗證自己工作的方法","Boris：13 個技巧","tips.html#t-boris-13-13"],["tip","新任務就開新 session","Thariq：Session 管理與 1M 脈絡","tips.html#t-thariq-sessions-3"],["tip","用倒回取代糾正","Thariq：Session 管理與 1M 脈絡","tips.html#t-thariq-sessions-4"],["tip","用 Auto 模式取代權限提示","Boris：讓 Opus 4.7 發揮更多的 6 個技巧","tips.html#t-boris-6-1"],["tip","建立 Skills 並 commit","Claude Code 團隊：10 個技巧","tips.html#t-team-10-4"],["tip","PostToolUse hook 自動格式化","Boris：13 個技巧","tips.html#t-boris-13-9"],["tip","用 Git Worktrees 平行工作","Boris：15 個隱藏功能","tips.html#t-boris-15-10"],["tip","可外包思考，不能外包理解","Karpathy：從 Vibe Coding 到 Agentic Engineering","tips.html#t-karpathy-9"]]}]};</script>
+<script>
+(() => {
+'use strict';
+const IDX = window.CC_INDEX || { items: [], map: [] };
+const esc = s => String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+const ICON = { page: ['頁', 'c-accent'], mod: ['課', 'c-green'], tip: ['心', 'c-accent'], demo: ['演', 'c-purple'], wf: ['法', 'c-blue'], stage: ['階', 'c-blue'], term: ['詞', 'c-green'] };
+const GROUP = { page: '頁面', mod: '模組章節', demo: '功能演示', wf: '方法論', stage: '方法論的階段', tip: '心法', term: '名詞' };
+const ORDER = ['page', 'mod', 'demo', 'wf', 'stage', 'tip', 'term'];
+const BOOST = { page: 3, mod: 2, demo: 2, wf: 2, term: 1, tip: 0, stage: 0 };
+const DATA = (IDX.items || []).map(a => ({ k: a[0], t: a[1], s: a[2], u: a[3], x: (a[1] + ' ' + a[2] + ' ' + (a[4] || '')).toLowerCase() }));
+
+const ov = document.createElement('div');
+ov.className = 'ccp-ov';
+ov.hidden = true;
+ov.innerHTML = '<div class="ccp" role="dialog" aria-modal="true" aria-label="搜尋全站"><div class="ccp-top"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg>' +
+  '<input type="search" id="ccpQ" placeholder="搜尋心法、功能、方法論、名詞…" autocomplete="off" spellcheck="false" aria-label="搜尋全站" aria-controls="ccpList"><kbd>Esc</kbd></div>' +
+  '<div class="ccp-list" id="ccpList" role="listbox"></div><div class="ccp-foot"><span>↑ ↓ 選擇</span><span>Enter 開啟</span><span class="ccp-k">⌘K／Ctrl+K 或 / 隨時叫出</span></div></div>';
+document.body.appendChild(ov);
+const q = ov.querySelector('#ccpQ'), list = ov.querySelector('#ccpList');
+let items = [], act = 0, lastFocus = null;
+
+function hl(text, terms) {
+  const low = text.toLowerCase(), mk = new Array(text.length).fill(false);
+  terms.forEach(t => { let i = low.indexOf(t); while (t && i >= 0) { for (let j = i; j < i + t.length; j++) mk[j] = true; i = low.indexOf(t, i + t.length); } });
+  let out = '', on = false;
+  for (let i = 0; i < text.length; i++) {
+    if (mk[i] && !on) { out += '<mark>'; on = true; }
+    if (!mk[i] && on) { out += '</mark>'; on = false; }
+    out += esc(text[i]);
+  }
+  return on ? out + '</mark>' : out;
+}
+function render() {
+  const raw = q.value.trim(), terms = raw.toLowerCase().split(/\s+/).filter(Boolean);
+  let groups;
+  if (!terms.length) {
+    groups = (IDX.map || []).map(g => ({ name: g.name, rows: g.items.map(a => ({ k: a[0], t: a[1], s: a[2], u: a[3] })) }));
+  } else {
+    const res = [];
+    DATA.forEach(d => {
+      if (!terms.every(t => d.x.includes(t))) return;
+      const tl = d.t.toLowerCase();
+      let sc = BOOST[d.k] || 0;
+      terms.forEach(t => { if (tl.includes(t)) sc += 3; if (tl.startsWith(t)) sc += 2; });
+      res.push([sc, d]);
+    });
+    res.sort((a, b) => b[0] - a[0]);
+    const top = res.slice(0, 60).map(r => r[1]);
+    groups = ORDER.map(k => ({ name: GROUP[k], rows: top.filter(d => d.k === k) })).filter(g => g.rows.length);
+  }
+  items = [];
+  let h = '';
+  groups.forEach(g => {
+    h += '<div class="ccp-g">' + esc(g.name) + '</div>';
+    g.rows.forEach(r => {
+      const i = items.length, ic = ICON[r.k] || ICON.page;
+      items.push(r);
+      h += '<a class="ccp-i ' + ic[1] + '" role="option" id="ccpo' + i + '" data-i="' + i + '" href="' + esc(r.u) + '"><span class="ccp-ic">' + ic[0] + '</span><span class="tx"><b>' + hl(r.t, terms) + '</b>' + (r.s ? '<small>' + hl(r.s, terms) + '</small>' : '') + '</span></a>';
+    });
+  });
+  list.innerHTML = h || '<div class="ccp-empty">找不到「' + esc(raw) + '」。換個關鍵字試試，例如 hooks、worktree、脈絡、grill。</div>';
+  setAct(0);
+}
+function setAct(i) {
+  if (!items.length) { q.removeAttribute('aria-activedescendant'); return; }
+  act = (i + items.length) % items.length;
+  list.querySelectorAll('.ccp-i').forEach(a => a.classList.toggle('on', +a.dataset.i === act));
+  const el = list.querySelector('#ccpo' + act);
+  if (el) { el.scrollIntoView({ block: 'nearest' }); q.setAttribute('aria-activedescendant', 'ccpo' + act); }
+}
+function go(i) {
+  const r = items[i];
+  if (!r) return;
+  close(false);
+  location.href = r.u;
+}
+function open() {
+  if (!ov.hidden) return;
+  lastFocus = document.activeElement;
+  ov.hidden = false;
+  q.value = '';
+  render();
+  document.documentElement.style.overflow = 'hidden';
+  setTimeout(() => q.focus(), 0);
+}
+function close(restoreFocus) {
+  if (ov.hidden) return;
+  ov.hidden = true;
+  document.documentElement.style.overflow = '';
+  if (restoreFocus !== false && lastFocus && lastFocus.focus) lastFocus.focus();
+}
+q.addEventListener('input', render);
+q.addEventListener('keydown', e => {
+  if (e.key === 'ArrowDown') { e.preventDefault(); setAct(act + 1); }
+  else if (e.key === 'ArrowUp') { e.preventDefault(); setAct(act - 1); }
+  else if (e.key === 'Enter') { e.preventDefault(); go(act); }
+  else if (e.key === 'Escape') { e.preventDefault(); close(); }
+});
+ov.addEventListener('click', e => {
+  if (e.target === ov) { close(); return; }
+  const a = e.target.closest('.ccp-i');
+  if (a) { e.preventDefault(); go(+a.dataset.i); }
+});
+list.addEventListener('mousemove', e => { const a = e.target.closest('.ccp-i'); if (a && +a.dataset.i !== act) setAct(+a.dataset.i); });
+document.addEventListener('keydown', e => {
+  if ((e.metaKey || e.ctrlKey) && (e.key === 'k' || e.key === 'K')) { e.preventDefault(); if (ov.hidden) open(); else close(); return; }
+  const typing = e.target && e.target.closest && e.target.closest('input, textarea, select, [contenteditable]');
+  if (e.key === '/' && ov.hidden && !typing && !e.metaKey && !e.ctrlKey && !e.altKey) { e.preventDefault(); open(); }
+});
+const btn = document.getElementById('ccSearchBtn');
+if (btn) btn.addEventListener('click', open);
+window.CCSearch = { open, close };
+})();
+</script>
+<!--/cc-site--></body>
+</html>
