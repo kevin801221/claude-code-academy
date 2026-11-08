@@ -630,7 +630,7 @@ function setTab(t, keepQ) {
   if (!keepQ) chip = 'all';
   renderTabs(); renderBody();
 }
-function route(scroll) {
+function route(scroll, instant) {
   const h = location.hash.slice(1);
   let t = TABS.some(x => x[0] === h) ? h : null, target = null;
   if (!t && h) {
@@ -641,7 +641,11 @@ function route(scroll) {
   else if (!$('#rtabs').children.length) setTab(tab);
   if (target) {
     const el = document.getElementById(target);
-    if (el) { el.scrollIntoView({ behavior: reduced ? 'auto' : 'smooth', block: 'center' }); el.classList.remove('flash'); void el.offsetWidth; el.classList.add('flash'); }
+    if (el) {
+      if (instant || reduced) { const r = document.documentElement, prev = r.style.scrollBehavior; r.style.scrollBehavior = 'auto'; el.scrollIntoView({ block: 'center' }); r.style.scrollBehavior = prev; }
+      else el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      el.classList.remove('flash'); void el.offsetWidth; el.classList.add('flash');
+    }
   } else if (t && scroll) {
     const top = document.getElementById('ref').getBoundingClientRect().top + window.scrollY - 70;
     window.scrollTo({ top: Math.max(0, top), behavior: reduced ? 'auto' : 'smooth' });
@@ -654,8 +658,8 @@ $('#rbody').addEventListener('click', e => {
   const b = e.target.closest('.cp'); if (!b) return;
   copyText(b.dataset.ct).then(() => { b.textContent = '已複製 ✓'; setTimeout(() => { b.textContent = '複製'; }, 1400); });
 });
-addEventListener('hashchange', () => route(true));
-route(false);
+addEventListener('hashchange', () => route(true, false));
+route(false, true);
 })();
 </script>
 <!--cc-site-->

@@ -737,23 +737,24 @@ document.addEventListener('keydown', e => {
   if (e.key === 'ArrowRight') { e.preventDefault(); active.next(); }
   else if (e.key === 'ArrowLeft') { e.preventDefault(); active.prev(); }
 });
-function fromHash(scroll) {
+const jump = top => { const r = document.documentElement, prev = r.style.scrollBehavior; r.style.scrollBehavior = 'auto'; window.scrollTo(0, top); r.style.scrollBehavior = prev; };
+function fromHash(scroll, instant) {
   let h = '';
   try { h = decodeURIComponent(location.hash.slice(1)); } catch (e) { h = location.hash.slice(1); }
   let m, sec = null;
   if ((m = h.match(/^day0-(mac|windows|linux)$/)) && OSK.includes(m[1])) { showOS(m[1]); sec = 'day0'; }
   else if ((m = h.match(/^day1-(.+)$/))) { const i = LS.findIndex(x => x.id === m[1]); if (i >= 0) { showLesson(i); sec = 'day1'; } }
   if (sec && scroll) {
-    const el = document.getElementById(sec);
-    window.scrollTo({ top: Math.max(0, el.getBoundingClientRect().top + window.scrollY - 70), behavior: reduced ? 'auto' : 'smooth' });
+    const el = document.getElementById(sec), top = Math.max(0, el.getBoundingClientRect().top + window.scrollY - 70);
+    if (instant || reduced) jump(top); else window.scrollTo({ top, behavior: 'smooth' });
   }
   return !!sec;
 }
 if (OSK.length) showOS(os);
 if (LS.length) showLesson(0);
 active = $('#d0Player')._api || null;
-if (fromHash(true) && /^#day1-/.test(location.hash)) active = $('#d1Player')._api || active;
-addEventListener('hashchange', () => fromHash(true));
+if (fromHash(true, true) && /^#day1-/.test(location.hash)) active = $('#d1Player')._api || active;
+addEventListener('hashchange', () => fromHash(true, false));
 })();
 </script>
 <!--cc-site-->
