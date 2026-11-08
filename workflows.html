@@ -1,0 +1,757 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Claude Code 方法論館</title>
+<script>document.documentElement.classList.add('js');try{var t=localStorage.getItem('cm-theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
+<style>
+:root{
+  --sans:-apple-system,BlinkMacSystemFont,"PingFang TC","Noto Sans TC","Microsoft JhengHei","Segoe UI",sans-serif;
+  --mono:"SF Mono",ui-monospace,Menlo,Consolas,"Liberation Mono",monospace;
+  --bg:#faf7f2; --surface:#ffffff; --surface-2:#f3eee6; --text:#1d1915; --muted:#6b635a; --border:#e6ded2;
+  --accent:#c65f3c; --accent-2:#e8916a; --accent-soft:#fbe8de;
+  --green:#1f8456; --green-soft:#dbf1e5;
+  --blue:#2c6bc4; --blue-soft:#e0eafa;
+  --purple:#7646d6; --purple-soft:#ece4fc;
+  --red:#c2364a; --red-soft:#fbe0e4;
+  --yellow:#c9922a;
+  --term-bg:#1b1815; --term-text:#efe9e0; --term-muted:#9a9187;
+  --shadow:0 1px 2px rgba(40,30,20,.05),0 8px 24px rgba(40,30,20,.07);
+  --mod:var(--accent); --mod-soft:var(--accent-soft); --mod-2:var(--purple);
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#13110f; --surface:#1c1916; --surface-2:#262220; --text:#efe9e0; --muted:#a59c91; --border:#37302a;
+    --accent:#e8845c; --accent-2:#f2a581; --accent-soft:#3a251b;
+    --green:#4cc38a; --green-soft:#16302a; --blue:#6ea4f0; --blue-soft:#182a44;
+    --purple:#ab8cf6; --purple-soft:#2a2142; --red:#f06b7d; --red-soft:#3d1c22; --yellow:#e0b252;
+    --term-bg:#0c0b0a; --shadow:0 1px 2px rgba(0,0,0,.3),0 10px 30px rgba(0,0,0,.35);
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#13110f; --surface:#1c1916; --surface-2:#262220; --text:#efe9e0; --muted:#a59c91; --border:#37302a;
+  --accent:#e8845c; --accent-2:#f2a581; --accent-soft:#3a251b;
+  --green:#4cc38a; --green-soft:#16302a; --blue:#6ea4f0; --blue-soft:#182a44;
+  --purple:#ab8cf6; --purple-soft:#2a2142; --red:#f06b7d; --red-soft:#3d1c22; --yellow:#e0b252;
+  --term-bg:#0c0b0a; --shadow:0 1px 2px rgba(0,0,0,.3),0 10px 30px rgba(0,0,0,.35);
+  color-scheme:dark;
+}
+body.m-teams{--mod:var(--blue);--mod-soft:var(--blue-soft);--mod-2:var(--purple)}
+body.m-goal{--mod:var(--green);--mod-soft:var(--green-soft);--mod-2:var(--blue)}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:70px}
+body{margin:0;background:var(--bg);color:var(--text);font:16px/1.75 var(--sans);-webkit-font-smoothing:antialiased;transition:background .3s,color .3s}
+main{overflow-x:clip}
+.wrap{max-width:1100px;margin:0 auto;padding-left:max(20px,env(safe-area-inset-left,0px));padding-right:max(20px,env(safe-area-inset-right,0px))}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:55;background:var(--bg)}
+h1,h2,h3,h4{line-height:1.3;margin:0}
+p{margin:0 0 1em}
+a{color:var(--mod)}
+code{font-family:var(--mono);font-size:.86em;background:var(--surface-2);border:1px solid var(--border);padding:.05em .4em;border-radius:6px;word-break:break-word}
+.c-accent{--c:var(--accent);--c-soft:var(--accent-soft)}
+.c-green{--c:var(--green);--c-soft:var(--green-soft)}
+.c-blue{--c:var(--blue);--c-soft:var(--blue-soft)}
+.c-purple{--c:var(--purple);--c-soft:var(--purple-soft)}
+.c-red{--c:var(--red);--c-soft:var(--red-soft)}
+.hint{font-weight:400;font-size:12.5px;color:var(--muted)}
+.ic{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex:none}
+
+/* top bar */
+.progress{position:fixed;top:env(safe-area-inset-top,0px);left:0;right:0;height:3px;z-index:60;pointer-events:none}
+.progress span{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--mod),var(--mod-2))}
+.topbar{position:sticky;top:env(safe-area-inset-top,0px);z-index:50;background:color-mix(in srgb,var(--bg) 86%,transparent);backdrop-filter:saturate(1.4) blur(10px);-webkit-backdrop-filter:saturate(1.4) blur(10px);border-bottom:1px solid var(--border)}
+.topbar-inner{display:flex;align-items:center;gap:12px;height:58px}
+.brand{display:flex;align-items:center;gap:10px;font-weight:700;color:var(--text);text-decoration:none;white-space:nowrap;flex:none}
+.brand-mark{width:30px;height:30px;border-radius:9px;background:linear-gradient(135deg,var(--accent),var(--purple));color:#fff;display:grid;place-items:center;font:800 11.5px var(--mono)}
+.crumb{flex:none;color:var(--mod);font-weight:700;font-size:14px;white-space:nowrap}
+.chapters{display:flex;gap:2px;overflow-x:auto;scrollbar-width:none;flex:1;min-width:0}
+.chapters::-webkit-scrollbar{display:none}
+.chapters a{flex:none;padding:5px 11px;border-radius:999px;color:var(--muted);text-decoration:none;font-size:13.5px;white-space:nowrap;transition:color .2s,background .2s}
+.chapters a:hover{color:var(--text);background:var(--surface-2)}
+.chapters a.on{color:var(--mod);background:var(--mod-soft);font-weight:600}
+.icon-btn{flex:none;width:36px;height:36px;border-radius:10px;border:1px solid var(--border);background:var(--surface);color:var(--text);cursor:pointer;display:grid;place-items:center}
+.icon-btn svg{width:18px;height:18px}
+@media (max-width:760px){.brand-text{display:none}}
+
+/* buttons */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:10px 18px;border-radius:999px;border:1px solid var(--border);background:var(--surface);color:var(--text);font:600 15px/1.2 var(--sans);cursor:pointer;text-decoration:none;transition:transform .15s,background .2s,box-shadow .2s,border-color .2s}
+.btn:hover:not(:disabled){transform:translateY(-1px);box-shadow:var(--shadow)}
+.btn.primary{background:var(--mod);border-color:var(--mod);color:#fff}
+.btn.small{padding:6px 13px;font-size:13px}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+button:focus-visible,.btn:focus-visible,[role="button"]:focus-visible,a:focus-visible,input:focus-visible{outline:2px solid var(--mod);outline-offset:2px}
+
+/* hero */
+.hero{padding:68px 0 64px;position:relative}
+.hero::before{content:"";position:absolute;inset:0;background-image:radial-gradient(var(--border) 1.2px,transparent 1.2px);background-size:22px 22px;-webkit-mask-image:radial-gradient(ellipse at 72% 40%,#000 15%,transparent 68%);mask-image:radial-gradient(ellipse at 72% 40%,#000 15%,transparent 68%);animation:drift 40s linear infinite;pointer-events:none}
+@keyframes drift{to{background-position:220px 110px}}
+.hero-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:48px;align-items:center;position:relative}
+.eyebrow{display:inline-block;font:700 12.5px var(--sans);letter-spacing:.06em;color:var(--mod);background:var(--mod-soft);padding:4px 12px;border-radius:999px;margin-bottom:18px}
+.hero h1{font-size:clamp(34px,5.6vw,60px);letter-spacing:-.02em;margin-bottom:18px}
+.grad{background:linear-gradient(90deg,var(--mod),var(--mod-2));-webkit-background-clip:text;background-clip:text;color:transparent}
+.lead{font-size:18px;color:var(--muted);max-width:32em}
+.hero-cta{display:flex;flex-wrap:wrap;gap:10px;margin:26px 0 22px}
+.meta{display:flex;flex-wrap:wrap;gap:8px 18px;font-size:13px;color:var(--muted)}
+.meta span{display:inline-flex;align-items:center;gap:6px}
+
+/* chapters */
+.chapter{padding:84px 0;border-top:1px solid var(--border)}
+.ch-head{display:flex;gap:18px;align-items:flex-start;margin-bottom:34px}
+.ch-num{font:800 14px var(--mono);color:var(--mod);background:var(--mod-soft);padding:6px 10px;border-radius:10px;flex:none;margin-top:5px}
+.ch-head h2{font-size:clamp(25px,3.4vw,36px);letter-spacing:-.01em}
+.ch-head p{margin:.45em 0 0;color:var(--muted);max-width:46em}
+.js .reveal{transition:transform .7s cubic-bezier(.2,.7,.2,1)}.js .reveal:not(.in){transform:translateY(14px)}
+
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:32px;align-items:start}
+.panel-card{background:var(--surface);border:1px solid var(--border);border-radius:18px;padding:22px;box-shadow:var(--shadow)}
+.panel-title{display:flex;justify-content:space-between;align-items:baseline;gap:4px 10px;flex-wrap:wrap;font-weight:700;font-size:14px;margin-bottom:10px}
+.sub-h{font-size:20px;margin:0 0 12px}
+.callout{display:flex;gap:12px;align-items:flex-start;padding:14px 18px;border-radius:14px;background:var(--c-soft,var(--mod-soft));border:1px solid var(--c,var(--mod));font-size:15px;margin-top:18px}
+.callout b{color:var(--c,var(--mod))}
+.callout a{color:var(--c,var(--mod));font-weight:700}
+.seg{display:inline-flex;flex-wrap:wrap;gap:4px;padding:4px;background:var(--surface-2);border-radius:12px;border:1px solid var(--border)}
+.seg button{border:0;background:transparent;color:var(--muted);font:600 14px var(--sans);padding:8px 14px;border-radius:9px;cursor:pointer;transition:.2s}
+.seg button.on{background:var(--surface);color:var(--mod);box-shadow:var(--shadow)}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip-btn{border:1px solid var(--border);background:var(--surface);color:var(--muted);font:600 13px var(--sans);padding:5px 12px;border-radius:999px;cursor:pointer;transition:.2s}
+.chip-btn.on{border-color:var(--c,var(--mod));color:var(--c,var(--mod));background:var(--c-soft,var(--mod-soft))}
+.empty{color:var(--muted);font-size:13px;border:1px dashed var(--border);border-radius:10px;padding:22px 12px;text-align:center}
+
+/* terminal */
+.term{background:var(--term-bg);border-radius:14px;overflow:hidden;font:13px/1.75 var(--mono);color:var(--term-text);min-width:0}
+.term-bar{display:flex;align-items:center;gap:7px;padding:10px 14px;background:rgba(255,255,255,.05)}
+.term-bar i{width:11px;height:11px;border-radius:50%;background:#ff5f57}
+.term-bar i:nth-child(2){background:#febc2e}.term-bar i:nth-child(3){background:#28c840}
+.term-bar span{margin-left:8px;color:var(--term-muted);font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.term-body{padding:14px 16px 16px}
+.tl{white-space:pre-wrap;word-break:break-word}
+.tl .ps{color:#f2a581}
+.tl.ok{color:#7ee2a8}.tl.warn{color:#f5c26b}.tl.muted{color:var(--term-muted)}.tl.info{color:#8ab8ff}.tl.bad{color:#ff8a98}.tl.hl{color:#d3b8ff}
+.caret{display:inline-block;width:8px;height:1.05em;background:var(--term-text);vertical-align:-2px;margin-left:1px;animation:blink 1s steps(1) infinite}
+.hero .term{box-shadow:0 24px 60px rgba(20,10,0,.28);transform:rotate(-.6deg);animation:float 7s ease-in-out infinite}
+.hero .term .term-body{min-height:260px;font-size:13.5px}
+
+/* code block */
+.code{border-radius:12px;overflow:hidden;background:var(--term-bg);color:var(--term-text);margin:12px 0}
+.code-bar{display:flex;justify-content:space-between;align-items:center;padding:6px 8px 6px 14px;background:rgba(255,255,255,.06);font:12px var(--mono);color:var(--term-muted)}
+.copy{border:1px solid rgba(255,255,255,.18);background:transparent;color:var(--term-text);font:600 12px var(--sans);padding:3px 10px;border-radius:7px;cursor:pointer}
+.copy:hover{background:rgba(255,255,255,.1)}
+.code pre{margin:0;padding:12px 16px 14px;font:13.5px/1.8 var(--mono);white-space:pre-wrap;word-break:break-word}
+.code .cm{color:var(--term-muted)}
+.code .ps{color:#f2a581}
+
+/* quiz */
+.quiz{max-width:780px;margin:0 auto;padding:26px}
+.q-anim{animation:slideIn .45s cubic-bezier(.2,.7,.2,1)}
+.q-top{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:14px;font-size:13.5px;color:var(--muted)}
+.q-dots{display:flex;gap:6px}
+.q-dots i{width:10px;height:10px;border-radius:50%;background:var(--border);transition:.3s}
+.q-dots i.ok{background:var(--green)}.q-dots i.no{background:var(--red)}
+.q-dots i.cur{outline:2px solid var(--mod);outline-offset:2px}
+.q-text{font-size:clamp(18px,2.2vw,21px);font-weight:700;margin:0 0 18px;line-height:1.55}
+.q-opts{display:flex;flex-direction:column;gap:10px}
+.q-opt{text-align:left;padding:12px 16px;border-radius:12px;border:1px solid var(--border);background:var(--bg);color:var(--text);font:15px/1.55 var(--sans);cursor:pointer;display:flex;gap:12px;align-items:center;transition:transform .2s,border-color .2s,background .2s}
+.q-opt .k{font:700 13px var(--mono);width:28px;height:28px;border-radius:8px;background:var(--surface-2);display:grid;place-items:center;flex:none;transition:.2s}
+.q-opt:hover:not(:disabled){border-color:var(--mod);transform:translateX(4px)}
+.q-opt.correct{border-color:var(--green);background:var(--green-soft)}
+.q-opt.correct .k{background:var(--green);color:#fff}
+.q-opt.wrong{border-color:var(--red);background:var(--red-soft);animation:shake .4s}
+.q-opt.wrong .k{background:var(--red);color:#fff}
+.q-opt:disabled{cursor:default}
+.q-exp{margin-top:14px;padding:12px 16px;border-radius:12px;background:var(--surface-2);font-size:14.5px;display:none}
+.q-exp.show{display:block;animation:popIn .35s}
+.q-next{margin-top:16px}
+.q-result{text-align:center;padding:10px 0}
+.ring{width:150px;height:150px;margin:0 auto 10px;position:relative}
+.ring svg{width:100%;height:100%;transform:rotate(-90deg)}
+.ring circle{fill:none;stroke-width:12}
+.ring .bg{stroke:var(--surface-2)}
+.ring .fg{stroke:var(--mod);stroke-linecap:round;transition:stroke-dashoffset 1.3s cubic-bezier(.2,.7,.2,1)}
+.ring .val{position:absolute;inset:0;display:grid;place-items:center;font:800 32px var(--sans)}
+.q-result h3{font-size:22px;margin:8px 0}
+.q-result p{color:var(--muted)}
+.q-result .row-btns{display:flex;flex-wrap:wrap;gap:10px;justify-content:center}
+
+/* module nav */
+.mod-nav{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:8px}
+.mod-nav a{display:block;padding:18px 20px;border-radius:16px;border:1px solid var(--border);background:var(--surface);color:var(--text);text-decoration:none;transition:.2s}
+.mod-nav a:hover{border-color:var(--mod);transform:translateY(-2px);box-shadow:var(--shadow)}
+.mod-nav small{display:block;color:var(--muted);font-size:13px}
+.mod-nav b{font-size:17px}
+.mod-nav .next{text-align:right}
+
+footer{padding:56px 0 70px;border-top:1px solid var(--border);color:var(--muted);font-size:14.5px}
+footer h3{color:var(--text);font-size:17px;margin:0 0 10px}
+footer ul{padding-left:20px;margin:0 0 18px}
+footer li{margin:4px 0}
+.confetti{position:fixed;width:8px;height:12px;border-radius:2px;pointer-events:none;z-index:100}
+
+@keyframes popIn{from{opacity:0;transform:translateY(5px)}}
+@keyframes blink{50%{opacity:0}}
+@keyframes bump{40%{transform:scale(1.13)}}
+@keyframes shake{20%{transform:translateX(-6px)}40%{transform:translateX(6px)}60%{transform:translateX(-4px)}80%{transform:translateX(3px)}}
+@keyframes chipIn{from{opacity:0;transform:scale(.85)}}
+@keyframes slideIn{from{opacity:0;transform:translateX(18px)}}
+@keyframes float{50%{transform:rotate(-.6deg) translateY(-8px)}}
+@keyframes pulse{50%{box-shadow:0 0 0 6px var(--c-soft,var(--mod-soft))}}
+
+@media (max-width:900px){
+  .hero-grid,.grid-2{grid-template-columns:1fr}
+  .hero-grid{gap:36px}
+}
+@media (max-width:600px){
+  .wrap{padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+  .chapter{padding:60px 0}
+  .hero{padding:44px 0 48px}
+  .panel-card,.quiz{padding:16px}
+  .ch-head{gap:12px}
+  .mod-nav{grid-template-columns:1fr}
+  .crumb{font-size:13px}
+}
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}
+}
+
+
+
+body.m-wf{--mod:var(--blue);--mod-soft:var(--blue-soft);--mod-2:var(--green)}
+.hero.hero-sm{padding:48px 0 30px}
+.hero-sm h1{font-size:clamp(30px,4.6vw,50px)}
+.hero-sm .lead{max-width:42em}
+.chapter.tight{padding-top:28px;border-top:0}
+.sec-h{font-size:21px;margin:0 0 6px}
+.sec-p{color:var(--muted);margin:0 0 16px;font-size:15px}
+.wgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:16px;margin-bottom:44px}
+.wcard{display:flex;flex-direction:column;gap:10px;padding:20px;border-radius:18px;border:1px solid var(--border);background:var(--surface);color:var(--text);text-decoration:none;box-shadow:var(--shadow);transition:transform .2s,border-color .2s,box-shadow .2s;position:relative;overflow:hidden;animation:popIn .4s backwards;animation-delay:calc(var(--i) * 50ms)}
+.wcard::before{content:"";position:absolute;inset:0 0 auto 0;height:4px;background:var(--c)}
+.wcard:hover{transform:translateY(-4px);border-color:var(--c);box-shadow:0 14px 30px rgba(0,0,0,.12)}
+.wc-top{display:flex;justify-content:space-between;gap:8px;font:600 12px var(--mono);color:var(--muted)}
+.wc-top .done-mark{color:var(--green)}
+.wcard h3{font-size:20px;line-height:1.35}
+.wcard p{margin:0;color:var(--muted);font-size:14.5px}
+.wc-rail{display:flex;flex-wrap:wrap;gap:4px 3px;align-items:center}
+.wc-rail span{font:600 11.5px var(--sans);padding:2px 8px;border-radius:6px;background:var(--c-soft);color:var(--c)}
+.wc-rail i{font-style:normal;color:var(--muted);font-size:11px}
+.wc-meta{font-size:12.5px;color:var(--muted);margin-top:auto}
+.wc-go{font-weight:800;color:var(--c)}
+.cmp-wrap{overflow-x:auto;border:1px solid var(--border);border-radius:14px;background:var(--surface)}
+table.cmp{border-collapse:collapse;width:100%;min-width:900px;font-size:13px}
+.cmp th,.cmp td{padding:10px 12px;border-bottom:1px solid var(--border);text-align:left;vertical-align:top}
+.cmp tr:last-child td{border-bottom:0}
+.cmp th{font-size:12.5px;color:var(--muted);background:var(--surface-2);white-space:nowrap}
+.cmp td:first-child{font-weight:700;white-space:nowrap}
+.cmp td:first-child a{color:var(--c);text-decoration:none}
+.cmp code{font-size:11.5px;display:inline-block;margin:2px 3px 2px 0}
+.cmp .none{color:var(--muted);opacity:.5}
+.crumbs{font-size:14px;color:var(--muted);margin-bottom:14px;display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.crumbs a{color:var(--mod);text-decoration:none;font-weight:700}
+.wf-head{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,.9fr);gap:22px;border-top:5px solid var(--c);margin-bottom:6px}
+.wh-by{font:700 12.5px var(--mono);color:var(--c)}
+.wf-head h2{font-size:clamp(24px,3.2vw,34px);margin:4px 0 6px;text-wrap:balance}
+.wh-tag{font-size:17px;font-weight:600;margin:0 0 8px}
+.wh-main p{color:var(--muted);margin:0 0 10px}
+.pchips{display:flex;flex-wrap:wrap;gap:6px;margin:4px 0 10px}
+.pchips span{font-size:12.5px;padding:3px 10px;border-radius:999px;background:var(--c-soft);color:var(--c);font-weight:600}
+.wh-side{min-width:0}
+.wh-side .code{margin:0}
+.wh-side .src{display:inline-block;margin-top:10px;font-weight:700;color:var(--c)}
+.rail-wrap{overflow-x:auto;padding:28px 4px 8px;scrollbar-width:thin}
+.rail{position:relative;display:flex;gap:8px;min-width:max-content;padding:0 6px}
+.rail-line{position:absolute;left:72px;right:72px;top:23px;height:3px;background:var(--border);border-radius:3px}
+.rail-line span{display:block;height:100%;width:0;background:var(--c);border-radius:3px;transition:width .7s cubic-bezier(.2,.7,.2,1)}
+.rnode{position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;gap:5px;width:136px;padding:0;border:0;background:transparent;color:var(--text);cursor:pointer;text-align:center;font:inherit}
+.rn-n{width:46px;height:46px;border-radius:50%;display:grid;place-items:center;background:var(--surface);border:3px solid var(--border);font:800 15px var(--mono);color:var(--muted);transition:background .35s,border-color .35s,color .35s,transform .35s,box-shadow .35s}
+.rnode b{font-size:13.5px;line-height:1.3}
+.rnode code{font-size:11px;max-width:130px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;display:block}
+.rnode .ph{font-size:11px;color:var(--muted)}
+.rnode.done .rn-n{background:var(--c);border-color:var(--c);color:#fff}
+.rnode.cur .rn-n{border-color:var(--c);color:var(--c);box-shadow:0 0 0 6px var(--c-soft);transform:scale(1.08)}
+.rnode.cur b{color:var(--c)}
+.rail-token{position:absolute;top:-22px;left:0;width:0;height:0;margin-left:-8px;border-left:8px solid transparent;border-right:8px solid transparent;border-top:11px solid var(--c);z-index:2;transition:left .7s cubic-bezier(.5,0,.3,1);pointer-events:none;filter:drop-shadow(0 2px 6px var(--c))}
+.wf-ctrl{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:4px 0 16px}
+.wf-ctrl .btn.primary,.wf-done .btn.primary{background:var(--c);border-color:var(--c)}
+.wf-pos{margin-left:auto;font:600 12.5px var(--mono);color:var(--muted)}
+.stage-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.05fr);grid-template-areas:"head sim" "steps sim";gap:16px 20px;align-items:start}
+.sg-head{grid-area:head;padding:18px;border-radius:16px;border:1px solid var(--c);background:var(--c-soft);min-width:0}
+.sg-head.fade{animation:popIn .4s}
+.sg-head .phase{display:inline-block;font:700 11.5px var(--sans);padding:2px 9px;border-radius:999px;background:var(--c);color:#fff;margin-right:6px;vertical-align:2px}
+.sg-head .note{display:block;font-size:12.5px;color:var(--muted);margin-top:6px}
+.sg-head h3{font-size:22px;margin:8px 0 4px}
+.sg-head p{margin:0 0 12px}
+.io{display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);gap:8px;align-items:stretch;font-size:13px}
+.io div{padding:8px 10px;border-radius:10px;background:var(--surface);border:1px solid var(--border);word-break:break-word}
+.io small{display:block;font-weight:700;color:var(--muted);font-size:11px}
+.io .ar{align-self:center;color:var(--c);font-weight:800;background:none;border:0;padding:0}
+.sg-sim{grid-area:sim;position:sticky;top:calc(env(safe-area-inset-top,0px) + 74px);display:flex;flex-direction:column;gap:10px;min-width:0}
+.sg-sim .term-body{height:300px;overflow-y:auto;font-size:12.5px}
+.tl .pi{color:#7ee2a8}
+.tl.cur{background:rgba(255,255,255,.05);border-radius:4px}
+.tl.old{opacity:.5}
+.tl.sep{color:#f2a581;opacity:.85;font-size:11.5px;margin-top:6px}
+.tl.sep:first-child{margin-top:0}
+.shelf{border:1px dashed var(--border);border-radius:14px;padding:10px 12px;background:var(--surface)}
+.shelf-h{font-size:12.5px;font-weight:700;color:var(--muted);margin-bottom:6px}
+.shelf-items{display:flex;flex-direction:column;gap:6px}
+.art{font:12px/1.5 var(--mono);padding:5px 10px;border-radius:9px;background:var(--c-soft);border:1px solid var(--c);word-break:break-word}
+.art.new{animation:chipIn .5s cubic-bezier(.2,.8,.3,1.3)}
+.art b{font-family:var(--sans);color:var(--c);margin-right:6px}
+.sim-note{font-size:12px;color:var(--muted);margin:0}
+.sg-steps{grid-area:steps;min-width:0}
+.steps{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:8px}
+.step{border:1px solid var(--border);border-radius:14px;background:var(--bg);transition:border-color .3s,background .3s,opacity .3s,box-shadow .3s}
+.step.todo{opacity:.55}
+.step.cur{border-color:var(--c);background:var(--surface);box-shadow:0 0 0 4px var(--c-soft)}
+.st-h{display:flex;align-items:center;gap:12px;width:100%;padding:12px 14px;border:0;background:transparent;color:var(--text);font:600 15px/1.45 var(--sans);cursor:pointer;text-align:left;border-radius:14px}
+.st-n{width:28px;height:28px;border-radius:50%;display:grid;place-items:center;font:800 13px var(--mono);background:var(--surface-2);color:var(--muted);flex:none;transition:background .3s,color .3s}
+.step.cur .st-n{background:var(--c);color:#fff}
+.step.done .st-n{background:var(--green);color:#fff}
+.st-body{display:none;padding:0 16px 14px 54px}
+.step.cur .st-body{display:block;animation:slideIn .4s cubic-bezier(.2,.7,.2,1)}
+.st-body p{margin:0;font-size:15px}
+.st-body .code{margin:10px 0 0}
+.wf-done{margin-top:16px;padding:16px 18px;border-radius:14px;background:var(--green-soft);border:1px solid var(--green);display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap;animation:popIn .4s}
+.wf-done b{color:var(--green)}
+.extras{margin-top:34px}
+.xgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:10px}
+.xcard{padding:12px 14px;border-radius:12px;border:1px solid var(--border);background:var(--surface);font-size:14px}
+.xcard code{font-size:12.5px}
+.xcard p{margin:4px 0 0;color:var(--muted)}
+.mnav{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:22px}
+.mnav a{padding:14px 16px;border-radius:14px;border:1px solid var(--border);background:var(--surface);color:var(--text);text-decoration:none;font-size:14px;transition:border-color .2s}
+.mnav a:hover{border-color:var(--c)}
+.mnav small{display:block;color:var(--muted);font-size:12px}
+.mnav .nx{text-align:right;grid-column:2}
+@media (max-width:900px){
+  .wf-head{grid-template-columns:1fr}
+  .stage-grid{grid-template-columns:1fr;grid-template-areas:"head" "sim" "steps"}
+  .sg-sim{position:static}
+  .sg-sim .term-body{height:220px}
+}
+@media (max-width:600px){
+  .st-body{padding-left:16px}
+  .mnav{grid-template-columns:1fr}
+  .mnav .nx{grid-column:auto}
+  .io{grid-template-columns:1fr}
+  .io .ar{transform:rotate(90deg);justify-self:center}
+  .rnode{width:112px}
+  .rail-line{left:60px;right:60px}
+}
+</style>
+</head>
+<body class="m-wf">
+<div class="progress"><span id="progressBar"></span></div>
+<header class="topbar">
+  <div class="wrap topbar-inner">
+    <a class="brand" href="index.html" title="回到學院首頁"><span class="brand-mark">CC</span><span class="brand-text">互動學院</span></a>
+    <span class="crumb">› 方法論館</span>
+    <nav class="chapters" id="chapterNav" aria-label="網站">
+      <a href="tips.html">心法集</a>
+      <a href="demos.html">功能演示館</a>
+      <a href="memory.html">01 Memory</a>
+      <a href="agent-teams.html">02 Agent Teams</a>
+      <a href="goal.html">03 /goal</a>
+    </nav>
+    <button class="icon-btn" id="themeBtn" aria-label="切換深色／淺色"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="8"/><path d="M12 4a8 8 0 0 0 0 16z" fill="currentColor"/></svg></button>
+  </div>
+</header>
+
+<main>
+<section id="hero" class="hero hero-sm">
+  <div class="wrap">
+    <span class="eyebrow">方法論館 · 社群最受歡迎的工作流</span>
+    <h1>Claude Code 方法論<br><span class="grad">整條流程拆給你看</span></h1>
+    <p class="lead">Matt Pocock 的 skills、Superpowers、Compound Engineering、GSD、Spec Kit、BMAD。每個方法都是一條從需求到交付的流程：看整條鏈怎麼串、每個階段做什麼、終端機裡實際會打什麼、最後產出什麼檔案。</p>
+    <div class="meta" id="heroMeta"></div>
+  </div>
+</section>
+
+<section id="app" class="chapter tight" aria-live="polite"><div class="wrap" id="view"></div></section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <h3>資料來源（各方法的官方 repo）</h3>
+    <ul id="srcList"></ul>
+    <p>階段、指令與產出物依各方法的原始 repo 與官方文件整理（2026 年 11 月）；終端機畫面為示意。這些專案更新很快，安裝方式與指令名稱請以原 repo 為準。</p>
+  </div>
+</footer>
+
+<script>
+(() => {
+'use strict';
+const $ = (s, r = document) => r.querySelector(s);
+const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
+const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+const sleep = ms => new Promise(r => setTimeout(r, reduced ? Math.min(ms, 40) : ms));
+const restart = (el, cls) => { el.classList.remove(cls); void el.offsetWidth; el.classList.add(cls); };
+const root = document.documentElement;
+
+/* theme */
+const tb = $('#themeBtn');
+if (tb) tb.addEventListener('click', () => {
+  const cur = root.dataset.theme || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+  const next = cur === 'dark' ? 'light' : 'dark';
+  root.dataset.theme = next;
+  try { localStorage.setItem('cm-theme', next); } catch (e) {}
+});
+
+/* scroll progress */
+const bar = $('#progressBar');
+const onScroll = () => {
+  if (!bar) return;
+  const h = document.documentElement;
+  bar.style.width = (h.scrollTop / Math.max(1, h.scrollHeight - h.clientHeight) * 100).toFixed(2) + '%';
+};
+addEventListener('scroll', onScroll, { passive: true }); onScroll();
+
+/* chapter nav highlight */
+const nav = $('#chapterNav');
+if (nav) {
+  const links = $$('a', nav);
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (!e.isIntersecting) return;
+      links.forEach(a => {
+        const on = a.getAttribute('href') === '#' + e.target.id;
+        a.classList.toggle('on', on);
+        if (on && nav.scrollTo) nav.scrollTo({ left: a.offsetLeft - nav.clientWidth / 2 + a.clientWidth / 2, behavior: reduced ? 'auto' : 'smooth' });
+      });
+    });
+  }, { rootMargin: '-45% 0px -50% 0px' });
+  $$('section[id]').forEach(s => obs.observe(s));
+}
+
+/* reveal */
+const revObs = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (!e.isIntersecting) return;
+    e.target.classList.add('in');
+    revObs.unobserve(e.target);
+    e.target.dispatchEvent(new CustomEvent('revealed'));
+  });
+}, { threshold: 0.12 });
+$$('.reveal').forEach(el => revObs.observe(el));
+
+/* confetti */
+function confetti(el) {
+  if (reduced || !el) return;
+  const r = el.getBoundingClientRect();
+  const x = r.left + r.width / 2, y = r.top + r.height / 2;
+  const colors = ['var(--accent)', 'var(--green)', 'var(--blue)', 'var(--purple)', '#f2c14e'];
+  for (let i = 0; i < 40; i++) {
+    const p = document.createElement('i');
+    p.className = 'confetti';
+    p.style.left = x + 'px'; p.style.top = y + 'px';
+    p.style.background = colors[i % colors.length];
+    document.body.appendChild(p);
+    const ang = Math.random() * Math.PI * 2, dist = 70 + Math.random() * 150;
+    const dx = Math.cos(ang) * dist, dy = Math.sin(ang) * dist - 70;
+    p.animate([
+      { transform: 'translate(0,0) rotate(0deg)', opacity: 1 },
+      { transform: 'translate(' + dx + 'px,' + (dy + 140) + 'px) rotate(' + (Math.random() * 720) + 'deg)', opacity: 0 }
+    ], { duration: 1100 + Math.random() * 600, easing: 'cubic-bezier(.2,.6,.4,1)' }).finished.then(() => p.remove());
+  }
+}
+
+/* copy buttons */
+function copyText(text) {
+  if (navigator.clipboard && window.isSecureContext !== false) {
+    return navigator.clipboard.writeText(text).catch(() => fallbackCopy(text));
+  }
+  return fallbackCopy(text);
+}
+function fallbackCopy(text) {
+  return new Promise(res => {
+    const ta = document.createElement('textarea');
+    ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
+    document.body.appendChild(ta); ta.select();
+    try { document.execCommand('copy'); } catch (e) {}
+    ta.remove(); res();
+  });
+}
+document.addEventListener('click', e => {
+  const b = e.target.closest('[data-copy]');
+  if (!b) return;
+  const src = b.dataset.copy ? document.getElementById(b.dataset.copy) : b.closest('.code').querySelector('pre');
+  if (!src) return;
+  copyText(src.innerText.trim()).then(() => {
+    const old = b.dataset.label || b.textContent;
+    b.dataset.label = old;
+    b.textContent = '已複製 ✓';
+    setTimeout(() => { b.textContent = old; }, 1500);
+  });
+});
+
+/* progress storage (shared across pages) */
+function getProgress() {
+  try { return JSON.parse(localStorage.getItem('cca-progress') || '{}') || {}; } catch (e) { return {}; }
+}
+function saveProgress(key, score, total) {
+  try {
+    const p = getProgress();
+    if (!p[key] || score >= p[key].score) p[key] = { score, total };
+    localStorage.setItem('cca-progress', JSON.stringify(p));
+  } catch (e) {}
+}
+
+/* quiz engine */
+function quiz(box, QUIZ, key, nextLink) {
+  let qi = 0, qScore = 0, qRes = [];
+  function render() {
+    if (qi >= QUIZ.length) return result();
+    const Q = QUIZ[qi];
+    box.innerHTML = '<div class="q-anim"><div class="q-top"><span>第 ' + (qi + 1) + ' / ' + QUIZ.length + ' 題</span><div class="q-dots">' +
+      QUIZ.map((_, i) => '<i class="' + (qRes[i] === true ? 'ok' : qRes[i] === false ? 'no' : '') + (i === qi ? ' cur' : '') + '"></i>').join('') + '</div></div>' +
+      '<p class="q-text">' + Q.q + '</p><div class="q-opts">' +
+      Q.o.map((o, i) => '<button class="q-opt" data-i="' + i + '"><span class="k">' + 'ABCD'[i] + '</span><span>' + o + '</span></button>').join('') +
+      '</div><div class="q-exp"></div><button class="btn primary q-next" hidden>' + (qi === QUIZ.length - 1 ? '看結果' : '下一題') + ' →</button></div>';
+  }
+  function answer(i) {
+    const Q = QUIZ[qi], ok = i === Q.a;
+    const opts = $$('.q-opt', box);
+    opts.forEach(o => { o.disabled = true; });
+    opts[Q.a].classList.add('correct');
+    if (!ok) opts[i].classList.add('wrong');
+    qRes[qi] = ok; if (ok) qScore++;
+    $$('.q-dots i', box)[qi].classList.add(ok ? 'ok' : 'no');
+    const exp = $('.q-exp', box);
+    exp.innerHTML = (ok ? '<b style="color:var(--green)">✓ 答對了！</b> ' : '<b style="color:var(--red)">✕ 差一點。</b> ') + Q.e;
+    exp.classList.add('show');
+    const nx = $('.q-next', box); nx.hidden = false; nx.focus({ preventScroll: true });
+  }
+  function result() {
+    const pct = qScore / QUIZ.length, C = 2 * Math.PI * 60;
+    saveProgress(key, qScore, QUIZ.length);
+    const msg = qScore === QUIZ.length ? '滿分！這個模組你已經完全掌握。'
+      : pct >= 0.7 ? '很棒！回頭看看答錯的題目，就更完整了。'
+      : '建議再玩一次上面的互動區，加深印象後再挑戰。';
+    box.innerHTML = '<div class="q-anim q-result"><div class="ring"><svg viewBox="0 0 140 140"><circle class="bg" cx="70" cy="70" r="60"/><circle class="fg" cx="70" cy="70" r="60" stroke-dasharray="' + C + '" stroke-dashoffset="' + C + '"/></svg><div class="val">' + qScore + '/' + QUIZ.length + '</div></div>' +
+      '<h3>' + (qScore === QUIZ.length ? '完美通關' : '測驗完成') + '</h3><p>' + msg + '</p><div class="row-btns"><button class="btn q-retry">↻ 再測一次</button>' +
+      (nextLink ? '<a class="btn primary" href="' + nextLink[0] + '">' + nextLink[1] + ' →</a>' : '') + '</div></div>';
+    requestAnimationFrame(() => requestAnimationFrame(() => { $('.ring .fg', box).style.strokeDashoffset = C * (1 - pct); }));
+    if (pct >= 0.7) setTimeout(() => confetti($('.ring', box)), 700);
+  }
+  box.addEventListener('click', e => {
+    const o = e.target.closest('.q-opt');
+    if (o && !o.disabled) return answer(+o.dataset.i);
+    if (e.target.closest('.q-next')) { qi++; render(); return; }
+    if (e.target.closest('.q-retry')) { qi = 0; qScore = 0; qRes = []; render(); }
+  });
+  render();
+}
+
+/* typing helper for terminals */
+async function typeInto(el, text, speed) {
+  for (const ch of text) { el.textContent += ch; await sleep(speed || 45); }
+}
+
+window.CC = { $, $$, reduced, sleep, restart, confetti, quiz, getProgress, saveProgress, typeInto, copyText };
+})();
+</script>
+<script>
+(() => {
+'use strict';
+const { $, $$, sleep, restart, confetti, typeInto, reduced } = CC;
+const esc = s => String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+const WF = [{"id":"bmad","name":"BMad Method","author":"BMad Code, LLC (bmad-code-org)","source":"https://github.com/bmad-code-org/BMAD-METHOD","license":"MIT","tagline":"敏捷式 AI 驅動開發方法：用專業代理人與工作流程，把點子或變更需求變成可運作的軟體，同時不放棄思考。","summary":"BMad Method 讓 AI 驅動開發涵蓋整個工作，而不只是寫程式：要做什麼、如何組合、如何隨學習調整。決策保持明確、脈絡向後傳遞，流程大小隨工作調整——小改直接建置，複雜工作才加深規劃；分析師、PM、PO、架構師、UX、開發者等專業代理人各自產出可交接的文件，避免 AI 把沒說出口的假設寫成程式碼。本頁依官方文件的 v7 預覽版（alpha）整理；穩定版 v6.12 以 npx bmad-method install 安裝，流程與本頁不同。","install":["npx skills add bmad-code-org/BMAD-METHOD --skill '*'","claude"],"principles":["流程大小隨工作調整（right-sized）","決策明確，並作為持久脈絡往後傳遞","需要時引入產品、架構、UX、開發、測試等專業視角","引導式協作，判斷權留在人手上","從早期思考到審查、修正與學習的單一交付路徑"],"when":"最適合 greenfield 產品、多個 epic 的計畫，或預計需要約 20 次以上實作 session 的專案。清楚的單一 session 變更可直接交給 bmad-build，明顯且低風險的小修改則不必用 BMad。","stages":[{"id":"explore-idea","cmd":"/bmad-forge-idea","name":"探索與驗證點子","phase":"釐清需求","goal":"在寫需求之前，用腦力激盪、壓力測試與研究把模糊的點子變成可行動的意圖（此步可選）。","input":"半成形的點子或主題","output":"forge-report.html、forge-<slug>.md（點子成形時）；或 brainstorm-<topic>.md、research-<topic>.md","steps":[{"do":"先問 bmad 從哪開始","detail":"描述你的現況，bmad 中樞會依已產出的文件推薦起點與下一步。","code":"bmad I have a SaaS idea and know all the features. Where do I start?"},{"do":"需要更多點子就腦力激盪","detail":"執行 bmad-brainstorming，選擇 Facilitator、Creative Partner 或 Ideate for me 立場，目標是遠超過一百個點子。"},{"do":"用 Forge Idea 壓力測試","detail":"一次一個問題追問點子的核心主張，每輪有兩種聲音；可說 attack this、defend this 或 switch roles 切換論辯方式。"},{"do":"需要證據就做研究","detail":"執行 bmad-deep-recon 研究市場、領域或技術，產出附引用的 research-<topic>.md。"},{"do":"接受三種結局並濃縮","detail":"Hardened、Killed、Clearer 都是有效結果；交給下一步前先把產出濃縮，而不是丟一堆原始資料。"}],"term":[["i","/bmad-forge-idea 我想在 App 加入 AI 每週摘要，每週一寄 email"],["o","Forge：先問一題——是誰提出這個需求？我建議的答案是：沒有人。"],["o","Skeptical CFO（生成角色）：每週的推論成本由哪條營收支付？"],["ok","Hardened：已寫入 forge-<slug>.md 與 forge-report.html"]]},{"id":"prd","cmd":"/bmad-agent-pm","name":"PM 撰寫 PRD","phase":"釐清需求","goal":"由產品經理 John 寫下「要做什麼、為什麼」，讓多人與多個 epic 對齊同一份產品定義。","input":"點子產出、product brief 或你的 brain dump","output":"prd-<slug>.md（位於 _bmad-output 中作用中 initiative 的 prd-<slug>/ 資料夾）；驗證時產生 review-*.md","steps":[{"do":"召喚 John 並說明目的","detail":"直接說要建立、更新或驗證 PRD；想先寫一兩頁的產品概念，可請他寫 product brief。","code":"create a PRD"},{"do":"先做 brain dump","detail":"把你知道的全部告訴他，並指向既有檔案，例如 forge、brainstorm 或研究結果。"},{"do":"選擇 Fast 或 Coaching","detail":"Fast path 把缺口集中成一兩個問題後起草全文並標上 [ASSUMPTION]；Coaching path 逐節引導並在答案單薄時反問。"},{"do":"只寫能力，不寫實作","detail":"功能分組、功能需求帶穩定 ID、非功能需求獨立成節；篇幅隨風險高低調整。"},{"do":"用 Validate 審查","detail":"驗證模式只批評不修改，把發現寫進 PRD 旁的 review-*.md。"}],"term":[["i","/bmad-agent-pm create a PRD"],["o","John：先把你知道的全部告訴我，也可以指向現有的檔案。"],["i","Fast path"],["o","已起草 PRD，標註 3 個 [ASSUMPTION] 待你確認"],["ok","已寫入 prd-<slug>.md"]]},{"id":"ux-architecture","cmd":"/bmad-architecture","name":"UX 與架構設計","phase":"規劃","goal":"記錄跨 epic 必須一致的體驗與技術決策，避免不同代理人或 session 各做各的選擇。","input":"ticket 的需求、PRD，以及既有程式碼（若有）","output":"architecture-<slug>.md（架構 spine）；跑 bmad-ux 時另有 DESIGN.md、EXPERIENCE.md","steps":[{"do":"先判斷是否需要","detail":"多個 epic 或跨系統決策就需要架構；介面外觀與行為對結果重要就需要 UX；局部小改通常都不必。"},{"do":"有介面就跑 UX","detail":"產出 DESIGN.md（外觀）與 EXPERIENCE.md（行為與流程），可選 Fast、Coaching 或交給外部設計工具的 handoff。","code":"/bmad-ux"},{"do":"產出架構 spine","detail":"只記錄「兩個單位各自決定就可能不相容」的關鍵決策，每個決策都有穩定 ID 供 ticket 引用。"},{"do":"選擇 Coaching 或 Fast","detail":"預設 Coaching，列出替代方案讓你決定；Fast 以 [ASSUMPTION] 標記起草；新專案會推薦一個當前知名的 starter。"},{"do":"透過 Sofia 掛上 References","detail":"完成後可經由 bmad-agent-po 把 spine 加到 ticket 的 References，Build 與 readiness gate 就能讀到。"}],"term":[["i","/bmad-architecture"],["o","決策 1：API 風格——REST 或 GraphQL？以下是取捨比較"],["i","REST"],["o","新專案建議採用一個知名的 starter"],["ok","已寫入 architecture-<slug>.md，要透過 Sofia 加到 ticket 的 References 嗎？"]]},{"id":"slice-stories","cmd":"/bmad-agent-po","name":"PO 切分故事","phase":"規劃","goal":"由產品負責人 Sofia 把文件轉成需求，並把 initiative 切成 epic、再把 epic 切成依建置順序排列的 story。","input":"PRD、架構 spine、UX 文件或已明確定義的意圖","output":"initiative／epic 檔案中的 Requirements 與 Constraints、.memlog.md、tickets/tickets.toml","steps":[{"do":"交給 Sofia 寫需求","detail":"她把輸入萃取成帶來源的 R<n> 需求，例如 R1 (FR-2, FR-5)，非目標放 Boundaries，未決問題放 Notes。","code":"/bmad-agent-po <path>"},{"do":"切分 initiative","detail":"說 slice this initiative，切成多個 epic，每個先以 refined: false 的精簡外殼寫入。"},{"do":"精煉要開工的 epic","detail":"說 refine this epic，她會列出已定案與待決事項並附上她的建議，再寫入該 epic 的需求。"},{"do":"規劃 epic 的 stories","detail":"說 incept this epic，依建置順序把 stories 寫進 epic 的 tickets.toml，每個都引用 epic 的 R id。"},{"do":"審閱順序並設檢查點","detail":"接受前先審閱拆分，決定哪些 story 需要檢查點；Requirements 由 Sofia 從 .memlog.md 推導，不要手改。"}],"term":[["i","/bmad-agent-po distill this PRD"],["o","Sofia：已寫入 Requirements R1–R12，另有 2 個 Open question"],["i","slice this initiative"],["o","已切成 3 個 epic（refined: false）"],["ok","incept 完成：epic 1 的 stories 已依建置順序寫入 tickets.toml"]]},{"id":"build","cmd":"/bmad-build","name":"逐一建置故事","phase":"實作","goal":"一次 session 建置一個 story：釐清、規劃、實作、獨立審查並修正，最後在本地 commit。","input":"story 編號（如 2.3）、ticket 檔案、issue 連結或一句話需求","output":"修改後的程式碼與本地 commit、story-<slug>-plan.md（狀態 built）、deferred-work.md","steps":[{"do":"開一個新對話","detail":"沿用其他工作流程的 session 會混雜脈絡、干擾這次執行。"},{"do":"指定要建置的 story","detail":"用 ref、檔案或標題指定；不帶參數時會先接續未完成的計畫，再取作用中 initiative 下一個 ready 的 ticket。","code":"/bmad-build 2.3"},{"do":"仔細回答開放問題","detail":"它會先調查程式碼與規劃文件，只有證據無法解決的才成為開放問題；這裡答錯是最昂貴的錯誤。"},{"do":"核准計畫","detail":"它回報 intent gaps、不可逆動作與影響範圍；全部乾淨走輕量路徑，否則先寫完整計畫等你核准。"},{"do":"實作、審查並修正","detail":"實作後由獨立審查者檢查並修正屬於本次變更的問題，與本次無關的既有問題寫進 deferred-work.md。"},{"do":"檢視結果並開 PR","detail":"看摘要、走查或瀏覽 diff，滿意後請它 push 並建立 PR；計畫停在 built，由你透過 Sofia 標記 done。"}],"term":[["i","/bmad-build 2.3"],["o","讀取 epic 2 的 entry 3，把驗收條件寫入計畫"],["o","審查完成：修正 2 項，1 項既有問題移至 deferred-work.md"],["ok","已在本地 commit，計畫狀態：built"]]},{"id":"review-test","cmd":"/bmad-code-review","name":"審查與測試","phase":"驗證","goal":"用多位獨立審查者深度檢查變更並分流處理，再為完成的功能補上 API 與端到端測試。","input":"處於 review 的 ticket（含計畫與 baseline）、PR、分支或 diff","output":"計畫中追加的 ## Code Review 區塊與修補；專案 E2E 測試位置中的新測試檔","steps":[{"do":"開新對話並指定目標","detail":"可指定 PR、commit、分支或檔案；不指定時會列出 review 中的 ticket，並從其計畫的 baseline_revision 開始審查。","code":"/bmad-code-review Review https://github.com/org/repo/pull/42"},{"do":"提供變更的意圖","detail":"附上規格、需求或計畫；沒有計畫時是 no-plan mode，只能拿 diff 跟自己比對。"},{"do":"選擇審查深度","detail":"bmad-code-review 預設 thorough（多位審查者、多種視角），也可在呼叫時說 quick。"},{"do":"分流處理每個發現","detail":"逐項驗證並定 low／medium／high，雜訊附理由駁回，其餘分為 patch、defer 或 decision needed；它不會改變 ticket 狀態。"},{"do":"補上 E2E 測試","detail":"先列出情境請你確認，沿用專案既有測試方式，新測試跑兩次；找到真 bug 時保留失敗的測試，不放寬斷言。","code":"/bmad-qa-generate-e2e-tests Create API and E2E tests for the login flow."}],"term":[["i","/bmad-code-review"],["o","找到 review 中的 ticket：story 2.3，將以其計畫作為意圖"],["o","Triage：patch 3｜defer 1｜decision needed 1"],["ok","已在計畫追加 Code Review 區塊（ticket 狀態未變更）"]]},{"id":"retrospective","cmd":"/bmad-retrospective","name":"Epic 回顧","phase":"回顧","goal":"epic 的 ticket 全部完成後，依據 diff、commit 與計畫等證據，整體判斷是否達成驗收條件。","input":"epic 資料夾、epic 的 id 或 slug","output":"epic 資料夾中的 epic-<slug>-retrospective.md，verdict 為 accepted、accepted-with-open-items 或 rejected","steps":[{"do":"確認所有 ticket 已完成","detail":"built、done、dropped 都算完成；仍停在 built 的 ticket 會列出來讓你關閉。"},{"do":"指定 epic 執行","detail":"不帶參數時會提供 ticket 全部完成的 epic 讓你選。","code":"/bmad-retrospective 3"},{"do":"找出整體才看得到的問題","detail":"檢查架構漂移、重複的 helper、逐步膨脹的檔案，並用 bmad-review 審查整個 epic 的 diff，特別是 ticket 之間的接縫。"},{"do":"比對規格並實際跑流程","detail":"對照 epic 與 initiative 需求找出偏離，改到執行行為時會端到端跑一遍，並檢查上一個 epic 的行動項目是否完成。"},{"do":"依 verdict 決定下一步","detail":"每個發現都附檔案、行號或 commit 來源；行動項目變成新 ticket，ADR 只在你核准後寫入，關閉由 Sofia 處理。"}],"term":[["i","/bmad-retrospective 3"],["o","讀取 tickets.toml、epic 檔、各 ticket 計畫與 git 歷史"],["o","發現：同一個 helper 被寫了兩次（附 commit 來源）"],["ok","verdict：accepted-with-open-items，已寫入 epic-<slug>-retrospective.md"]]}],"extras":[{"name":"bmad","desc":"BMad 中樞：回答問題並排出下一步，也負責 bmad setup、bmad status 與切換作用中的 initiative。"},{"name":"bmad-agent-analyst（Mary）","desc":"分析師：腦力激盪、市場／領域／技術研究、競品拆解、product brief、PRFAQ 與專案脈絡。"},{"name":"bmad-agent-dev（Amelia）","desc":"開發者代理人，選單代碼 BD 建置、QA 產生測試、CR code review、ER epic 回顧。"},{"name":"bmad-prfaq","desc":"以 Amazon Working Backwards 方法先寫新聞稿與 FAQ，壓力測試產品概念。"},{"name":"bmad-build-auto","desc":"無人值守地執行單一 ticket 的建置與審查，適合重要決策都已穩定之後使用。"},{"name":"bmad-walkthrough","desc":"一次一個區塊，引導你人工審閱 commit、PR、檔案或目錄。"},{"name":"bmad-party-mode","desc":"讓已安裝的多個代理人在同一場對話中各自發言討論，由你主導。"},{"name":"bmad-advanced-elicitation","desc":"從多個方向（如 pre-mortem、red team、steelman）對草稿施壓，提出可逐項接受的修訂。"}]},{"id":"compound","name":"Compound Engineering","author":"Every (EveryInc) · Kieran Klaassen & Trevin Chow","source":"https://github.com/EveryInc/compound-engineering-plugin","license":"MIT","tagline":"讓每一單位工程工作都比上一次更輕鬆的 AI 技能外掛。","summary":"Compound Engineering 把開發組織成一個迴圈：腦力激盪、規劃、實作、精簡、審查，最後把學到的東西寫進 docs/solutions/，讓下一輪的 /ce-brainstorm 與 /ce-plan 讀取並以此為基礎。它主張 80% 心力放在規劃與審查、20% 放在執行，讓知識隨每次變更累積，而不是累積技術債。","install":["/plugin marketplace add EveryInc/compound-engineering-plugin","/plugin install compound-engineering"],"principles":["每一單位工程工作都應讓後續工作更容易","80% 規劃與審查、20% 執行","把知識寫下來，讓它可以重複使用","維持高品質，讓未來的變更更容易","重點是槓桿，不是儀式"],"when":"適合長期維護、會反覆遇到類似問題的程式碼庫：每次變更後把非顯而易見的經驗寫下來，下一次規劃時就會自動參考。想放手讓 agent 一路做到開 PR，可以在 /ce-brainstorm 之後改用 /lfg。","stages":[{"id":"ce-brainstorm","cmd":"/ce-brainstorm","name":"腦力激盪需求","phase":"釐清需求","goal":"透過一問一答釐清「要做什麼」，寫出 ce-plan 能直接接手、不必再猜產品行為的需求文件。","input":"模糊的功能想法或問題描述","output":"requirements-only unified plan：docs/plans/YYYY-MM-DD-HHMM-<type>-<topic>-plan.md（輕量工作只在對話中產出一段摘要）","steps":[{"do":"判斷規模與路線","detail":"依需求分成 Lightweight、Standard、Deep、Deep-product 四級；輕量工作只在對話中收尾，不寫檔。拿不準時選較重的一級。"},{"do":"一次只問一個問題","detail":"每輪只問一個需要你決定的問題，能從 repo 或其他來源查到的就自己查；Standard 以上會同時派 scout 蒐集程式碼證據。"},{"do":"用缺口鏡頭壓力測試前提","detail":"檢查 Evidence、Specificity、Counterfactual、Attachment 等缺口，只針對實際存在的缺口用文字追問，而不是給選單。"},{"do":"提出 2–3 種做法再推薦","detail":"至少包含一個非顯而易見的角度（例如反轉或移除限制），先讓你看到替代方案，再給推薦。"},{"do":"確認範圍摘要後寫檔","detail":"寫檔前先給你 scoping synthesis 確認範圍；Product Contract 帶有 R/A/F/AE 編號，且必須通過 Ready for Planning Check。"},{"do":"提供交棒選單","detail":"最後建議用 ce-plan 建立實作計畫，也可選 lfg 自動交付或繼續釐清；不提供直接跳到 ce-work 的選項。"}],"term":[["i","/ce-brainstorm add a way for users to pause notifications"],["o","這裡的「使用者」具體是誰？他們現在遇到的是什麼狀況？"],["mu","（比較 3 種做法：依類型靜音＋TTL、全域勿擾時段、在規則層靜音）"],["ok","Requirements-only plan 已寫入 docs/plans/，建議下一步執行 /ce-plan"]]},{"id":"ce-plan","cmd":"/ce-plan","name":"規劃實作","phase":"規劃","goal":"把需求擴充成可直接實作的計畫，記下決策、範圍、實作單元、檔案、測試情境與風險，但不預寫程式碼。","input":"requirements-only plan、GitHub issue、PRD 或一段描述","output":"同一份 unified plan 從 artifact_readiness: requirements-only 升級為 implementation-ready（docs/plans/YYYY-MM-DD-HHMM-<type>-<name>-plan.md）","steps":[{"do":"先選輸出契約","detail":"依工作大小選 Direct、Chat brief 或 Durable；拿不準時選較重的一種，涉及身分驗證、金流、migration 等風險面一律 Durable。"},{"do":"平行研究脈絡","detail":"一定會研究 repo 既有模式與 docs/solutions/ 的過往經驗；你明確要求或本地模式不足時才做外部研究。"},{"do":"確認範圍摘要","detail":"寫計畫前先顯示 scoping synthesis 與可能的分歧點，讓你確認或修正方向。"},{"do":"拆成 U-ID 實作單元","detail":"每個單元用穩定編號命名、永不重新編號，並列出要動的檔案，以及快樂路徑、邊界、錯誤、整合等測試情境。","code":"### U1. Name"},{"do":"信心檢查並自動補強","detail":"寫完後替各段落評分，針對最弱的部分派子代理補強，再以非互動模式跑 ce-doc-review。"},{"do":"提出下一步選單","detail":"詢問計畫要怎麼接續，推薦接著執行 ce-work，也可建立 issue 或先處理剩下的審查項目。","code":"Plan ready at <absolute path to plan>. What would you like to do next?"}],"term":[["i","/ce-plan docs/plans/2026-11-08-1430-feat-notification-mute-plan.md"],["o","偵測到 artifact_readiness: requirements-only，平行研究 repo 模式與 docs/solutions/⋯"],["o","U1. Mute rule model · U2. Mute API · U3. Settings UI"],["ok","Plan ready at docs/plans/2026-11-08-1430-feat-notification-mute-plan.md. What would you like to do next?"]]},{"id":"ce-work","cmd":"/ce-work","name":"執行計畫","phase":"實作","goal":"依計畫的護欄實作並持續測試，產出經本地驗證的變更，審查後交給 commit 與 PR 流程。","input":"implementation-ready 計畫（或範圍清楚的小型需求）","output":"commits 與 PR（透過 ce-commit-push-pr）；計畫檔全程唯讀不修改","steps":[{"do":"分流輸入","detail":"判斷是計畫、路徑還是一句話需求；Trivial 工作直接做，大型或敏感工作會建議先跑 /ce-brainstorm 或 /ce-plan。requirements-only 計畫會被退回 ce-plan。"},{"do":"建立工作區與分支","detail":"先確認有可寫入的 checkout；除非你在本 session 明確指示，否則不會在預設分支上寫入。"},{"do":"選擇執行引擎與排程","detail":"預設原生執行，也可指定其他模型或 harness 撰寫程式；互不相依的單元可平行進行，但由主控端統一驗證與 commit。"},{"do":"逐單元實作與測試","detail":"每個任務前先檢查是否早已完成，避免重做；變更行為前先找出或補上會失敗的測試，並持續跑測試。"},{"do":"只 commit 該單元的檔案","detail":"每個 commit 只包含該單元負責的檔案；禁止直接下裸的 git commit，以免吃進你原本 index 裡的內容。"},{"do":"審查通過才交付","detail":"獨立使用時，出貨前必須有完成的 ce-code-review 結果（或明確的略過理由），之後才交給 ce-commit-push-pr 開 PR。"}],"term":[["i","/ce-work docs/plans/2026-11-08-1430-feat-notification-mute-plan.md"],["o","建立 feature branch，任務清單：U1 → U2 → U3"],["mu","U2 的驗證已在先前 session 滿足，標記完成、不重做"],["ok","所有單元完成，本地驗證通過"]]},{"id":"ce-simplify-code","cmd":"/ce-simplify-code","name":"精簡程式碼","phase":"驗證","goal":"在審查前精簡剛寫好的程式，提升清晰度、重用性與效率，並刪掉沒有價值的測試與註解，同時完全保留行為。","input":"目前分支相對基底的變更（或你指定的範圍）","output":"精簡後的程式＋依 reuse / quality / efficiency / tests / comments 分類的修改摘要","steps":[{"do":"確定範圍","detail":"你指定的範圍優先；否則取目前分支相對基底的 diff。若只有文件、產生檔或 lockfile，直接回報沒有可精簡的內容。"},{"do":"平行派出審查子代理","detail":"把 code-reuse、code-quality、efficiency 審查者的 persona 檔案全文交給子代理；範圍內有測試或註解時，再加上 test-value 與 comment 審查者。"},{"do":"套用值得的修正","detail":"你直接呼叫時會先回報發現、等你同意再改（除非你說直接修）。每個修正都必須保留輸出、錯誤、副作用與順序，絕不移除安全檢查。"},{"do":"保護證明用的測試","detail":"被其他 skill 呼叫（pipeline 模式）時，用來證明這次變更有效的測試一律不刪、不弱化、不改名。"},{"do":"驗證行為沒有改變","detail":"跑專案的 typecheck 與 lint，並依影響範圍跑測試；失敗就修正或還原該修改，絕不弱化測試來過關。"},{"do":"總結成果","detail":"回報哪些原本就很好、改善了什麼、跳過幾項與檢查結果；不以刪掉的行數當成功指標。"}],"term":[["i","/ce-simplify-code"],["o","範圍：目前分支 vs main · 派出 reuse / quality / efficiency / test-value 審查者"],["o","發現 6 項：reuse 2、quality 1、tests 1⋯ 要套用嗎？"],["i","套用"],["ok","已套用 4 項、跳過 2 項；typecheck、lint、測試全部通過"]]},{"id":"ce-code-review","cmd":"/ce-code-review","name":"多代理程式審查","phase":"驗證","goal":"依 diff 實際碰到的風險挑選審查角色平行審查，合併去重成一份有嚴重度分級的報告。","input":"目前分支、指定的 PR 或分支","output":"結構化審查報告（P0–P3 嚴重度；gated_auto / manual / advisory 分類）；預設只報告、不修改","steps":[{"do":"解析範圍與審查深度","detail":"預設審查目前分支（基底取自 origin/HEAD 或 PR 資料），並依變更可能造成的後果自動選 lite、focused 或 full 路徑。"},{"do":"寫意圖摘要並找計畫","detail":"從 commit 訊息整理變更意圖，並自動找到 docs/plans/ 中對應的計畫，用來核對需求是否達成。"},{"do":"依風險挑選審查角色","detail":"correctness 一定會跑；security、performance、data-migration 等只在 diff 碰到時才加入；有 CODING_STANDARDS.md 時加入 project-standards。"},{"do":"平行派出審查者","detail":"選定的審查者同一批平行派出；選到 adversarial 且審查本地工作樹時，可交由不同模型家族的跨模型 peer 執行。"},{"do":"合併、去重、產出報告","detail":"驗證每個發現並錨定到 diff，跨角色一致時提高信心，最後輸出一份編號穩定的報告。"},{"do":"需要時才在本地套用","detail":"加上 apply:local 或明確要求修正時，才會在本地套用已驗證的修正；任何模式都不會 push、開 PR 或切換分支。","code":"/ce-code-review apply:local"}],"term":[["i","/ce-code-review"],["o","審查角色：correctness、security、reliability、data-migration（adversarial 由跨模型 peer 執行）"],["o","#1 P1 gated_auto · #2 P2 manual · #3 P3 advisory"],["ok","報告完成（report-only，未修改工作樹）"]]},{"id":"ce-compound","cmd":"/ce-compound","name":"沉澱學習","phase":"回顧","goal":"把已解決、已驗證問題中無法從程式碼看出的推理寫成文件，讓下一輪規劃自動參考。","input":"剛解決並驗證過的問題（對話脈絡）","output":"docs/solutions/[category]/[filename].md（附 YAML frontmatter）","steps":[{"do":"先判斷值不值得寫","detail":"只寫非顯而易見、能長久適用、遺失會導致重犯或大量重查的知識；若最終程式碼與測試已說明一切，就什麼都不寫並說明原因。"},{"do":"選擇 Full 或 Lightweight","detail":"預設 Full；只有 session 接近 context 上限時才用 Lightweight 單次完成，由 agent 自行判斷，不會問你。"},{"do":"平行研究並檢查重複","detail":"Full 模式派出 Context Analyzer、Solution Extractor、Related Docs Finder 並探查過往 session；與既有文件高度重疊時改為更新該文件。"},{"do":"依類型組裝文件","detail":"bug 類寫 Symptoms、What Didn't Work、Solution、Why This Works、Prevention；知識類寫 Context、Guidance、Why This Matters、When to Apply、Examples。"},{"do":"驗證內容與可發現性","detail":"檢查引用的路徑、SHA 與 frontmatter；若 AGENTS.md 或 CLAUDE.md 沒指向 docs/solutions/，互動 Full 模式會徵得同意後補上一行。"},{"do":"必要時建議 refresh","detail":"若新經驗讓某份舊文件可能過時，會建議執行 /ce-compound-refresh；結束後沒有「下一步」選單。"}],"term":[["i","/ce-compound the email digest race condition we fixed"],["o","Ran Full mode. 平行派出 3 個研究子代理，並探查過往 session"],["o","與一份舊文件中度重疊 → 建立新文件，並建議之後整併"],["ok","已寫入 docs/solutions/runtime-errors/email-digest-race-condition.md"]]}],"extras":[{"name":"/lfg","desc":"在 /ce-brainstorm 之後放手自動跑完規劃、實作、精簡、審查、沉澱、瀏覽器測試與 commit；有 remote 時推送、開 PR 並監看 CI，未經授權不合併。"},{"name":"/ce-setup","desc":"安裝後在專案中執行，回報可選工具能力，並在缺少時建立 .compound-engineering/config.yaml。"},{"name":"/ce-ideate","desc":"還不確定要做什麼時，先找出值得探索的方向。"},{"name":"/ce-debug","desc":"從 bug 而不是新功能出發時使用的除錯流程。"},{"name":"/ce-doc-review","desc":"以多個角色審查需求或計畫文件（markdown 或 HTML）。"},{"name":"/ce-commit-push-pr","desc":"處理最後的 commit、推送與開 PR 流程。"},{"name":"/ce-compound-refresh","desc":"隨程式碼演進維護 docs/solutions/，也負責建立整個 repo 的 CONCEPTS.md。"},{"name":"/ce-test-browser","desc":"用瀏覽器測試驗證做出來的成果，/lfg 流程中會自動呼叫。"}]},{"id":"gsd","name":"GSD Core (Get Shit Done)","author":"Open GSD (open-gsd)；原版 get-shit-done 由 TÂCHES 建立","source":"https://github.com/open-gsd/gsd-core","license":"MIT","tagline":"用固定的階段循環加上全新 context 子代理，對抗 context rot 的規格驅動開發系統。","summary":"GSD Core 是給 Claude Code 等 AI 程式代理用的 meta-prompting、context engineering 與規格驅動開發框架，每個階段都走 Discuss → Plan → Execute → Verify → Ship 的循環。研究、規劃、執行這些重活都交給全新 context 的子代理，主會話保持精簡，避免 context 越塞越滿造成品質下滑（context rot）；.planning/ 下的 STATE.md、CONTEXT.md 等產物則讓記憶跨 session 延續。原本的 get-shit-done repo 已封存，現在由 Open GSD 以 GSD Core 之名繼續開發。","install":["npx @opengsd/gsd-core@latest","npx @opengsd/gsd-core@latest --claude --global"],"principles":["重活交給全新 context 的子代理","先討論實作決策，再規劃","用 .planning/ 產物跨 session 保存記憶","寫完不等於能用：出貨前必驗證","階段範圍拿不準就拆小"],"when":"適合需要跨多個 session、分成多個階段的真實功能或產品開發，尤其擔心長對話讓 AI 品質下滑時。像修 README 錯字這種小事低於循環的門檻，官方建議改用 /gsd-quick。","stages":[{"id":"new-project","cmd":"/gsd-new-project","name":"建立專案藍圖","phase":"釐清需求","goal":"透過深度提問蒐集脈絡，產出專案說明、需求清單與分階段路線圖。","input":"你的專案想法（既有程式碼庫改用 /gsd-onboard）","output":".planning/PROJECT.md、REQUIREMENTS.md、ROADMAP.md、STATE.md、config.json（可選 research/）","steps":[{"do":"安裝後重啟 Claude Code","detail":"用安裝程式安裝，重啟後 /gsd-* 指令才會出現；不要直接複製 agents/ 或 commands/ 的檔案。","code":"npx @opengsd/gsd-core@latest --claude --local"},{"do":"回答「你想做什麼？」","detail":"第一個問題一定是想建什麼，接著回答釐清問題；也可以用 --auto 搭配 @ 引用 PRD 自動擷取。","code":"/gsd-new-project --auto @prd.md"},{"do":"設定研究與工作流程偏好","detail":"會問是否在每個階段規劃前先做研究（會增加 token 與時間），並把工作流程設定寫進 config.json。"},{"do":"整理需求與 REQ-ID","detail":"把範圍內的需求寫進 REQUIREMENTS.md，每項能力對應一個 REQ-ID，例如 CLI-01。"},{"do":"核准路線圖","detail":"roadmapper 提出分階段路線圖，確認所有 v1 需求都已涵蓋後輸入 Approve。"}],"term":[["i","/gsd-new-project"],["o","What do you want to build?"],["i","一個用 Node.js 管理待辦事項的 CLI，資料存在 todos.json"],["o","Proposed Roadmap：1 phase | 4 requirements mapped"],["ok","已建立 .planning/PROJECT.md、ROADMAP.md、STATE.md"]]},{"id":"discuss-phase","cmd":"/gsd-discuss-phase","name":"討論實作決策","phase":"釐清需求","goal":"在規劃之前，把這個階段「要怎麼做」的實作決策問清楚並寫下來。","input":"ROADMAP.md 裡某個階段的目標","output":".planning/phases/<NN>-<name>/<NN>-CONTEXT.md（另有 DISCUSSION-LOG.md 稽核紀錄）","steps":[{"do":"先清空 context","detail":"GSD 以全新 context 為核心，每個階段開始前先 /clear。","code":"/clear"},{"do":"載入先前脈絡","detail":"讀取 PROJECT.md、REQUIREMENTS.md、STATE.md 與先前的 CONTEXT.md，已經決定的事不會重問。"},{"do":"偵察可重用資產","detail":"掃描程式碼庫中可重用的元件與模式，並跳過先前階段已決定的灰色地帶。"},{"do":"挑選要討論的灰色地帶","detail":"列出剩下的灰色地帶讓你選，逐一深入直到滿意；超出範圍的想法會被導到 deferred ideas。"},{"do":"寫出 CONTEXT.md","detail":"把決策寫到下游 researcher 與 planner 不必再回頭問你的程度。","code":"/gsd-discuss-phase 1"}],"term":[["i","/gsd-discuss-phase 1"],["o","How should done items be stored — mark them in place or move them?"],["i","原地加上 done 旗標"],["ok","已寫入 .planning/phases/01-core-cli/01-CONTEXT.md"]]},{"id":"plan-phase","cmd":"/gsd-plan-phase","name":"研究與規劃","phase":"規劃","goal":"研究、拆解並驗證計畫，產出每份都能放進全新 context window 的任務計畫。","input":"該階段的 CONTEXT.md（可選先做研究）","output":"<NN>-RESEARCH.md、<NN>-<N>-PLAN.md、<NN>-VALIDATION.md","steps":[{"do":"決定要不要先研究","detail":"熟悉的領域可以跳過；需要時由 researcher 子代理調查生態系，結果寫進 RESEARCH.md。","code":"/gsd-plan-phase 3 --skip-research"},{"do":"planner 產出 PLAN.md","detail":"planner 讀取研究與 CONTEXT.md，每份 PLAN.md 寫明要動的檔案、具體變更與完成的驗收條件。"},{"do":"預設 tracer-first 拆法","detail":"每份計畫先做一個端到端的 tracer 切片並驗證，再擴充其他任務；可用 --no-tracer 退回水平分層。"},{"do":"依相依性排成 wave","detail":"計畫被排進相依 wave，同一個 wave 的執行者處理互不重疊的部分，才能安全平行。"},{"do":"plan-checker 把關","detail":"plan-checker 確認計畫完整、一致且不超出範圍，沒過就反覆修正，直到通過或達到上限。"}],"term":[["i","/gsd-plan-phase 1"],["o","Research before planning Phase 1: Core CLI?"],["i","Skip research"],["o","Planner → 01-01-PLAN.md、01-02-PLAN.md，plan-checker 驗證中"],["ok","plans saved ✓"]]},{"id":"execute-phase","cmd":"/gsd-execute-phase","name":"平行波次執行","phase":"實作","goal":"以 wave 平行執行所有計畫，每個執行者都在全新的 200k context 裡寫程式並原子化 commit。","input":"該階段的 PLAN.md 檔案","output":"每份計畫的 <NN>-<N>-SUMMARY.md、git commits；全部完成時產出 <NN>-VERIFICATION.md","steps":[{"do":"分析相依並分組 wave","detail":"協調者保持精簡（約用 15% context），只負責找出計畫、分析相依、分組並派出子代理。"},{"do":"每份計畫一個新執行者","detail":"每個子代理在全新 200k-token context 中只載入專案摘要、階段脈絡、研究與自己那份 PLAN.md。"},{"do":"每項任務原子化 commit","detail":"完成計畫中的一項任務就 commit 一次；一個 wave 全部結束才開始下一個。"},{"do":"需要時分波或互動執行","detail":"--wave N 只跑指定 wave 以控管用量；--interactive 不開子代理，逐項跟你確認。","code":"/gsd-execute-phase 1 --wave 2"},{"do":"verifier 對照階段目標","detail":"全部完成後 verifier 檢查需求覆蓋、CONTEXT.md 決策是否落實與目標一致性，寫出 VERIFICATION.md。"}],"term":[["i","/gsd-execute-phase 1"],["o","Wave 1 (parallel): [Executor A] → 01-01-PLAN.md ✓ committed"],["o","[Verifier] CLI-01 ✓  CLI-02 ✓  CLI-03 ✓  CLI-04 ✓"],["ok","Status: PASS"]]},{"id":"verify-work","cmd":"/gsd-verify-work","name":"使用者驗收","phase":"驗證","goal":"用對話式 UAT 一次一項確認做出來的東西真的能用，有問題就自動診斷並產出修正計畫。","input":"該階段的 SUMMARY.md 檔案","output":"<NN>-UAT.md；若發現問題則另有經驗證的修正計畫","steps":[{"do":"把交付物轉成檢查點","detail":"讀取 SUMMARY.md，萃取使用者看得到的交付物，一次只呈現一個檢查點。"},{"do":"回覆 pass 或描述問題","detail":"輸入 yes、y 或直接 Enter 代表通過；其他描述記為問題，嚴重度由你的用詞自動推斷。"},{"do":"失敗時自動找根因","detail":"每個問題派一個 debug 子代理平行診斷根因，並更新 UAT.md。"},{"do":"產出並檢查修正計畫","detail":"gsd-planner 以 gap-closure 模式寫新的 PLAN.md，gsd-plan-checker 最多反覆三次確認可執行。"},{"do":"執行修正後再驗一次","detail":"依提示 /clear 後只跑修正計畫，再重跑 /gsd-verify-work 確認全部通過。","code":"/gsd-execute-phase 1 --gaps-only"}],"term":[["i","/gsd-verify-work 1"],["o","CHECKPOINT Test 1: Add a to-do — Type `pass` or describe what's wrong."],["i","pass"],["ok","已記錄到 01-UAT.md，ROADMAP.md 與 STATE.md 標記完成"]]},{"id":"ship","cmd":"/gsd-ship","name":"開 PR 出貨","phase":"交付","goal":"驗證通過後推送分支並建立 PR，PR 內文自動由規劃產物組成。","input":"已通過驗證的階段","output":"內文自動生成的 GitHub PR，並更新 STATE.md","steps":[{"do":"跑出貨前檢查","detail":"檢查驗證狀態、工作樹是否乾淨、分支、remote 與 gh CLI 登入；ROADMAP 沒標記完成就拒絕出貨。"},{"do":"推送分支並建立 PR","detail":"預設建立可供審查的 PR；後面還有階段要接時，可用 --draft 建立草稿 PR。","code":"/gsd-ship 1 --draft"},{"do":"自動組成 PR 內文","detail":"包含 ROADMAP.md 的階段目標、SUMMARY.md 的變更摘要、涵蓋的 REQ-ID、驗證狀態與關鍵決策。"},{"do":"可選：插入程式審查","detail":"/gsd-ship 不會自動做 code review，可以在驗證前或 PR 開出後另外執行。","code":"/gsd-code-review 1 --fix"},{"do":"前往下一個階段","detail":"多階段專案就對每個階段重複 discuss 到 ship；不確定下一步時讓 GSD 自己判斷。","code":"/gsd-progress --next"}],"term":[["i","/gsd-ship 1"],["o","Preflight：verification ✓  clean tree ✓  gh auth ✓"],["ok","Pull request created — Title: Phase 01: core-cli"]]},{"id":"complete-milestone","cmd":"/gsd-complete-milestone","name":"里程碑收尾","phase":"回顧","goal":"所有階段出貨後，稽核里程碑是否達成目標，再歸檔並打上版本 tag。","input":"已全部出貨的里程碑階段","output":"稽核報告、MILESTONES.md 條目與 git tag","steps":[{"do":"先稽核里程碑","detail":"確認所有需求都已出貨，並產出缺口分析（官方建議在收尾前先做）。","code":"/gsd-audit-milestone"},{"do":"清點未結項目","detail":"歸檔前列出未解決的 debug、quick task、UAT 與驗證缺口、CONTEXT 未決問題等，可選擇 Resolve、Acknowledge 或 Cancel。"},{"do":"歸檔並打 tag","detail":"把階段目錄移入歸檔、寫入 MILESTONES.md，並建立 git tag。","code":"/gsd-complete-milestone"},{"do":"可選：萃取經驗","detail":"從完成的階段整理架構決策、有效模式與反模式，寫成 LEARNINGS.md 供之後參考。","code":"/gsd-extract-learnings --all"},{"do":"開啟下一個版本週期","detail":"用 /gsd-new-milestone 開始新里程碑，更新 PROJECT.md 並產生新的 REQUIREMENTS.md 與 ROADMAP.md。","code":"/gsd-new-milestone \"v2.0 Mobile\""}],"term":[["i","/gsd-audit-milestone"],["o","所有需求均已出貨，沒有缺口"],["i","/gsd-complete-milestone"],["ok","已寫入 MILESTONES.md 並建立 git tag"]]}],"extras":[{"name":"/gsd-onboard","desc":"既有程式碼庫的首次導入：先對應程式碼、可選匯入文件，再初始化專案。"},{"name":"/gsd-quick","desc":"小型臨時任務也有 GSD 保證，加 --full 可開啟完整品質流程。"},{"name":"/gsd-progress","desc":"顯示目前進度與下一步，加 --next 會直接前進到下一個步驟。"},{"name":"/gsd-next","desc":"讀取 STATE.md 等狀態判斷現況，顯示選單後派發一個對應指令。"},{"name":"/gsd-ui-phase","desc":"前端階段在規劃前先產出 UI-SPEC.md 設計契約。"},{"name":"/gsd-autonomous","desc":"自動跑完所有剩餘階段，可用 --from、--to 限定範圍。"},{"name":"/gsd-debug","desc":"帶持久狀態的系統化除錯，可用 --diagnose 只找根因不修。"},{"name":"/gsd-resume-work","desc":"context 重置或開新 session 後，還原上次的完整脈絡。"}]},{"id":"mattpocock","name":"Matt Pocock's Skills (Skills For Real Engineers)","author":"Matt Pocock","source":"https://github.com/mattpocock/skills","license":"MIT","tagline":"把軟體工程基本功拆成小而可組合的技能，讓你保有 AI 開發的主導權。","summary":"這是 Matt Pocock 每天用來做「真工程、不是 vibe coding」的一組 agent skills。他認為 GSD、BMAD、Spec-Kit 這類方法接管了整個流程，反而讓你失去控制，所以這些技能刻意做得小巧、好改、可自由組合。每個技能針對代理常見的失敗模式：沒照你的意思做、太囉嗦、程式跑不動、程式碼變成一團泥。","install":["claude plugin install mattpocock-skills@claude-plugins-official","/setup-matt-pocock-skills"],"principles":["動手前先被逼問，對齊需求","建立共用語言（GLOSSARY.md）","回饋速度就是你的速度上限","每天投資系統設計，打造深模組","技能小而可組合，主控權在你"],"when":"適合在既有 repo 裡做真實功能開發、又想自己掌控流程的人：每次要改東西都先 grill，再依規模決定要不要寫 spec、拆票。沒有工作目錄、只是想釐清計畫或文件時，改用 /grill-me 即可。","stages":[{"id":"grill-with-docs","cmd":"/grill-with-docs","name":"逼問對齊需求","phase":"釐清需求","goal":"透過一輪輪追問把想法磨到雙方都理解，同時建立專案的共用語言與決策紀錄。","input":"一個想做的改動或功能想法","output":"雙方確認的共識；GLOSSARY.md 與 docs/adr/ 下的 ADR（有需要時才建立）","steps":[{"do":"同時載入兩個子技能","detail":"grill-with-docs 本身只做一件事：呼叫 grilling（訪談原語）與 domain-modeling。沒有工作目錄時改用無狀態的 /grill-me。","code":"Call the Skill tool twice, for \"grilling\" and \"domain-modeling\"."},{"do":"以設計樹分輪提問","detail":"把決策畫成設計樹，每輪只問「前提已確定」的前沿問題，逐題編號並附建議答案，等你回覆再算下一輪。","code":"Word each question so \"yes\" accepts your recommended answer."},{"do":"事實自己查，決策交給你","detail":"需要檔案、工具等環境事實時，派一個全新 context 的子代理去查，不拿來問你；只有決策才請你拍板。"},{"do":"對照詞彙表挑戰用語","detail":"你用的詞若和 GLOSSARY.md 衝突或太含糊，會立刻指出，並用邊界情境壓力測試，也會對照程式碼找矛盾。"},{"do":"即時更新 GLOSSARY 與 ADR","detail":"術語一確定就寫進 GLOSSARY.md（不放實作細節）；只有「難以逆轉、沒脈絡會意外、真實取捨」三者都成立才提議寫 ADR。"},{"do":"前沿清空才算完成","detail":"設計樹每個分支都走過、沒有默默假設，而且你確認已達成共識，才進入下一步。"}],"term":[["i","/grill-with-docs 我想讓使用者可以部分取消訂單"],["o","Q1 取消單位：是整張 Order 還是單一品項？建議：單一品項"],["o","GLOSSARY.md 把 cancellation 定義為整單取消，你指的是哪一個？"],["ok","已更新 GLOSSARY.md：新增 Partial Cancellation"]]},{"id":"to-spec","cmd":"/to-spec","name":"整理成規格","phase":"規劃","goal":"不再訪談，直接把剛才的對話與程式碼理解綜合成一份 spec，發佈到 issue tracker。","input":"grilling 留下的對話脈絡與程式碼庫","output":"發佈到 issue tracker 的 spec（標上 ready-for-agent 標籤）","steps":[{"do":"確認 issue tracker 已設定","detail":"技能需要知道 issue tracker 與 triage 標籤；若尚未設定，會請你先執行一次 setup。","code":"/setup-matt-pocock-skills"},{"do":"探索程式碼庫","detail":"了解目前程式碼狀態，整份 spec 使用 GLOSSARY 的領域詞彙，並尊重相關 ADR。"},{"do":"規劃測試接縫並確認","detail":"優先沿用既有 seam、選最高層的接縫，數量越少越好（理想是一個），並跟你確認是否符合預期。"},{"do":"依模板撰寫 spec","detail":"包含 Problem Statement、Solution、很長的 User Stories、Implementation Decisions、Testing Decisions、Out of Scope；不寫具體檔案路徑或程式碼片段。","code":"1. As an <actor>, I want a <feature>, so that <benefit>"},{"do":"發佈並標記 ready-for-agent","detail":"把 spec 發佈到 issue tracker 並套用 ready-for-agent 標籤，不需要再 triage。"}],"term":[["i","/to-spec"],["o","建議測試接縫：訂單模組的公開介面（只用一個 seam），符合預期嗎？"],["i","yes"],["ok","Spec 已發佈到 issue tracker，標籤 ready-for-agent"]]},{"id":"to-tickets","cmd":"/to-tickets","name":"拆解垂直切片票","phase":"規劃","goal":"把 spec 拆成一組 tracer-bullet 垂直切片票，每張都標明被哪些票阻擋。","input":"spec、計畫或目前對話（可傳入 spec 路徑或 issue 編號）","output":"本機模式：.scratch/<feature-slug>/issues/<NN>-<slug>.md（一票一檔）；或真實 tracker 上帶原生 blocking 連結的 issues","steps":[{"do":"蒐集脈絡","detail":"以對話內容為主；若傳入 spec 路徑或 issue 編號、網址，會先抓取完整內文與留言。"},{"do":"找預先重構的機會","detail":"探索程式碼，找能讓實作變簡單的 prefactor：先讓改動變容易，再做容易的改動。"},{"do":"草擬垂直切片","detail":"每張票貫穿 schema、API、UI、測試的一條窄路徑，可獨立展示，大小能放進一個全新 context window；大範圍機械式重構改用 expand–contract。"},{"do":"標出 blocking edges","detail":"每張票列出必須先完成的票；沒有阻擋者的票可以立即開工。"},{"do":"請你確認拆法","detail":"以編號清單列出標題、Blocked by 與交付內容，詢問粒度、相依關係、是否合併或拆分，直到你核准。"},{"do":"發佈到設定的 tracker","detail":"本機模式依相依順序從 01 編號、一票一檔；真實 tracker 則阻擋者優先建立 issue 並套用 ready-for-agent。","code":".scratch/<feature-slug>/issues/<NN>-<slug>.md"}],"term":[["i","/to-tickets"],["o","1. 部分取消的資料模型 — Blocked by: None"],["o","2. 取消 API 與畫面 — Blocked by: 1"],["i","粒度 OK，發佈吧"],["ok","已建立 .scratch/partial-cancel/issues/01、02 兩張票"]]},{"id":"implement","cmd":"/implement","name":"TDD 實作","phase":"實作","goal":"依票或 spec 實作，在事先約定的接縫用 TDD 紅綠循環一小片一小片推進。","input":"一張票（或整份 spec）","output":"通過測試與審查的程式碼，commit 到目前分支","steps":[{"do":"抓取票並說出標題","detail":"傳入票號時先從 issue tracker 抓取並說出標題，參照不明確就先問。多 session 的建造建議每張票之間 /clear。"},{"do":"在約定接縫呼叫 tdd","detail":"盡可能呼叫 tdd 技能；只在事先跟你確認過的 seam 寫測試，不測內部實作。","code":"Call the Skill tool with \"tdd\" where possible, at pre-agreed seams."},{"do":"紅燈先於綠燈","detail":"先寫一個會失敗的測試，再寫剛好讓它通過的程式；一次一個接縫、一個測試、一個最小實作。"},{"do":"避開測試反模式","detail":"不耦合實作細節、不寫套套邏輯的斷言（期望值要有獨立來源）、不先一口氣寫完所有測試（水平切片）。"},{"do":"定期跑型別檢查與測試","detail":"經常跑型別檢查和單一測試檔，最後跑一次完整測試套件，接著交給 code-review。"}],"term":[["i","/implement .scratch/partial-cancel/issues/01-data-model.md"],["o","票 01：部分取消的資料模型"],["o","RED   ✗ user can cancel a single line item"],["o","GREEN ✓ user can cancel a single line item"],["ok","型別檢查與完整測試套件通過"]]},{"id":"code-review","cmd":"/code-review（由 /implement 收尾時自動觸發）","name":"雙軸程式審查","phase":"驗證","goal":"比較固定點之後的 diff，分 Standards 與 Spec 兩軸、用兩個平行子代理獨立審查。","input":"固定點（commit、分支、tag 或 main）之後的 diff，加上原始 spec","output":"分列 ## Standards 與 ## Spec 的審查報告","steps":[{"do":"釘住固定點","detail":"取得你指定的固定點，先用 git rev-parse 確認存在、diff 不是空的，再往下走。","code":"git diff <fixed-point>...HEAD"},{"do":"找出原始 spec","detail":"依序從 commit 訊息的 issue 參照、傳入的路徑、docs/ specs/ .scratch/ 下的檔案尋找，都沒有就問你。"},{"do":"蒐集程式碼標準","detail":"找出所有規範寫法的檔案（有 CODING_STANDARDS.md、CONTRIBUTING.md 必列），再加上 Fowler code smell 基準；repo 規範優先。"},{"do":"平行啟動兩個子代理","detail":"Standards 與 Spec 各用一個全新 context 的子代理同時審查，避免彼此污染。"},{"do":"並列報告，不跨軸排名","detail":"以 ## Standards 與 ## Spec 兩個標題並列，各自點出最嚴重的問題，不合併也不重新排序。"}],"term":[["mu","/implement 完成後自動呼叫 code-review"],["o","## Standards：1 項，possible Feature Envy（judgement call）"],["o","## Spec：沒有缺漏，也沒有範圍蔓延"],["ok","審查完成，已 commit 到目前分支"]]},{"id":"pr","cmd":"pr（自動觸發：代理撰寫 PR 內文時套用）","name":"撰寫 PR 內文","phase":"交付","goal":"讓 PR 內文用最小的視覺說清楚改動、附上前後證據，並評估合併風險。","input":"已完成並審查過的分支","output":"含 ## Summary、## Evidence、## Merge Danger 三段的 PR body","steps":[{"do":"套用三段式 PR 模板","detail":"內文固定 Summary、Evidence、Merge Danger 三段；跳過開場白、文字精簡，並使用 GLOSSARY.md 的領域語言。","code":"## Summary\n\n## Evidence\n\n## Merge Danger"},{"do":"挑最小的視覺做摘要","detail":"依重點選 pseudocode、call tree、元件樹、檔案樹、Mermaid 或 diff，可以用一到數種，但不要全部塞進去。"},{"do":"附上前後對照證據","detail":"視覺改動用截圖最好（S-tier），其次是測試結果、console 輸出等執行證據（A-tier），展示從失敗到通過的那個測試。"},{"do":"判斷單向門或雙向門","detail":"可以輕鬆回滾的是雙向門；涉及破壞性操作或難以逆轉的決策是單向門。"},{"do":"評估爆炸半徑","detail":"用一個詞描述 Blast Radius，並考慮版面位移、下游使用者壞掉、行動裝置響應式等影響。"}],"term":[["i","幫我開一個 PR"],["mu","代理自動套用 pr 技能"],["o","Door: two-way ・ Blast Radius: orders"],["ok","PR 內文已產生：Summary / Evidence / Merge Danger"]]},{"id":"retro","cmd":"/retro","name":"回顧改善環境","phase":"回顧","goal":"回看這次 session，提出改善代理「環境」而非程式碼的建議，依嚴重度排序。","input":"指定的 session（預設為目前 session，或該 session 的紀錄檔）","output":"依嚴重度排序的環境改善建議清單","steps":[{"do":"載入 writing-for-agents","detail":"先呼叫 writing-for-agents 技能，取得撰寫給代理看的文件的風格指引。"},{"do":"讀取 session 原始紀錄","detail":"讀你指定 session 的原始資料（可能要搜尋本機 session logs），沒指定就用目前 session；最好在 /clear 之前於同一 session 執行。"},{"do":"依七個類別找改善點","detail":"Navigation、Automated checks、Coding standards、Global AGENTS.md、Tool economy、No-ops、Information access。"},{"do":"機械式錯誤改成自動檢查","detail":"固定模式的違規優先做成 linter 規則、pre-commit hook 或 CI；需要判斷的才寫進 CODING_STANDARDS.md。沒有任何 guardrail 的 repo 本身就是一項發現。"},{"do":"依嚴重度呈現建議","detail":"把候選建議依嚴重度由高到低列給你，讓下一次建造從更好的環境開始。"}],"term":[["i","/retro"],["o","1.（高）Automated checks：沒有 pre-commit hook 或 CI 跑 lint 與型別檢查"],["o","2.（中）Navigation：在 CLAUDE.md 加導覽指標指向 docs/adr/"],["ok","已依嚴重度列出環境改善建議"]]}],"extras":[{"name":"/grill-me","desc":"沒有工作目錄時用的無狀態逼問版，同樣跑 grilling 但不寫任何檔案。"},{"name":"/setup-matt-pocock-skills","desc":"每個 repo 先跑一次，設定 issue tracker、triage 標籤與領域文件位置。"},{"name":"/ask-matt","desc":"不確定該用哪個技能或流程時，問這個路由器。"},{"name":"/implement-spec","desc":"在一條整合分支上用平行子代理把整份 spec 的票一次做完，最後統一 code-review。"},{"name":"/prototype","desc":"用拋棄式原型回答一個紙上談不清的設計問題，常搭配 /handoff 進出。"},{"name":"/handoff","desc":"把目前對話壓縮成交接文件，讓另一個 session 或代理接手。"},{"name":"/diagnosing-bugs","desc":"先建立會在此 bug 上變紅的回饋迴圈，再最小化、假設、量測、修復並補回歸測試。"},{"name":"/improve-codebase-architecture","desc":"掃描程式碼庫找出加深模組的機會，以 HTML 報告呈現後再 grill 你選的那一項。"}]},{"id":"speckit","name":"Spec Kit","author":"GitHub","source":"https://github.com/github/spec-kit","license":"MIT","tagline":"讓 AI 程式代理依「規格 → 計畫 → 任務 → 實作」結構化流程開發的開源工具包。","summary":"Spec Kit 實踐「規格驅動開發」（Spec-Driven Development, SDD）：反轉「程式碼才是真相」的傳統，讓規格成為主要產物，計畫、任務與程式碼都由規格產生。它用模板與一組 /speckit-* 技能把 AI 的生成約束成有紀律的流程：先講清楚做什麼與為什麼，再決定技術、拆解任務、實作，最後收斂驗證，避免 AI 憑猜測寫程式。","install":["uv tool install specify-cli","specify init my-project --integration claude","cd my-project"],"principles":["規格是主要產物，程式碼只是它的表達","規格要精確、完整、無歧義到足以產生系統","一致性驗證持續進行，而非一次性關卡","以專案憲章（constitution）治理每個階段","規格階段只談做什麼與為什麼，不談技術棧"],"when":"適合從規格出發打造新功能或應用，並希望在寫程式前先釐清需求、留下可追溯文件的情境。小功能可走 specify → plan → tasks → implement → converge 的短路徑；正式上線的功能再加上 clarify、checklist、analyze 等品質關卡。","stages":[{"id":"constitution","cmd":"/speckit-constitution","name":"制定專案憲章","phase":"規劃","goal":"建立整個專案的指導原則，之後每個階段都會依它檢查。","input":"你想要的原則（程式品質、測試、架構偏好等）","output":".specify/memory/constitution.md","steps":[{"do":"把原則當作參數傳入","detail":"每個專案只需做一次，原則改變時再重跑更新。","code":"/speckit-constitution Create principles focused on code quality, testing, and maintainability."},{"do":"填入模板佔位符","detail":"讀取 constitution-template，找出 [ALL_CAPS_IDENTIFIER] 形式的佔位符，從你的輸入或 repo 脈絡補上內容。"},{"do":"依語意化版本更新版號","detail":"CONSTITUTION_VERSION 依 MAJOR／MINOR／PATCH 規則遞增，並記錄批准與修訂日期。"},{"do":"附上 Sync Impact Report","detail":"以 HTML 註解放在憲章檔開頭，列出版本變化、修改、新增與移除的章節。"},{"do":"只改憲章、不做其他事","detail":"輸入中若夾帶功能實作等要求，不會執行，而是列在 Next Actions 並建議下一個指令。"}],"term":[["i","/speckit-constitution 以程式品質、測試標準與使用者體驗一致性為核心原則"],["o","解析 constitution-template，填入 4 條原則與 Governance 章節"],["o","已在檔首附上 Sync Impact Report"],["ok","已寫入 .specify/memory/constitution.md"]]},{"id":"specify","cmd":"/speckit-specify","name":"撰寫功能規格","phase":"釐清需求","goal":"把自然語言的功能描述轉成結構化、可測試的功能規格。","input":"功能描述：要做什麼、為什麼（不含技術棧）","output":"specs/<NNN-short-name>/spec.md、checklists/requirements.md、.specify/feature.json","steps":[{"do":"描述做什麼與為什麼","detail":"專注在使用者行為與目標，技術棧留到 plan 階段再談。","code":"/speckit-specify Build a photo organizer with albums grouped by date and a tile preview of each album."},{"do":"建立功能目錄","detail":"產生 2–4 個字的短名稱，在 specs/ 下建立如 003-user-auth 的目錄，並把路徑記錄到 .specify/feature.json。"},{"do":"依模板填寫規格","detail":"填入使用者情境與測試、可測試的 Functional Requirements、可量測且與技術無關的 Success Criteria，以及 Key Entities。"},{"do":"標記真正不確定之處","detail":"最多 3 個 [NEEDS CLARIFICATION] 標記，其餘以合理預設處理並寫進 Assumptions。"},{"do":"用品質清單自我驗證","detail":"產生 checklists/requirements.md 逐項檢查，不通過就修正（最多 3 輪）；有待釐清的問題會用選項表格請你選擇。"}],"term":[["i","/speckit-specify 打造相簿整理工具，相簿依日期分組，並以磚牆方式預覽照片"],["o","建立 specs/001-photo-albums/spec.md"],["o","Spec 品質清單：全部通過，無 NEEDS CLARIFICATION"],["ok","規格完成，可進入 /speckit-clarify 或 /speckit-plan"]]},{"id":"clarify","cmd":"/speckit-clarify","name":"釐清模糊處","phase":"釐清需求","goal":"在做計畫前，用最多 5 個精準問題消除規格中的模糊與缺漏。","input":"目前的 spec.md（可附上想聚焦的領域）","output":"更新後的 spec.md（新增 ## Clarifications 與 ### Session YYYY-MM-DD）","steps":[{"do":"可指定聚焦領域","detail":"可以多次執行，每次處理不同面向。","code":"/speckit-clarify Focus on the task card behavior: status changes, comment limits, and who can be assigned."},{"do":"掃描模糊與缺漏","detail":"依功能範圍、資料模型、UX 流程、非功能需求、邊界情況等分類，標記為 Clear／Partial／Missing。"},{"do":"一次只問一題","detail":"整個 session 最多 5 題，選擇題會附上 Recommended 選項；回覆字母或 yes 即可採用。"},{"do":"每答一題就寫回規格","detail":"在 ## Clarifications 下記錄「- Q: … → A: …」，並同步更新對應的需求、資料模型或邊界情況章節。"},{"do":"重驗清單並建議下一步","detail":"若有 checklists/requirements.md 會重新評估勾選狀態，並輸出涵蓋度摘要與建議的下一個指令。"}],"term":[["i","/speckit-clarify 聚焦在任務卡的狀態變更與指派規則"],["o","Question: 一張任務卡可以同時指派給多位使用者嗎？ Recommended: Option A"],["i","A"],["ok","已更新 spec.md：新增 Clarifications 並調整 Functional Requirements"]]},{"id":"plan","cmd":"/speckit-plan","name":"技術實作計畫","phase":"規劃","goal":"根據規格與你指定的技術棧，產出實作計畫與設計文件。","input":"spec.md、憲章，以及你提供的技術棧與架構限制","output":"specs/<feature>/plan.md、research.md、data-model.md、contracts/、quickstart.md","steps":[{"do":"提供技術棧與架構","detail":"實作細節在這一步才登場。","code":"/speckit-plan Use Vite with vanilla JavaScript. Keep images local and store metadata in SQLite."},{"do":"填寫技術脈絡並過憲章關卡","detail":"填入 Technical Context 與 Constitution Check；違反原則又沒有合理說明就報錯停止。"},{"do":"Phase 0：研究未知項","detail":"每個 NEEDS CLARIFICATION 變成研究任務，結論以 Decision／Rationale／Alternatives considered 寫進 research.md。"},{"do":"Phase 1：設計與契約","detail":"從規格抽出實體寫入 data-model.md，對外介面寫入 contracts/，並以 quickstart.md 記錄端到端驗證情境。"},{"do":"設計後再檢查一次憲章","detail":"重新評估 Constitution Check，最後回報 plan 路徑與產生的文件。"}],"term":[["i","/speckit-plan 使用 Vite 與原生 JavaScript，圖片留在本機，metadata 存在 SQLite"],["o","Constitution Check：通過"],["o","已產生 research.md、data-model.md、contracts/、quickstart.md"],["ok","plan.md 完成，下一步：/speckit-tasks"]]},{"id":"tasks","cmd":"/speckit-tasks","name":"拆解任務清單","phase":"規劃","goal":"把計畫拆成依相依順序排列、可直接執行的任務清單。","input":"plan.md、spec.md（必要），data-model.md、contracts/、research.md、quickstart.md（若有）","output":"specs/<feature>/tasks.md","steps":[{"do":"讀取設計文件","detail":"從 plan.md 取得技術棧與結構，從 spec.md 取得帶優先序（P1、P2…）的使用者故事。"},{"do":"依使用者故事分階段","detail":"Phase 1 Setup、Phase 2 Foundational，之後每個使用者故事一個階段，最後是 Polish。"},{"do":"用嚴格格式寫每項任務","detail":"每項都有勾選框、任務 ID、可選的 [P] 與 [US#] 標記，以及明確檔案路徑。","code":"- [ ] T012 [P] [US1] Create User model in src/models/user.py"},{"do":"標記可平行的任務","detail":"不同檔案、且不依賴未完成任務的才標 [P]；測試任務只有在規格要求或採 TDD 時才產生。"},{"do":"回報統計與 MVP 範圍","detail":"列出總任務數、各故事任務數、平行機會，並建議 MVP 範圍（通常是 User Story 1）。"}],"term":[["i","/speckit-tasks"],["o","Phase 1 Setup：3 項｜Phase 2 Foundational：4 項"],["o","US1：6 項，其中 4 項可平行 [P]"],["ok","已產生 tasks.md，建議 MVP：User Story 1"]]},{"id":"analyze","cmd":"/speckit-analyze","name":"跨文件一致性","phase":"驗證","goal":"在實作前以唯讀方式檢查 spec、plan、tasks 之間的衝突、缺口與模糊處。","input":"spec.md、plan.md、tasks.md 與憲章","output":"Specification Analysis Report（只輸出報告，不修改任何檔案）","steps":[{"do":"在 tasks 之後、實作之前執行","detail":"此時修改文件的成本最低。","code":"/speckit-analyze"},{"do":"建立需求與任務對照","detail":"為每個 FR-### 與 SC-### 建立索引，並對應到 tasks.md 中的任務。"},{"do":"偵測六類問題","detail":"重複、模糊、規格不足、與憲章衝突、涵蓋缺口，以及術語或資料實體不一致。"},{"do":"依嚴重度分級","detail":"違反憲章 MUST 原則一律是 CRITICAL，其餘依影響分為 HIGH、MEDIUM、LOW。"},{"do":"回源頭修正後重跑","detail":"需求問題回到 specify 或 clarify，設計問題回到 plan，任務問題重跑 tasks，直到報告乾淨。"}],"term":[["i","/speckit-analyze"],["o","Specification Analysis Report：0 CRITICAL、1 HIGH、2 MEDIUM"],["o","A1 Coverage Gap：FR-007 沒有對應任務"],["mu","唯讀分析，未修改任何檔案"]]},{"id":"implement","cmd":"/speckit-implement","name":"依任務實作","phase":"實作","goal":"依 tasks.md 的階段與相依順序執行所有任務，產出可運作的程式碼。","input":"tasks.md、plan.md 與其他設計文件","output":"程式碼與設定檔；tasks.md 中完成的任務標記為 [X]","steps":[{"do":"檢查清單閘門","detail":"掃描 checklists/ 的勾選狀態；若有未勾項目會停下來問你是否仍要繼續，且不會改動清單。"},{"do":"載入實作脈絡","detail":"必讀 tasks.md 與 plan.md，若存在也會讀 data-model.md、contracts/、research.md、quickstart.md 與憲章。"},{"do":"確認 ignore 檔","detail":"依實際技術棧建立或補齊 .gitignore、.dockerignore 等必要的忽略規則。"},{"do":"逐階段依序執行","detail":"完成一個階段再進下一個；[P] 任務可平行，動到同一檔案的任務依序執行，有要求測試時先寫測試。"},{"do":"回報進度並打勾","detail":"每完成一項就在 tasks.md 標 [X]；非平行任務失敗時立即停止並說明原因。"},{"do":"大型功能分段執行","detail":"用參數限定範圍，驗證通過再繼續下一段，避免塞爆代理的脈絡。","code":"/speckit-implement Implement only the Setup and Foundational phases: project scaffolding and the project/task data model with basic CRUD. Stop before the user-story features."}],"term":[["i","/speckit-implement"],["o","Checklists：requirements.md ✓ PASS"],["o","Phase 1 Setup：T001–T003 完成"],["ok","所有任務完成並已在 tasks.md 標記 [X]"]]},{"id":"converge","cmd":"/speckit-converge","name":"收斂驗證","phase":"驗證","goal":"比對程式碼與 spec、plan、tasks，找出遺漏並追加任務，直到完全收斂。","input":"已實作的程式碼，以及 spec.md、plan.md、tasks.md","output":"Converged 結果，或在 tasks.md 末尾追加 ## Phase N: Convergence 任務","steps":[{"do":"在 implement 之後執行","detail":"必須先對目前的 tasks.md 跑過實作。","code":"/speckit-converge"},{"do":"以文件為唯一意圖來源","detail":"只以 spec、plan、tasks（加上憲章）判斷目前程式碼狀態；它不是 diff 工具，也不看 git 歷史。"},{"do":"分類差距與嚴重度","detail":"每個發現標為 missing、partial、contradicts 或 unrequested，並分 CRITICAL 到 LOW。"},{"do":"只追加、不改寫","detail":"唯一的寫入是在 tasks.md 末尾追加可追溯的新任務；絕不修改程式碼、spec 或 plan。","code":"- [ ] T042 <imperative description> per <source-ref> (<gap-type>)"},{"do":"重複直到 Converged","detail":"有追加任務就再跑 /speckit-implement 再 converge；回報 Converged 後即可進入審查或開 PR。"}],"term":[["i","/speckit-converge"],["o","Convergence Findings：F1 missing HIGH FR-008"],["o","已在 tasks.md 追加 Phase 6: Convergence（1 項）"],["mu","再跑 /speckit-implement，然後重新 converge"],["ok","✅ Converged — the implementation satisfies the spec, plan, and tasks."]]}],"extras":[{"name":"/speckit-checklist","desc":"產生「需求的單元測試」品質清單，由審閱者確認後才勾選，可放在 plan 與 tasks 之間。"},{"name":"/speckit-bug-assess → /speckit-bug-fix → /speckit-bug-test","desc":"以 specify extension add bug 安裝的修 bug 流程，報告存於 .specify/bugs/<slug>/，結論為 verified、partial 或 failed。"},{"name":"/speckit-assess-intake → … → /speckit-assess-decide","desc":"以 specify extension add assess 安裝的點子評估流程，最後給出 go、needs-clarification 或 kill 決策。"},{"name":"specify integration install claude","desc":"在既有的 Spec Kit 專案中加入 Claude Code 整合，技能會裝到 .claude/skills/speckit-<command>/SKILL.md。"},{"name":"specify init my-project --integration claude --integration-options=\"--no-model-invocation\"","desc":"讓核心技能只能由你手動輸入 /speckit-<command> 觸發，描述不佔用 Claude 的脈絡。"},{"name":"specify extension search / specify preset search / specify workflow search","desc":"搜尋擴充、預設與工作流程目錄，用來客製或自動化整套流程。"},{"name":"specify integration status","desc":"回報目前專案的整合狀態，例如預設整合與遺失或被修改的受管檔案。"},{"name":"git 擴充（選用）","desc":"為功能加上編號分支（如 001-feature-name）；作用中的功能仍以 .specify/feature.json 為準。"}]},{"id":"superpowers","name":"Superpowers","author":"Jesse Vincent (obra) · Prime Radiant","source":"https://github.com/obra/superpowers","license":"MIT","tagline":"讓 coding agent 自動遵循完整軟體開發流程的技能框架。","summary":"Superpowers 是建立在一組可組合 skills 上的完整軟體開發方法論：agent 不會一看到需求就開始寫程式，而是先問清楚你真正想做什麼、寫出設計、拆成細緻的計畫，再派子代理逐項實作與審查。因為 skills 會自動觸發，安裝後不需要特別操作，agent 在每個任務前都會先檢查並使用相關的 skill，常能照著計畫自主工作好幾個小時。","install":["/plugin install superpowers@claude-plugins-official"],"principles":["測試驅動開發：永遠先寫測試","系統化勝過臨場發揮","降低複雜度，以簡潔為首要目標","證據勝過宣稱：驗證後才說完成","YAGNI、DRY、小步頻繁 commit"],"when":"適合想讓 agent 長時間自主開發、又要求品質有保障的功能開發：先和你對齊設計與計畫，再交給子代理連續執行。若需求已經完整明確（例如「把圖示改成矢車菊藍」），brainstorming 會直接照做，不拉長流程。","stages":[{"id":"brainstorming","cmd":"brainstorming（自動觸發）","name":"腦力激盪釐清需求","phase":"釐清需求","goal":"在動手之前透過提問找出你真正想要什麼、為什麼，並寫成經你核准的設計文件。","input":"一個想法或需求（可能還很模糊）","output":"經核准的設計文件：docs/superpowers/specs/YYYY-MM-DD-<topic>-design.md（小改動則是對話中確認的簡短設計）","steps":[{"do":"先讀現有程式與脈絡","detail":"在既有專案中，先閱讀你提到的檔案與相關程式碼，直到能說明現況與這次變更會碰到哪些地方。專案本身就能回答的問題，不拿來問你。"},{"do":"一次只問一個開放式問題","detail":"只在答案會改變要做的東西時才提問；在弄懂「為什麼」之前，先讓你用自己的話描述，而不是丟選項給你挑。"},{"do":"分段回放理解讓你修正","detail":"每弄懂一部分，就用約 200–300 字回放給你，分清哪些是你說的、哪些是它的提案，並請你指出錯漏。"},{"do":"列出 2–3 種做法並推薦一種","detail":"在一則獨立訊息中列出可行做法與各自的取捨，推薦其中一種並說明理由，由你決定方向。"},{"do":"寫設計文件並請你核准","detail":"依規模寫簡短或完整的設計（都含 Approaches 段落）；完整專案會先派一個全新子代理做 builder check。核准前什麼都不建置（HARD-GATE）。","code":"docs/superpowers/specs/YYYY-MM-DD-<topic>-design.md"},{"do":"交棒給 writing-plans","detail":"設計文件核准後，下一步只能呼叫 superpowers:writing-plans，不呼叫其他 skill。"}],"term":[["i","我想幫網站加一個暫停通知的功能"],["o","我先看了通知模組的現況⋯⋯你希望使用者能暫停通知，是想解決什麼困擾？"],["mu","（分段回放、比較 3 種做法後由你選定）"],["ok","設計文件已寫入 docs/superpowers/specs/2026-11-08-pause-notifications-design.md，請審閱核准"]]},{"id":"using-git-worktrees","cmd":"using-git-worktrees（自動觸發）","name":"建立隔離工作區","phase":"規劃","goal":"在新分支的隔離工作區中開工，裝好依賴並確認測試基準是乾淨的。","input":"已核准的設計","output":"隔離的 worktree（預設在專案根目錄的 .worktrees/ 下）＋通過的基準測試","steps":[{"do":"先偵測是否已在隔離區","detail":"比較 git-dir 與 git-common-dir（並排除 submodule 的情況），若已在 linked worktree 裡就不再建立新的。","code":"GIT_DIR=$(cd \"$(git rev-parse --git-dir)\" 2>/dev/null && pwd -P)\nGIT_COMMON=$(cd \"$(git rev-parse --git-common-dir)\" 2>/dev/null && pwd -P)"},{"do":"徵求同意後再建立","detail":"若你沒有事先表明偏好，會先問是否要建立隔離 worktree 來保護目前分支；你拒絕就在原地工作。"},{"do":"優先使用原生 worktree 工具","detail":"harness 若有原生工具（例如 EnterWorktree）就用它；沒有時才退回手動 git worktree。"},{"do":"確認目錄已被 gitignore","detail":"使用專案內的 .worktrees/ 時，必須先用 git check-ignore 確認已被忽略，否則加進 .gitignore 並 commit，再建立 worktree。","code":"git worktree add \"$path\" -b \"$BRANCH_NAME\""},{"do":"自動安裝依賴","detail":"依專案檔案自動判斷，例如有 package.json 就跑 npm install、有 Cargo.toml 就跑 cargo build。"},{"do":"跑測試確認乾淨基準","detail":"執行專案測試；若失敗就回報並詢問要繼續還是先調查，通過才回報就緒。"}],"term":[["o","I'm using the using-git-worktrees skill to set up an isolated workspace."],["o","Would you like me to set up an isolated worktree? It protects your current branch from changes."],["i","好"],["ok","Worktree ready at .worktrees/pause-notifications · Tests passing (42 tests, 0 failures)"]]},{"id":"writing-plans","cmd":"writing-plans（自動觸發）","name":"撰寫實作計畫","phase":"規劃","goal":"把核准的設計拆成一口大小的任務，寫成連沒看過這份程式碼的工程師都能照做的計畫。","input":"核准的設計文件（spec）","output":"docs/superpowers/plans/YYYY-MM-DD-<feature-name>.md","steps":[{"do":"宣告並檢查範圍","detail":"開始時宣告正在使用 writing-plans；若 spec 涵蓋多個獨立子系統，會建議拆成各自獨立的計畫。"},{"do":"先規劃檔案結構","detail":"定義任務前，先列出要新增或修改哪些檔案、各自負責什麼，偏好職責單一的小檔案。"},{"do":"寫固定格式的計畫標頭","detail":"每份計畫都以 Goal、Architecture、Tech Stack、Spec 路徑開頭，並附上 Global Constraints 與 Review Focus 兩段。"},{"do":"拆成可獨立測試的任務","detail":"每個任務列出 Files 與 Interfaces，步驟依序為：寫失敗測試、確認失敗、實作、確認通過、commit，並用核取方塊追蹤。","code":"- [ ] **Step 1: Write the failing test**"},{"do":"自我審查計畫","detail":"對照 spec 檢查需求覆蓋、步驟是否明確、型別與命名一致、Review Focus 與篇幅比例，有問題就直接修正。"},{"do":"請你審閱並選擇執行方式","detail":"存檔後請你審閱，並在 Subagent-driven（最徹底）與 Native（最省、最快）之間擇一，它會附上推薦與理由。"}],"term":[["o","I'm using the writing-plans skill to create the implementation plan."],["o","Task 1: PauseRule 模型 · Task 2: 暫停 API · Task 3: 設定頁 UI"],["ok","Plan complete and saved to docs/superpowers/plans/2026-11-08-pause-notifications.md"],["o","Please review the plan. Which execution approach would you prefer? Subagent-driven / Native"]]},{"id":"subagent-driven-development","cmd":"subagent-driven-development（自動觸發；選 Native 時改用 executing-plans）","name":"子代理逐項實作","phase":"實作","goal":"每個任務派一個全新的實作子代理，完成後立刻審查規格符合度與程式品質，全部做完再做整支分支的最終審查。","input":"實作計畫＋你選擇的執行方式","output":"每個任務一組 commit；進度記錄在 <repo-root>/.superpowers/sdd/ 下此計畫的 progress.md（ledger）","steps":[{"do":"依你的選擇決定執行方式","detail":"選 Subagent-driven 就走本 skill；選 Native 或沒有子代理工具時改用 executing-plans，在本 session 內自己逐項實作，最後只做一次整體審查。"},{"do":"建立 ledger 並預檢衝突","detail":"確保在隔離工作區後，取得此計畫的工作目錄並建立 progress.md，這份紀錄在 context 壓縮後仍可據以續做；接著讀計畫與 spec、掃描任務間的介面衝突。","code":"bash scripts/sdd-workspace PLAN_FILE"},{"do":"每個任務派新的實作子代理","detail":"擷取該任務全文作為 brief，只給子代理它需要的內容；子代理實作、測試、commit 並自我審查。絕不同時派多個實作子代理。","code":"bash scripts/task-brief PLAN_FILE N"},{"do":"產生審查包並派審查者","detail":"把 diff 打包成檔案交給任務審查者，同時判定規格符合度與程式品質；有 Critical 或 Important 問題就進入修正迴圈。","code":"bash scripts/review-package PLAN_FILE BASE HEAD"},{"do":"連續執行、自行裁決","detail":"任務之間不停下來問「要繼續嗎？」；遇到模糊處自行裁決並在 ledger 寫下 Ruling 行。只有不可逆操作、資安、對外副作用或計畫完全壞掉時才停下來問你。"},{"do":"做整支分支的最終審查","detail":"全部完成後用最強的模型審查整支分支，乾淨後刪除此計畫的工作目錄，交棒給 finishing-a-development-branch。"}],"term":[["o","Task 1/3：派出實作子代理（brief：task-1-brief.md）"],["o","Task reviewer：Spec ✅ · Quality approved"],["mu","Task 1: complete (commits a7981ec..3df7661, review clean)"],["ok","3/3 任務完成，整支分支最終審查乾淨"]]},{"id":"test-driven-development","cmd":"test-driven-development（自動觸發）","name":"測試驅動開發","phase":"實作","goal":"在實作過程中強制 RED-GREEN-REFACTOR：沒有先失敗的測試，就不寫任何正式程式碼。","input":"一個要實作的功能或要修的 bug","output":"先失敗、後通過的測試＋剛好夠用的實作＋commit","steps":[{"do":"RED：寫一個失敗的測試","detail":"一個測試只測一個行為、名稱清楚，盡量用真實程式碼而不是 mock。","code":"NO PRODUCTION CODE WITHOUT A FAILING TEST FIRST"},{"do":"親眼確認它失敗","detail":"必做、不可跳過：確認是因為功能還不存在而失敗，而不是打錯字或執行錯誤；測試直接通過代表測錯了東西。","code":"npm test path/to/test.test.ts"},{"do":"GREEN：寫最少的程式碼","detail":"只寫剛好讓測試通過的程式，不多加功能、不順手重構其他程式（YAGNI）。"},{"do":"確認通過且整套全綠","detail":"不只跑自己的測試檔，還要跑專案完整的測試指令，輸出要乾淨、沒有錯誤或警告。"},{"do":"REFACTOR：整理程式","detail":"只在綠燈後去除重複、改善命名、抽出 helper，過程中保持全綠、不新增行為。"},{"do":"測試前寫的程式就刪掉","detail":"如果在寫測試前就先寫了程式碼，刪掉重來，不留著當「參考」。"}],"term":[["i","test('rejects empty email', ...)"],["o","$ npm test → FAIL: expected 'Email required', got undefined"],["o","$ npm test → PASS"],["ok","RED → GREEN 完成，已 commit"]]},{"id":"requesting-code-review","cmd":"requesting-code-review（自動觸發）","name":"請求程式碼審查","phase":"驗證","goal":"派一個只拿到精準脈絡的審查子代理，對照計畫檢查成果，在問題擴散前抓出來。","input":"完成的任務或功能、git SHA 範圍、計畫或需求","output":"依嚴重度分級的審查結果（Critical / Important / Minor）與整體評估","steps":[{"do":"在關鍵時點請求審查","detail":"子代理開發的每個任務之後、完成重大功能之後、合併到 main 之前，都必須審查。"},{"do":"取得 git SHA 範圍","detail":"記下起訖 commit，讓審查者只看這次的變更。","code":"BASE_SHA=$(git rev-parse HEAD~1)  # or: git merge-base origin/main HEAD\nHEAD_SHA=$(git rev-parse HEAD)"},{"do":"派出審查子代理","detail":"以 code-reviewer.md 模板派一個 general-purpose 子代理，填入 DESCRIPTION、PLAN_OR_REQUIREMENTS、BASE_SHA、HEAD_SHA；不把你的 session 歷史交給它。"},{"do":"依嚴重度處理回饋","detail":"Critical 立即修、Important 在繼續前修好、Minor 記下來之後處理。"},{"do":"審查者錯了就有理據地反駁","detail":"用技術理由、程式碼或測試來證明，但不忽略有效的技術回饋。"}],"term":[["o","Let me request code review before proceeding."],["mu","DESCRIPTION: 新增暫停規則與 API · BASE_SHA: a7981ec · HEAD_SHA: 3df7661"],["o","Issues — Important: Missing progress indicators · Minor: Magic number (100)"],["ok","Assessment: Ready to proceed"]]},{"id":"finishing-a-development-branch","cmd":"finishing-a-development-branch（自動觸發）","name":"收尾開發分支","phase":"交付","goal":"確認測試全綠後提供合併、開 PR 或保留分支等選項，由你決定如何整合，再清理工作區。","input":"所有任務都完成的開發分支","output":"本地合併、已推送的 Pull Request，或保留原狀的分支；必要時移除 worktree","steps":[{"do":"跑完整測試套件","detail":"在即將整合的程式上跑完整測試；有失敗就回報並停下，全綠才會出現選單。"},{"do":"偵測環境與基底分支","detail":"判斷是一般 repo、具名分支的 worktree 還是 detached HEAD，並確認這個分支是從哪個基底分出來的。"},{"do":"提出固定的 3 個選項","detail":"照固定格式列出選項後等你決定，整合方式由你拍板（detached HEAD 時只有 2 個選項）。","code":"1. Merge back to <base-branch> locally\n2. Push and create a Pull Request\n3. Keep the branch as-is (I'll handle it later)"},{"do":"執行你的選擇","detail":"本地合併後會在合併結果上再跑一次測試；開 PR 則推送分支並保留 worktree，方便處理審查回饋。","code":"git push -u origin <feature-branch>"},{"do":"清理工作區","detail":"只有本地合併或你明確要求丟棄時，才移除 .worktrees/ 下的 worktree；丟棄必須輸入 discard 確認，絕不自行 --force。"}],"term":[["o","I'm using the finishing-a-development-branch skill to complete this work."],["o","Implementation complete. What would you like to do? 1. Merge locally 2. Push and create a Pull Request 3. Keep as-is"],["i","2"],["ok","已推送並建立 PR，worktree 保留以便處理審查回饋"]]}],"extras":[{"name":"executing-plans","desc":"Native 執行方式：在目前 session 內自己逐項實作，最後只做一次整支分支審查，成本最低。"},{"name":"systematic-debugging","desc":"四階段找出根本原因的除錯流程，遇到 bug 時優先觸發。"},{"name":"verification-before-completion","desc":"宣稱完成前必須先跑驗證指令並讀完輸出：證據先於宣稱。"},{"name":"dispatching-parallel-agents","desc":"同時派出多個子代理並行處理工作。"},{"name":"receiving-code-review","desc":"收到審查回饋時該如何回應與處理。"},{"name":"writing-skills","desc":"依最佳實務建立新的 skill，並附測試方法。"},{"name":"using-superpowers","desc":"對話開始時載入的入門 skill，要求任何回應前先檢查並使用相關 skill。"},{"name":"diagnosing-superpowers","desc":"session 出狀況時讀取對話紀錄，用證據說明 Superpowers 哪裡出錯。"}]}];
+const ORDER = ['mattpocock', 'superpowers', 'compound', 'gsd', 'speckit', 'bmad'];
+WF.sort((a, b) => (ORDER.indexOf(a.id) + 99) % 99 - (ORDER.indexOf(b.id) + 99) % 99);
+const COLORS = ['c-accent', 'c-purple', 'c-blue', 'c-green', 'c-red', 'c-blue'];
+WF.forEach((w, i) => { w.c = COLORS[i % COLORS.length]; });
+const byId = {};
+WF.forEach(w => { byId[w.id] = w; });
+const PHASES = ['釐清需求', '規劃', '實作', '驗證', '交付', '回顧'];
+const splitCmd = cmd => { const m = String(cmd).match(/^([^（(]+?)\s*[（(](.+)[）)]\s*$/); return m ? [m[1].trim(), m[2]] : [String(cmd), '']; };
+const TCLS = { c: '', i: 'hl', o: '', ok: 'ok', bad: 'bad', warn: 'warn', mu: 'muted' };
+const lineHtml = L => L[0] === 'c' ? '<span class="ps">$</span> ' + esc(L[1]) : L[0] === 'i' ? '<span class="pi">&gt;</span> ' + esc(L[1]) : esc(L[1]);
+let wdone = new Set();
+try { wdone = new Set(JSON.parse(localStorage.getItem('cca-wf-done') || '[]')); } catch (e) {}
+const saveW = () => { try { localStorage.setItem('cca-wf-done', JSON.stringify([...wdone])); } catch (e) {} };
+const view = $('#view'), hero = $('#hero');
+let cleanup = null, firstRoute = true, keyNav = null;
+
+const totalSteps = w => w.stages.reduce((s, st) => s + st.steps.length, 0);
+$('#heroMeta').innerHTML = '<span>' + WF.length + ' 種方法</span><span>' + WF.reduce((s, w) => s + w.stages.length, 0) + ' 個階段</span><span>' + WF.reduce((s, w) => s + totalSteps(w), 0) + ' 個步驟</span><span>每個階段都有終端機模擬</span>';
+$('#srcList').innerHTML = WF.map(w => '<li><a href="' + esc(w.source) + '" target="_blank" rel="noopener">' + esc(w.name) + '</a>（' + esc(w.author) + (w.license ? '，' + esc(w.license) : '') + '）</li>').join('');
+
+/* ---------- home ---------- */
+function viewHome() {
+  hero.hidden = false;
+  view.innerHTML = '<h2 class="sec-h">選一個方法</h2><p class="sec-p">點進去會看到整條流程，可以一步一步走，也可以按「播放整條流程」看它自動跑完。</p>' +
+    '<div class="wgrid">' + WF.map((w, i) => '<a class="wcard ' + w.c + '" style="--i:' + i + '" href="#' + w.id + '"><div class="wc-top"><span>' + esc(w.author) + '</span><span>' + (wdone.has(w.id) ? '<span class="done-mark">✓ 看完了</span>' : esc(w.license)) + '</span></div>' +
+      '<h3>' + esc(w.name) + '</h3><p>' + esc(w.tagline) + '</p><div class="wc-rail">' + w.stages.map(st => '<span>' + esc(st.name) + '</span>').join('<i>→</i>') + '</div>' +
+      '<div class="wc-meta">' + w.stages.length + ' 個階段 · ' + totalSteps(w) + ' 個步驟</div><span class="wc-go">看整條流程 →</span></a>').join('') + '</div>' +
+    '<h2 class="sec-h">六種方法怎麼對應到開發流程？</h2><p class="sec-p">把每個方法的階段放到同一條開發流程上比較，就看得出各自把力氣花在哪裡。</p>' +
+    '<div class="cmp-wrap"><table class="cmp"><thead><tr><th>方法</th>' + PHASES.map(p => '<th>' + p + '</th>').join('') + '</tr></thead><tbody>' +
+    WF.map(w => '<tr class="' + w.c + '"><td><a href="#' + w.id + '">' + esc(w.name) + '</a></td>' + PHASES.map(p => {
+      const sts = w.stages.filter(st => st.phase === p);
+      return '<td>' + (sts.length ? sts.map(st => '<code>' + esc(splitCmd(st.cmd)[0]) + '</code>').join('') : '<span class="none">—</span>') + '</td>';
+    }).join('') + '</tr>').join('') + '</tbody></table></div>';
+}
+
+/* ---------- method ---------- */
+function viewWf(id) {
+  const w = byId[id], N = w.stages.length, wi = WF.indexOf(w);
+  hero.hidden = true;
+  const prevW = WF[wi - 1], nextW = WF[wi + 1];
+  view.innerHTML = '<nav class="crumbs" aria-label="位置"><a href="#">方法論館</a><span>›</span><span>' + esc(w.name) + '</span></nav>' +
+    '<header class="panel-card wf-head ' + w.c + '"><div class="wh-main"><span class="wh-by">' + esc(w.author) + (w.license ? ' · ' + esc(w.license) : '') + '</span><h2>' + esc(w.name) + '</h2><p class="wh-tag">' + esc(w.tagline) + '</p><p>' + esc(w.summary) + '</p>' +
+    '<div class="pchips">' + (w.principles || []).map(p => '<span>' + esc(p) + '</span>').join('') + '</div><p><b>適合：</b>' + esc(w.when) + '</p></div>' +
+    '<div class="wh-side"><div class="code"><div class="code-bar"><span>安裝</span><button class="copy" data-copy>複製</button></div><pre>' + esc((w.install || []).join('\n')) + '</pre></div><a class="src" href="' + esc(w.source) + '" target="_blank" rel="noopener">原始 repo ↗</a></div></header>' +
+    '<div class="rail-wrap ' + w.c + '"><div class="rail" id="rail"><div class="rail-line"><span id="railFill"></span></div>' +
+    w.stages.map((st, j) => '<button class="rnode" data-s="' + j + '" title="' + esc(st.goal) + '"><span class="rn-n">' + (j + 1) + '</span><b>' + esc(st.name) + '</b><code>' + esc(splitCmd(st.cmd)[0]) + '</code><span class="ph">' + esc(st.phase) + '</span></button>').join('') +
+    '<div class="rail-token" id="railToken"></div></div></div>' +
+    '<div class="wf-ctrl ' + w.c + '"><button class="btn small" id="wPrev">← 上一步</button><button class="btn small" id="wPlay">▶ 播放整條流程</button><button class="btn small primary" id="wNext">下一步 →</button><span class="wf-pos" id="wPos"></span></div>' +
+    '<section class="stage-grid ' + w.c + '"><div class="sg-head" id="sgHead"></div>' +
+    '<div class="sg-sim"><div class="term"><div class="term-bar"><i></i><i></i><i></i><span>claude — ' + esc(w.id) + '</span></div><div class="term-body" id="wTerm" aria-live="polite"></div></div>' +
+    '<div class="shelf"><div class="shelf-h">產出物</div><div class="shelf-items" id="shelf"></div></div><p class="sim-note">終端機畫面為示意；指令與產出物依原始 repo。</p></div>' +
+    '<div class="sg-steps"><ol class="steps" id="wSteps"></ol><div id="wfDone"></div></div></section>' +
+    ((w.extras || []).length ? '<div class="extras"><h3 class="sec-h">其他好用的技能／指令</h3><div class="xgrid">' + w.extras.map(x => '<div class="xcard"><code>' + esc(x.name) + '</code><p>' + esc(x.desc) + '</p></div>').join('') + '</div></div>' : '') +
+    '<div class="mnav">' + (prevW ? '<a class="' + prevW.c + '" href="#' + prevW.id + '"><small>← 上一個方法</small>' + esc(prevW.name) + '</a>' : '') + (nextW ? '<a class="nx ' + nextW.c + '" href="#' + nextW.id + '"><small>下一個方法 →</small>' + esc(nextW.name) + '</a>' : '<a class="nx" href="#"><small>全部看完了 →</small>回到方法論館</a>') + '</div>';
+
+  const nodes = $$('.rnode', view), fill = $('#railFill'), token = $('#railToken'), term = $('#wTerm'), shelf = $('#shelf'), wrap = $('.rail-wrap', view);
+  let s = -1, k = 0, termUpTo = -1, run = 0, playing = false, playT = 0, finished = false;
+  const stageLines = j => (w.stages[j].term && w.stages[j].term.length) ? w.stages[j].term : [['mu', '（這個階段沒有終端機操作）']];
+  const sepEl = j => { const el = document.createElement('div'); el.className = 'tl sep'; el.textContent = '── 階段 ' + (j + 1) + '：' + splitCmd(w.stages[j].cmd)[0] + ' ──'; return el; };
+  const lineEl = (L, cls) => { const el = document.createElement('div'); el.className = 'tl ' + (TCLS[L[0]] || '') + (cls ? ' ' + cls : ''); el.innerHTML = lineHtml(L); return el; };
+  function moveToken() {
+    const n = nodes[s];
+    token.style.left = (n.offsetLeft + n.offsetWidth / 2) + 'px';
+    fill.style.width = (N > 1 ? s / (N - 1) * 100 : 0) + '%';
+    if (wrap.scrollWidth > wrap.clientWidth && wrap.scrollTo) wrap.scrollTo({ left: n.offsetLeft - wrap.clientWidth / 2 + n.offsetWidth / 2, behavior: reduced ? 'auto' : 'smooth' });
+  }
+  function renderShelf(upto, newest) {
+    const items = [];
+    for (let j = 0; j < upto; j++) items.push('<div class="art' + (j === newest ? ' new' : '') + '"><b>' + (j + 1) + ' ' + esc(w.stages[j].name) + '</b>' + esc(w.stages[j].output) + '</div>');
+    shelf.innerHTML = items.length ? items.join('') : '<div class="hint">完成一個階段後，它的產出物會出現在這裡。</div>';
+  }
+  function renderStage() {
+    const st = w.stages[s], sc = splitCmd(st.cmd);
+    const head = $('#sgHead');
+    head.innerHTML = '<span class="phase">' + esc(st.phase) + '</span><code class="cmd">' + esc(sc[0]) + '</code>' + (sc[1] ? '<span class="note">' + esc(sc[1]) + '</span>' : '') +
+      '<h3>階段 ' + (s + 1) + '：' + esc(st.name) + '</h3><p>' + esc(st.goal) + '</p>' +
+      '<div class="io"><div><small>輸入</small>' + esc(st.input) + '</div><span class="ar">→</span><div><small>產出</small>' + esc(st.output) + '</div></div>';
+    restart(head, 'fade');
+    $('#wSteps').innerHTML = st.steps.map((x, j) => '<li class="step todo"><button class="st-h" data-k="' + j + '"><span class="st-n">' + (j + 1) + '</span><span>' + esc(x.do) + '</span></button><div class="st-body"><p>' + esc(x.detail) + '</p>' +
+      (x.code ? '<div class="code"><div class="code-bar"><span>原文指令／範例</span><button class="copy" data-copy>複製</button></div><pre>' + esc(x.code) + '</pre></div>' : '') + '</div></li>').join('');
+    nodes.forEach((n, j) => { n.classList.toggle('done', j < s); n.classList.toggle('cur', j === s); });
+  }
+  async function termShow(animate, alive) {
+    if (animate && s === termUpTo + 1) {
+      termUpTo = s;
+      term.innerHTML = '';
+      for (let j = 0; j < s; j++) { term.appendChild(sepEl(j)); stageLines(j).forEach(L => term.appendChild(lineEl(L, 'old'))); }
+      term.appendChild(sepEl(s));
+      for (const L of stageLines(s)) {
+        if (!alive()) return;
+        const el = lineEl(L, 'cur');
+        if (L[0] === 'c' || L[0] === 'i') {
+          el.innerHTML = (L[0] === 'c' ? '<span class="ps">$</span> ' : '<span class="pi">&gt;</span> ') + '<span class="ty"></span>';
+          term.appendChild(el);
+          await typeInto($('.ty', el), L[1], 16);
+        } else { el.classList.add('pop'); term.appendChild(el); await sleep(260); }
+        term.scrollTop = term.scrollHeight;
+      }
+    } else {
+      termUpTo = s;
+      term.innerHTML = '';
+      for (let j = 0; j <= s; j++) { term.appendChild(sepEl(j)); stageLines(j).forEach(L => term.appendChild(lineEl(L, j === s ? 'cur' : 'old'))); }
+      term.scrollTop = term.scrollHeight;
+    }
+  }
+  function setStep(nk) {
+    const st = w.stages[s];
+    k = Math.max(0, Math.min(st.steps.length - 1, nk));
+    $$('#wSteps .step').forEach((li, j) => {
+      li.className = 'step ' + (j < k ? 'done' : j === k ? 'cur' : 'todo');
+      $('.st-n', li).textContent = j < k ? '✓' : String(j + 1);
+    });
+    $('#wPos').textContent = '階段 ' + (s + 1) + '/' + N + ' · 步驟 ' + (k + 1) + '/' + st.steps.length;
+    $('#wPrev').disabled = s === 0 && k === 0;
+    const lastStep = k === st.steps.length - 1;
+    $('#wNext').textContent = finished ? '從頭再看一次' : lastStep ? (s === N - 1 ? '完成整條流程 ✓' : '進入下一階段 →') : '下一步 →';
+  }
+  async function go(ns, nk, animate) {
+    const my = ++run, alive = () => my === run;
+    clearTimeout(playT);
+    if (finished) { finished = false; $('#wfDone').innerHTML = ''; }
+    if (ns !== s) {
+      const forward = ns === s + 1;
+      s = ns;
+      renderStage(); moveToken();
+      renderShelf(s, forward ? s - 1 : -1);
+      setStep(nk);
+      await termShow(animate, alive);
+    } else setStep(nk);
+    if (!alive()) return;
+    if (playing) playT = setTimeout(() => { if (alive()) next(); }, reduced ? 300 : Math.min(6500, 2400 + w.stages[s].steps[k].detail.length * 28));
+  }
+  function finish() {
+    clearTimeout(playT); playing = false; $('#wPlay').textContent = '▶ 播放整條流程';
+    nodes.forEach(n => { n.classList.add('done'); n.classList.remove('cur'); });
+    fill.style.width = '100%';
+    $$('#wSteps .step').forEach(li => { li.className = 'step done'; $('.st-n', li).textContent = '✓'; });
+    renderShelf(N, N - 1);
+    finished = true;
+    const first = !wdone.has(w.id);
+    wdone.add(w.id); saveW();
+    $('#wfDone').innerHTML = '<div class="wf-done"><span><b>✓ 整條流程走完了！</b>　' + esc(w.name) + ' 的 ' + N + ' 個階段都看過一遍。</span>' + (nextW ? '<a class="btn primary" href="#' + nextW.id + '">下一個方法：' + esc(nextW.name) + ' →</a>' : '<a class="btn primary" href="#">回到方法論館</a>') + '</div>';
+    if (first) confetti($('#wfDone'));
+    $('#wNext').textContent = '從頭再看一次';
+  }
+  function next() {
+    if (finished) { termUpTo = -1; s = -1; term.innerHTML = ''; go(0, 0, true); return; }
+    const st = w.stages[s];
+    if (k < st.steps.length - 1) go(s, k + 1, false);
+    else if (s < N - 1) go(s + 1, 0, true);
+    else finish();
+  }
+  function prev() {
+    if (finished) { finished = false; $('#wfDone').innerHTML = ''; renderStage(); renderShelf(s, -1); setStep(k); return; }
+    if (k > 0) go(s, k - 1, false);
+    else if (s > 0) go(s - 1, w.stages[s - 1].steps.length - 1, false);
+  }
+  function stopPlay() { playing = false; clearTimeout(playT); $('#wPlay').textContent = '▶ 播放整條流程'; }
+  $('#wNext').addEventListener('click', () => { stopPlay(); next(); });
+  $('#wPrev').addEventListener('click', () => { stopPlay(); prev(); });
+  $('#wPlay').addEventListener('click', () => {
+    if (playing) { stopPlay(); return; }
+    playing = true; $('#wPlay').textContent = '⏸ 暫停';
+    next();
+  });
+  $('#rail').addEventListener('click', e => { const b = e.target.closest('.rnode'); if (b) { stopPlay(); const j = +b.dataset.s; go(j, 0, j === s + 1); } });
+  $('#wSteps').addEventListener('click', e => { const b = e.target.closest('.st-h'); if (b) { stopPlay(); go(s, +b.dataset.k, false); } });
+  const onResize = () => { if (s >= 0) moveToken(); };
+  addEventListener('resize', onResize);
+  keyNav = { next: () => $('#wNext').click(), prev: () => { if (!$('#wPrev').disabled) $('#wPrev').click(); } };
+  cleanup = () => { run++; clearTimeout(playT); playing = false; removeEventListener('resize', onResize); keyNav = null; };
+  go(0, 0, true);
+}
+
+/* ---------- router ---------- */
+function route() {
+  if (cleanup) { cleanup(); cleanup = null; }
+  const h = location.hash.slice(1);
+  if (byId[h]) viewWf(h); else viewHome();
+  if (!firstRoute) {
+    if (hero.hidden) {
+      const top = $('#app').getBoundingClientRect().top + window.scrollY - 70;
+      window.scrollTo({ top: Math.max(0, top), behavior: reduced ? 'auto' : 'smooth' });
+    } else window.scrollTo({ top: 0, behavior: 'auto' });
+  }
+  firstRoute = false;
+}
+document.addEventListener('keydown', e => {
+  if (!keyNav || (e.target.closest && e.target.closest('input, textarea, select')) || e.altKey || e.metaKey || e.ctrlKey) return;
+  if (e.key === 'ArrowRight') { e.preventDefault(); keyNav.next(); }
+  else if (e.key === 'ArrowLeft') { e.preventDefault(); keyNav.prev(); }
+});
+addEventListener('hashchange', route);
+route();
+})();
+</script>
+</body>
+</html>

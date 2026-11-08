@@ -309,6 +309,7 @@ body.m-demos{--mod:var(--purple);--mod-soft:var(--purple-soft);--mod-2:var(--blu
     <a class="brand" href="index.html" title="回到學院首頁"><span class="brand-mark">CC</span><span class="brand-text">互動學院</span></a>
     <span class="crumb">› 功能演示館</span>
     <nav class="chapters" id="chapterNav" aria-label="網站">
+      <a href="workflows.html">方法論館</a>
       <a href="tips.html">心法集</a>
       <a href="memory.html">01 Memory</a>
       <a href="agent-teams.html">02 Agent Teams</a>
@@ -1001,7 +1002,7 @@ async function go(i, animate) {
   $('#dCount').textContent = cur.name + ' · ' + (si + 1) + '/' + cur.steps.length;
   prevBtn.disabled = si === 0;
   nextBtn.textContent = last ? '完成 ✓' : '下一步 →';
-  if (animate && si === termUpTo + 1) { termUpTo = si; await termAppend(st.term || [], alive); }
+  if (animate && si === termUpTo + 1) { termUpTo = si; if (si > 0) termRebuild(si - 1); else term.innerHTML = ''; await termAppend(st.term || [], alive); }
   else { termUpTo = si; termRebuild(si); }
   if (!alive()) return;
   if (animate) for (const f of (st.flow || [])) { await packet(f, alive); if (!alive()) return; }

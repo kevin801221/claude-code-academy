@@ -279,7 +279,12 @@ footer li{margin:4px 0}
 .term-card a{font-size:12.5px;font-weight:700;color:var(--c);text-decoration:none}
 .gl-count{font-size:13px;color:var(--muted)}
 
-.halls{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.halls{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:18px}
+.wf-art::before{content:"";position:absolute;left:14%;right:14%;top:74px;height:3px;background:var(--c);opacity:.35;border-radius:3px}
+.wf-art i{position:absolute;top:60px;width:30px;height:30px;margin-left:-15px;border-radius:50%;background:var(--surface);border:3px solid var(--c)}
+.wf-art i:nth-child(1){left:14%}.wf-art i:nth-child(2){left:38%}.wf-art i:nth-child(3){left:62%}.wf-art i:nth-child(4){left:86%}
+.wf-art b{position:absolute;top:36px;left:14%;width:0;height:0;margin-left:-8px;border-left:8px solid transparent;border-right:8px solid transparent;border-top:11px solid var(--c);animation:hop 4s steps(1) infinite}
+@keyframes hop{0%{left:14%}25%{left:38%}50%{left:62%}75%{left:86%}}
 .hall{display:flex;flex-direction:column;border-radius:22px;border:1px solid var(--border);background:var(--surface);color:var(--text);text-decoration:none;overflow:hidden;box-shadow:var(--shadow);transition:transform .25s,box-shadow .25s,border-color .25s}
 .hall:hover{transform:translateY(-5px);border-color:var(--c);box-shadow:0 18px 40px rgba(0,0,0,.12)}
 .hall-art{height:150px;position:relative;background:linear-gradient(135deg,var(--c-soft),var(--surface-2));overflow:hidden}
@@ -330,6 +335,7 @@ footer li{margin:4px 0}
       <a href="goal.html">03 /goal</a>
       <a href="tips.html">心法集</a>
       <a href="demos.html">功能演示館</a>
+      <a href="workflows.html">方法論館</a>
     </nav>
     <button class="icon-btn" id="themeBtn" aria-label="切換深色／淺色"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="8"/><path d="M12 4a8 8 0 0 0 0 16z" fill="currentColor"/></svg></button>
   </div>
@@ -341,11 +347,12 @@ footer li{margin:4px 0}
     <div>
       <span class="eyebrow">claude-code-zh-tw 最佳實踐 · 動畫互動教材</span>
       <h1>Claude Code<br><span class="grad">互動學院</span></h1>
-      <p class="lead">三個可以動手玩的模組，加上一座收錄 124 條實戰技巧的心法集，和 9 個核心功能的逐步動畫演示館。每個地方都有動畫、互動練習和進度記錄。</p>
+      <p class="lead">三個可以動手玩的模組，加上一座收錄 124 條實戰技巧的心法集，、9 個核心功能的逐步動畫演示館，和 6 套社群工作流的方法論館。每個地方都有動畫、互動練習和進度記錄。</p>
       <div class="hero-cta">
         <a class="btn primary" href="#modules">選擇模組 ↓</a>
         <a class="btn" href="tips.html">進入心法集</a>
         <a class="btn" href="demos.html">功能演示館</a>
+        <a class="btn" href="workflows.html">方法論館</a>
       </div>
       <div class="overall">
         <div class="mini-ring"><svg viewBox="0 0 46 46"><circle class="bg" cx="23" cy="23" r="18"/><circle class="fg" id="ovFg" cx="23" cy="23" r="18"/></svg></div>
@@ -370,15 +377,19 @@ footer li{margin:4px 0}
 
 <section id="halls" class="chapter">
   <div class="wrap">
-    <header class="ch-head reveal"><span class="ch-num">◆</span><div><h2>心法集與功能演示館</h2><p>想快速吸收實戰經驗，進心法集；想看懂功能怎麼運作，進功能演示館。</p></div></header>
+    <header class="ch-head reveal"><span class="ch-num">◆</span><div><h2>心法集・功能演示館・方法論館</h2><p>想吸收實戰經驗，進心法集；想看懂單一功能怎麼運作，進功能演示館；想學一整套從需求到交付的流程，進方法論館。</p></div></header>
     <div class="halls reveal">
       <a class="hall c-accent" href="tips.html">
         <div class="hall-art tips-art" aria-hidden="true"><span></span><span></span><span></span></div>
-        <div class="hall-body"><span class="mod-num">心法集</span><h3>124 條實戰心法，一步一步照著做</h3><p>整理自 claude-code-zh-tw：Boris、Thariq 公開分享的技巧，加上 Karpathy 等人的訪談心法與深度分析。每條心法都拆成可以照做的步驟。</p><ul class="mod-tags"><li>13 份來源</li><li>494 個步驟</li><li>主題篩選與搜尋</li><li>學習進度</li></ul><span class="btn primary">進入心法集 →</span></div>
+        <div class="hall-body"><span class="mod-num">心法集</span><h3>124 條實戰心法，一步一步照著做</h3><p>整理自 claude-code-zh-tw：Boris、Thariq 公開分享的技巧，加上 Karpathy 等人的訪談心法與深度分析。每條心法都拆成步驟，每一步都有終端機模擬畫面。</p><ul class="mod-tags"><li>13 份來源</li><li>494 個步驟</li><li>主題篩選與搜尋</li><li>學習進度</li></ul><span class="btn primary">進入心法集 →</span></div>
       </a>
       <a class="hall c-purple" href="demos.html">
         <div class="hall-art demo-art" aria-hidden="true"><i></i><i></i><i></i><b></b></div>
         <div class="hall-body"><span class="mod-num">功能演示館</span><h3>9 個核心功能的逐步動畫</h3><p>每個功能一個實際情境：左邊看終端機指令，右邊看資料怎麼流動，下方有設定檔與說明。內容依 Claude Code 官方文件整理。</p><ul class="mod-tags"><li>Hooks</li><li>Plugins</li><li>Skills</li><li>Subagents</li><li>MCP</li><li>權限模式</li><li>Checkpoints</li><li>/goal</li><li>/loop</li></ul><span class="btn primary">進入功能演示館 →</span></div>
+      </a>
+      <a class="hall c-blue" href="workflows.html">
+        <div class="hall-art wf-art" aria-hidden="true"><i></i><i></i><i></i><i></i><b></b></div>
+        <div class="hall-body"><span class="mod-num">方法論館</span><h3>6 套社群工作流，整條流程拆給你看</h3><p>Matt Pocock 的 skills、Superpowers、Compound Engineering、GSD、Spec Kit、BMAD：從需求、規劃、實作、審查到回顧，每個階段都有終端機模擬與產出物。</p><ul class="mod-tags"><li>42 個階段</li><li>225 個步驟</li><li>流程鏈動畫</li><li>跨方法比較表</li></ul><span class="btn primary">進入方法論館 →</span></div>
       </a>
     </div>
   </div>
@@ -439,6 +450,7 @@ footer li{margin:4px 0}
           <button class="chip-btn c-blue" data-m="teams">Agent Teams</button>
           <button class="chip-btn c-green" data-m="goal">/goal</button>
           <button class="chip-btn c-purple" data-m="demos">功能演示館</button>
+          <button class="chip-btn c-blue" data-m="wf">方法論館</button>
         </div>
         <span class="gl-count" id="glCount"></span>
       </div>
@@ -654,7 +666,7 @@ else if (done > 0) $('#ovSub').textContent = '繼續加油，還有 ' + (3 - don
 requestAnimationFrame(() => requestAnimationFrame(() => { fg.style.strokeDashoffset = C * (1 - done / 3); }));
 
 /* glossary */
-const MOD = { memory: ['Memory', 'c-accent', 'memory.html'], teams: ['Agent Teams', 'c-blue', 'agent-teams.html'], goal: ['/goal', 'c-green', 'goal.html'], demos: ['功能演示館', 'c-purple', 'demos.html'] };
+const MOD = { memory: ['Memory', 'c-accent', 'memory.html'], teams: ['Agent Teams', 'c-blue', 'agent-teams.html'], goal: ['/goal', 'c-green', 'goal.html'], demos: ['功能演示館', 'c-purple', 'demos.html'], wf: ['方法論館', 'c-blue', 'workflows.html'] };
 const TERMS = [
   { t: 'CLAUDE.md', m: 'memory', d: '寫給 Claude 的 Markdown 指令檔，提供持久脈絡。結構良好的 CLAUDE.md 是改善 Claude Code 表現最有效的單一手段。' },
   { t: '祖先載入', m: 'memory', d: '啟動時從當前工作目錄往上走到檔案系統根目錄，立即載入沿途找到的每一個 CLAUDE.md。' },
@@ -682,7 +694,13 @@ const TERMS = [
   { t: 'Skills（SKILL.md）', m: 'demos', h: 'demos.html#skills', d: '把做法寫進 SKILL.md，Claude 在相關時自動使用，也能用 /skill-name 叫用；描述常駐脈絡，內容用到才載入。' },
   { t: 'MCP', m: 'demos', h: 'demos.html#mcp', d: 'Model Context Protocol：讓 Claude Code 連接外部工具、資料庫與 API 的開放標準，用 claude mcp add 新增伺服器。' },
   { t: 'Plan 模式', m: 'demos', h: 'demos.html#permissions', d: '只讀檔與探索、先擬計畫，核准後才開始修改程式碼的權限模式。' },
-  { t: 'Checkpoints（/rewind）', m: 'demos', h: 'demos.html#checkpoints', d: '每次送出 prompt 前自動建立的檢查點；用 /rewind 或連按兩下 Esc 倒回程式碼或對話。' }
+  { t: 'Checkpoints（/rewind）', m: 'demos', h: 'demos.html#checkpoints', d: '每次送出 prompt 前自動建立的檢查點；用 /rewind 或連按兩下 Esc 倒回程式碼或對話。' },
+  { t: "BMad Method", m: 'wf', h: "workflows.html#bmad", d: "敏捷式 AI 驅動開發方法：用專業代理人與工作流程，把點子或變更需求變成可運作的軟體，同時不放棄思考。" },
+  { t: "Compound Engineering", m: 'wf', h: "workflows.html#compound", d: "讓每一單位工程工作都比上一次更輕鬆的 AI 技能外掛。" },
+  { t: "GSD Core (Get Shit Done)", m: 'wf', h: "workflows.html#gsd", d: "用固定的階段循環加上全新 context 子代理，對抗 context rot 的規格驅動開發系統。" },
+  { t: "Matt Pocock's Skills (Skills For Real Engineers)", m: 'wf', h: "workflows.html#mattpocock", d: "把軟體工程基本功拆成小而可組合的技能，讓你保有 AI 開發的主導權。" },
+  { t: "Spec Kit", m: 'wf', h: "workflows.html#speckit", d: "讓 AI 程式代理依「規格 → 計畫 → 任務 → 實作」結構化流程開發的開源工具包。" },
+  { t: "Superpowers", m: 'wf', h: "workflows.html#superpowers", d: "讓 coding agent 自動遵循完整軟體開發流程的技能框架。" }
 ];
 let glM = 'all';
 function renderGl() {
@@ -690,7 +708,7 @@ function renderGl() {
   const list = TERMS.filter(x => (glM === 'all' || x.m === glM) && (!q || (x.t + ' ' + x.d).toLowerCase().replace(/&lt;/g, '<').replace(/&gt;/g, '>').includes(q)));
   $('#glGrid').innerHTML = list.length ? list.map((x, i) => {
     const M = MOD[x.m];
-    return '<div class="term-card ' + M[1] + '" style="--i:' + i + '"><h4>' + x.t + '</h4><p>' + x.d + '</p><a href="' + (x.h || M[2]) + '">→ ' + M[0] + (x.m === 'demos' ? '' : ' 模組') + '</a></div>';
+    return '<div class="term-card ' + M[1] + '" style="--i:' + i + '"><h4>' + x.t + '</h4><p>' + x.d + '</p><a href="' + (x.h || M[2]) + '">→ ' + M[0] + (x.m === 'demos' || x.m === 'wf' ? '' : ' 模組') + '</a></div>';
   }).join('') : '<div class="empty" style="grid-column:1/-1">找不到符合的名詞</div>';
   $('#glCount').textContent = list.length + ' 個名詞';
 }

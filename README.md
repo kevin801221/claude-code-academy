@@ -13,7 +13,8 @@
 | [`agent-teams.html`](agent-teams.html) | 模組 02：Agent Teams 實作，含子代理對照、Command → Agent → Skill 管線模擬、團隊協作動畫 |
 | [`goal.html`](goal.html) | 模組 03：`/goal` 實作，含迴圈動畫、目標模擬器、`/goal`／`/loop`／auto 模式比較、社群 prompt 技巧 |
 | [`demos.html`](demos.html) | 功能演示館：Hooks、Plugins、Skills、Subagents、MCP、權限模式、Checkpoints、`/goal`、`/loop` 共 9 個功能的逐步動畫 |
-| [`tips.html`](tips.html) | 心法集：13 份來源、124 條實戰心法、494 個步驟，可搜尋、依主題篩選、記錄學習進度 |
+| [`tips.html`](tips.html) | 心法集：13 份來源、124 條實戰心法、494 個步驟，每一步都有終端機／編輯器模擬畫面，可搜尋、依主題篩選、記錄學習進度 |
+| [`workflows.html`](workflows.html) | 方法論館：Matt Pocock skills、Superpowers、Compound Engineering、GSD、Spec Kit、BMAD 六套工作流的流程鏈動畫、各階段終端機模擬與跨方法比較 |
 
 ## 使用方式
 
@@ -32,5 +33,6 @@
 - [kevin801221/claude-code-zh-tw](https://github.com/kevin801221/claude-code-zh-tw)：繁體中文版（MIT）
 - [shanraisshan/claude-code-best-practice](https://github.com/shanraisshan/claude-code-best-practice)：英文原作（MIT）
 - [Claude Code 官方文件](https://code.claude.com/docs)
+- 方法論館的各方法原始 repo：[mattpocock/skills](https://github.com/mattpocock/skills)、[obra/superpowers](https://github.com/obra/superpowers)、[EveryInc/compound-engineering-plugin](https://github.com/EveryInc/compound-engineering-plugin)、[open-gsd/gsd-core](https://github.com/open-gsd/gsd-core)、[github/spec-kit](https://github.com/github/spec-kit)、[bmad-code-org/BMAD-METHOD](https://github.com/bmad-code-org/BMAD-METHOD)
 
 本 repo 以 MIT 授權釋出，並保留上游作品的著作權與授權聲明，詳見 [`LICENSE`](LICENSE)。
