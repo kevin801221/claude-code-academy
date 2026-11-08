@@ -1,0 +1,808 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>參考手冊｜Kevin 的 Claude Code 互動學院</title><!--cc-meta-->
+<meta name="description" content="Claude Code 參考手冊：96 個斜線指令、70 個啟動旗標與環境變數、56 個 frontmatter 欄位，加上內建 Skills 與代理類型，可搜尋、一鍵複製。">
+<link rel="canonical" href="https://kevin801221.github.io/claude-code-academy/reference.html">
+<meta property="og:url" content="https://kevin801221.github.io/claude-code-academy/reference.html">
+<meta property="og:title" content="參考手冊｜Kevin 的 Claude Code 互動學院">
+<meta property="og:description" content="Claude Code 參考手冊：96 個斜線指令、70 個啟動旗標與環境變數、56 個 frontmatter 欄位，加上內建 Skills 與代理類型，可搜尋、一鍵複製。">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Kevin 的 Claude Code 互動學院">
+<meta property="og:locale" content="zh_TW">
+<meta property="og:image" content="https://kevin801221.github.io/claude-code-academy/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Kevin 的 Claude Code 互動學院">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://kevin801221.github.io/claude-code-academy/og.png">
+<meta name="theme-color" content="#c65f3c">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%23d9734e'/%3E%3Cstop offset='1' stop-color='%237c4ddb'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='64' height='64' rx='16' fill='url(%23g)'/%3E%3Ctext x='32' y='42' font-family='Arial,Helvetica,sans-serif' font-size='26' font-weight='800' fill='white' text-anchor='middle'%3ECC%3C/text%3E%3C/svg%3E">
+<!--/cc-meta-->
+<script>document.documentElement.classList.add('js');try{var t=localStorage.getItem('cm-theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
+<style>
+:root{
+  --sans:-apple-system,BlinkMacSystemFont,"PingFang TC","Noto Sans TC","Microsoft JhengHei","Segoe UI",sans-serif;
+  --mono:"SF Mono",ui-monospace,Menlo,Consolas,"Liberation Mono",monospace;
+  --bg:#faf7f2; --surface:#ffffff; --surface-2:#f3eee6; --text:#1d1915; --muted:#6b635a; --border:#e6ded2;
+  --accent:#c65f3c; --accent-2:#e8916a; --accent-soft:#fbe8de;
+  --green:#1f8456; --green-soft:#dbf1e5;
+  --blue:#2c6bc4; --blue-soft:#e0eafa;
+  --purple:#7646d6; --purple-soft:#ece4fc;
+  --red:#c2364a; --red-soft:#fbe0e4;
+  --yellow:#c9922a;
+  --term-bg:#1b1815; --term-text:#efe9e0; --term-muted:#9a9187;
+  --shadow:0 1px 2px rgba(40,30,20,.05),0 8px 24px rgba(40,30,20,.07);
+  --mod:var(--accent); --mod-soft:var(--accent-soft); --mod-2:var(--purple);
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#13110f; --surface:#1c1916; --surface-2:#262220; --text:#efe9e0; --muted:#a59c91; --border:#37302a;
+    --accent:#e8845c; --accent-2:#f2a581; --accent-soft:#3a251b;
+    --green:#4cc38a; --green-soft:#16302a; --blue:#6ea4f0; --blue-soft:#182a44;
+    --purple:#ab8cf6; --purple-soft:#2a2142; --red:#f06b7d; --red-soft:#3d1c22; --yellow:#e0b252;
+    --term-bg:#0c0b0a; --shadow:0 1px 2px rgba(0,0,0,.3),0 10px 30px rgba(0,0,0,.35);
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#13110f; --surface:#1c1916; --surface-2:#262220; --text:#efe9e0; --muted:#a59c91; --border:#37302a;
+  --accent:#e8845c; --accent-2:#f2a581; --accent-soft:#3a251b;
+  --green:#4cc38a; --green-soft:#16302a; --blue:#6ea4f0; --blue-soft:#182a44;
+  --purple:#ab8cf6; --purple-soft:#2a2142; --red:#f06b7d; --red-soft:#3d1c22; --yellow:#e0b252;
+  --term-bg:#0c0b0a; --shadow:0 1px 2px rgba(0,0,0,.3),0 10px 30px rgba(0,0,0,.35);
+  color-scheme:dark;
+}
+body.m-teams{--mod:var(--blue);--mod-soft:var(--blue-soft);--mod-2:var(--purple)}
+body.m-goal{--mod:var(--green);--mod-soft:var(--green-soft);--mod-2:var(--blue)}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:70px}
+body{margin:0;background:var(--bg);color:var(--text);font:16px/1.75 var(--sans);-webkit-font-smoothing:antialiased;transition:background .3s,color .3s}
+main{overflow-x:clip}
+.wrap{max-width:1100px;margin:0 auto;padding-left:max(20px,env(safe-area-inset-left,0px));padding-right:max(20px,env(safe-area-inset-right,0px))}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:55;background:var(--bg)}
+h1,h2,h3,h4{line-height:1.3;margin:0}
+p{margin:0 0 1em}
+a{color:var(--mod)}
+code{font-family:var(--mono);font-size:.86em;background:var(--surface-2);border:1px solid var(--border);padding:.05em .4em;border-radius:6px;word-break:break-word}
+.c-accent{--c:var(--accent);--c-soft:var(--accent-soft)}
+.c-green{--c:var(--green);--c-soft:var(--green-soft)}
+.c-blue{--c:var(--blue);--c-soft:var(--blue-soft)}
+.c-purple{--c:var(--purple);--c-soft:var(--purple-soft)}
+.c-red{--c:var(--red);--c-soft:var(--red-soft)}
+.hint{font-weight:400;font-size:12.5px;color:var(--muted)}
+.ic{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex:none}
+
+/* top bar */
+.progress{position:fixed;top:env(safe-area-inset-top,0px);left:0;right:0;height:3px;z-index:60;pointer-events:none}
+.progress span{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--mod),var(--mod-2))}
+.topbar{position:sticky;top:env(safe-area-inset-top,0px);z-index:50;background:color-mix(in srgb,var(--bg) 86%,transparent);backdrop-filter:saturate(1.4) blur(10px);-webkit-backdrop-filter:saturate(1.4) blur(10px);border-bottom:1px solid var(--border)}
+.topbar-inner{display:flex;align-items:center;gap:12px;height:58px}
+.brand{display:flex;align-items:center;gap:10px;font-weight:700;color:var(--text);text-decoration:none;white-space:nowrap;flex:none}
+.brand-mark{width:30px;height:30px;border-radius:9px;background:linear-gradient(135deg,var(--accent),var(--purple));color:#fff;display:grid;place-items:center;font:800 11.5px var(--mono)}
+.crumb{flex:none;color:var(--mod);font-weight:700;font-size:14px;white-space:nowrap}
+.chapters{display:flex;gap:2px;overflow-x:auto;scrollbar-width:none;flex:1;min-width:0}
+.chapters::-webkit-scrollbar{display:none}
+.chapters a{flex:none;padding:5px 11px;border-radius:999px;color:var(--muted);text-decoration:none;font-size:13.5px;white-space:nowrap;transition:color .2s,background .2s}
+.chapters a:hover{color:var(--text);background:var(--surface-2)}
+.chapters a.on{color:var(--mod);background:var(--mod-soft);font-weight:600}
+.icon-btn{flex:none;width:36px;height:36px;border-radius:10px;border:1px solid var(--border);background:var(--surface);color:var(--text);cursor:pointer;display:grid;place-items:center}
+.icon-btn svg{width:18px;height:18px}
+@media (max-width:760px){.brand-text{display:none}}
+
+/* buttons */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:10px 18px;border-radius:999px;border:1px solid var(--border);background:var(--surface);color:var(--text);font:600 15px/1.2 var(--sans);cursor:pointer;text-decoration:none;transition:transform .15s,background .2s,box-shadow .2s,border-color .2s}
+.btn:hover:not(:disabled){transform:translateY(-1px);box-shadow:var(--shadow)}
+.btn.primary{background:var(--mod);border-color:var(--mod);color:#fff}
+.btn.small{padding:6px 13px;font-size:13px}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+button:focus-visible,.btn:focus-visible,[role="button"]:focus-visible,a:focus-visible,input:focus-visible{outline:2px solid var(--mod);outline-offset:2px}
+
+/* hero */
+.hero{padding:68px 0 64px;position:relative}
+.hero::before{content:"";position:absolute;inset:0;background-image:radial-gradient(var(--border) 1.2px,transparent 1.2px);background-size:22px 22px;-webkit-mask-image:radial-gradient(ellipse at 72% 40%,#000 15%,transparent 68%);mask-image:radial-gradient(ellipse at 72% 40%,#000 15%,transparent 68%);animation:drift 40s linear infinite;pointer-events:none}
+@keyframes drift{to{background-position:220px 110px}}
+.hero-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:48px;align-items:center;position:relative}
+.eyebrow{display:inline-block;font:700 12.5px var(--sans);letter-spacing:.06em;color:var(--mod);background:var(--mod-soft);padding:4px 12px;border-radius:999px;margin-bottom:18px}
+.hero h1{font-size:clamp(34px,5.6vw,60px);letter-spacing:-.02em;margin-bottom:18px}
+.grad{background:linear-gradient(90deg,var(--mod),var(--mod-2));-webkit-background-clip:text;background-clip:text;color:transparent}
+.lead{font-size:18px;color:var(--muted);max-width:32em}
+.hero-cta{display:flex;flex-wrap:wrap;gap:10px;margin:26px 0 22px}
+.meta{display:flex;flex-wrap:wrap;gap:8px 18px;font-size:13px;color:var(--muted)}
+.meta span{display:inline-flex;align-items:center;gap:6px}
+
+/* chapters */
+.chapter{padding:84px 0;border-top:1px solid var(--border)}
+.ch-head{display:flex;gap:18px;align-items:flex-start;margin-bottom:34px}
+.ch-num{font:800 14px var(--mono);color:var(--mod);background:var(--mod-soft);padding:6px 10px;border-radius:10px;flex:none;margin-top:5px}
+.ch-head h2{font-size:clamp(25px,3.4vw,36px);letter-spacing:-.01em}
+.ch-head p{margin:.45em 0 0;color:var(--muted);max-width:46em}
+.js .reveal{transition:transform .7s cubic-bezier(.2,.7,.2,1)}.js .reveal:not(.in){transform:translateY(14px)}
+
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:32px;align-items:start}
+.panel-card{background:var(--surface);border:1px solid var(--border);border-radius:18px;padding:22px;box-shadow:var(--shadow)}
+.panel-title{display:flex;justify-content:space-between;align-items:baseline;gap:4px 10px;flex-wrap:wrap;font-weight:700;font-size:14px;margin-bottom:10px}
+.sub-h{font-size:20px;margin:0 0 12px}
+.callout{display:flex;gap:12px;align-items:flex-start;padding:14px 18px;border-radius:14px;background:var(--c-soft,var(--mod-soft));border:1px solid var(--c,var(--mod));font-size:15px;margin-top:18px}
+.callout b{color:var(--c,var(--mod))}
+.callout a{color:var(--c,var(--mod));font-weight:700}
+.seg{display:inline-flex;flex-wrap:wrap;gap:4px;padding:4px;background:var(--surface-2);border-radius:12px;border:1px solid var(--border)}
+.seg button{border:0;background:transparent;color:var(--muted);font:600 14px var(--sans);padding:8px 14px;border-radius:9px;cursor:pointer;transition:.2s}
+.seg button.on{background:var(--surface);color:var(--mod);box-shadow:var(--shadow)}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip-btn{border:1px solid var(--border);background:var(--surface);color:var(--muted);font:600 13px var(--sans);padding:5px 12px;border-radius:999px;cursor:pointer;transition:.2s}
+.chip-btn.on{border-color:var(--c,var(--mod));color:var(--c,var(--mod));background:var(--c-soft,var(--mod-soft))}
+.empty{color:var(--muted);font-size:13px;border:1px dashed var(--border);border-radius:10px;padding:22px 12px;text-align:center}
+
+/* terminal */
+.term{background:var(--term-bg);border-radius:14px;overflow:hidden;font:13px/1.75 var(--mono);color:var(--term-text);min-width:0}
+.term-bar{display:flex;align-items:center;gap:7px;padding:10px 14px;background:rgba(255,255,255,.05)}
+.term-bar i{width:11px;height:11px;border-radius:50%;background:#ff5f57}
+.term-bar i:nth-child(2){background:#febc2e}.term-bar i:nth-child(3){background:#28c840}
+.term-bar span{margin-left:8px;color:var(--term-muted);font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.term-body{padding:14px 16px 16px}
+.tl{white-space:pre-wrap;word-break:break-word}
+.tl .ps{color:#f2a581}
+.tl.ok{color:#7ee2a8}.tl.warn{color:#f5c26b}.tl.muted{color:var(--term-muted)}.tl.info{color:#8ab8ff}.tl.bad{color:#ff8a98}.tl.hl{color:#d3b8ff}
+.caret{display:inline-block;width:8px;height:1.05em;background:var(--term-text);vertical-align:-2px;margin-left:1px;animation:blink 1s steps(1) infinite}
+.hero .term{box-shadow:0 24px 60px rgba(20,10,0,.28);transform:rotate(-.6deg);animation:float 7s ease-in-out infinite}
+.hero .term .term-body{min-height:260px;font-size:13.5px}
+
+/* code block */
+.code{border-radius:12px;overflow:hidden;background:var(--term-bg);color:var(--term-text);margin:12px 0}
+.code-bar{display:flex;justify-content:space-between;align-items:center;padding:6px 8px 6px 14px;background:rgba(255,255,255,.06);font:12px var(--mono);color:var(--term-muted)}
+.copy{border:1px solid rgba(255,255,255,.18);background:transparent;color:var(--term-text);font:600 12px var(--sans);padding:3px 10px;border-radius:7px;cursor:pointer}
+.copy:hover{background:rgba(255,255,255,.1)}
+.code pre{margin:0;padding:12px 16px 14px;font:13.5px/1.8 var(--mono);white-space:pre-wrap;word-break:break-word}
+.code .cm{color:var(--term-muted)}
+.code .ps{color:#f2a581}
+
+/* quiz */
+.quiz{max-width:780px;margin:0 auto;padding:26px}
+.q-anim{animation:slideIn .45s cubic-bezier(.2,.7,.2,1)}
+.q-top{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:14px;font-size:13.5px;color:var(--muted)}
+.q-dots{display:flex;gap:6px}
+.q-dots i{width:10px;height:10px;border-radius:50%;background:var(--border);transition:.3s}
+.q-dots i.ok{background:var(--green)}.q-dots i.no{background:var(--red)}
+.q-dots i.cur{outline:2px solid var(--mod);outline-offset:2px}
+.q-text{font-size:clamp(18px,2.2vw,21px);font-weight:700;margin:0 0 18px;line-height:1.55}
+.q-opts{display:flex;flex-direction:column;gap:10px}
+.q-opt{text-align:left;padding:12px 16px;border-radius:12px;border:1px solid var(--border);background:var(--bg);color:var(--text);font:15px/1.55 var(--sans);cursor:pointer;display:flex;gap:12px;align-items:center;transition:transform .2s,border-color .2s,background .2s}
+.q-opt .k{font:700 13px var(--mono);width:28px;height:28px;border-radius:8px;background:var(--surface-2);display:grid;place-items:center;flex:none;transition:.2s}
+.q-opt:hover:not(:disabled){border-color:var(--mod);transform:translateX(4px)}
+.q-opt.correct{border-color:var(--green);background:var(--green-soft)}
+.q-opt.correct .k{background:var(--green);color:#fff}
+.q-opt.wrong{border-color:var(--red);background:var(--red-soft);animation:shake .4s}
+.q-opt.wrong .k{background:var(--red);color:#fff}
+.q-opt:disabled{cursor:default}
+.q-exp{margin-top:14px;padding:12px 16px;border-radius:12px;background:var(--surface-2);font-size:14.5px;display:none}
+.q-exp.show{display:block;animation:popIn .35s}
+.q-next{margin-top:16px}
+.q-result{text-align:center;padding:10px 0}
+.ring{width:150px;height:150px;margin:0 auto 10px;position:relative}
+.ring svg{width:100%;height:100%;transform:rotate(-90deg)}
+.ring circle{fill:none;stroke-width:12}
+.ring .bg{stroke:var(--surface-2)}
+.ring .fg{stroke:var(--mod);stroke-linecap:round;transition:stroke-dashoffset 1.3s cubic-bezier(.2,.7,.2,1)}
+.ring .val{position:absolute;inset:0;display:grid;place-items:center;font:800 32px var(--sans)}
+.q-result h3{font-size:22px;margin:8px 0}
+.q-result p{color:var(--muted)}
+.q-result .row-btns{display:flex;flex-wrap:wrap;gap:10px;justify-content:center}
+
+/* module nav */
+.mod-nav{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:8px}
+.mod-nav a{display:block;padding:18px 20px;border-radius:16px;border:1px solid var(--border);background:var(--surface);color:var(--text);text-decoration:none;transition:.2s}
+.mod-nav a:hover{border-color:var(--mod);transform:translateY(-2px);box-shadow:var(--shadow)}
+.mod-nav small{display:block;color:var(--muted);font-size:13px}
+.mod-nav b{font-size:17px}
+.mod-nav .next{text-align:right}
+
+footer{padding:56px 0 70px;border-top:1px solid var(--border);color:var(--muted);font-size:14.5px}
+footer h3{color:var(--text);font-size:17px;margin:0 0 10px}
+footer ul{padding-left:20px;margin:0 0 18px}
+footer li{margin:4px 0}
+.confetti{position:fixed;width:8px;height:12px;border-radius:2px;pointer-events:none;z-index:100}
+
+@keyframes popIn{from{opacity:0;transform:translateY(5px)}}
+@keyframes blink{50%{opacity:0}}
+@keyframes bump{40%{transform:scale(1.13)}}
+@keyframes shake{20%{transform:translateX(-6px)}40%{transform:translateX(6px)}60%{transform:translateX(-4px)}80%{transform:translateX(3px)}}
+@keyframes chipIn{from{opacity:0;transform:scale(.85)}}
+@keyframes slideIn{from{opacity:0;transform:translateX(18px)}}
+@keyframes float{50%{transform:rotate(-.6deg) translateY(-8px)}}
+@keyframes pulse{50%{box-shadow:0 0 0 6px var(--c-soft,var(--mod-soft))}}
+
+@media (max-width:900px){
+  .hero-grid,.grid-2{grid-template-columns:1fr}
+  .hero-grid{gap:36px}
+}
+@media (max-width:600px){
+  .wrap{padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+  .chapter{padding:60px 0}
+  .hero{padding:44px 0 48px}
+  .panel-card,.quiz{padding:16px}
+  .ch-head{gap:12px}
+  .mod-nav{grid-template-columns:1fr}
+  .crumb{font-size:13px}
+}
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}
+}
+
+
+
+body.m-ref{--mod:var(--purple);--mod-soft:var(--purple-soft);--mod-2:var(--blue)}
+.hero.hero-sm{padding:48px 0 26px}
+.hero-sm h1{font-size:clamp(30px,4.6vw,50px)}
+.hero-sm .lead{max-width:44em}
+.chapter.tight{padding-top:24px;border-top:0}
+.rtabs{margin-bottom:14px}
+.rtabs button .n{font:600 11.5px var(--mono);opacity:.7;margin-left:6px}
+.rtools{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:0 0 10px}
+.search{flex:1;min-width:220px;display:flex;align-items:center;gap:8px;padding:10px 14px;border-radius:12px;border:1px solid var(--border);background:var(--surface);color:var(--muted)}
+.search:focus-within{border-color:var(--mod)}
+.search input{flex:1;min-width:0;border:0;background:transparent;color:var(--text);font:15px var(--sans);outline:none}
+.rcount{font-size:13px;color:var(--muted)}
+.rchips{margin:0 0 6px}
+.rgrp{margin:22px 0 4px}
+.rgrp h2{font-size:18px;margin:0 0 10px;display:flex;gap:8px;align-items:baseline;flex-wrap:wrap}
+.rgrp h2 span{font:600 12px var(--mono);color:var(--muted)}
+.rlist{display:grid;grid-template-columns:repeat(auto-fill,minmax(310px,1fr));gap:10px}
+.rrow{position:relative;padding:12px 64px 12px 14px;border-radius:12px;border:1px solid var(--border);background:var(--surface);min-width:0;scroll-margin-top:90px}
+.rrow.flash,.rt tr.flash td{animation:rflash 2s ease}
+@keyframes rflash{0%,50%{background:var(--mod-soft)}}
+.rname{font:700 14px var(--mono);color:var(--mod);word-break:break-word}
+.rargs{font:12.5px var(--mono);color:var(--muted);margin-left:6px;word-break:break-word}
+.rrow p{margin:6px 0 0;font-size:14px}
+.rrow .rex{display:block;margin-top:6px;font:12.5px var(--mono);color:var(--muted);word-break:break-word}
+.cp{position:absolute;top:10px;right:10px;border:1px solid var(--border);background:var(--surface-2);color:var(--muted);font:600 11.5px var(--sans);padding:3px 9px;border-radius:7px;cursor:pointer}
+.cp:hover{color:var(--text);border-color:var(--mod)}
+.rtable-wrap{overflow-x:auto;border:1px solid var(--border);border-radius:14px;background:var(--surface)}
+table.rt{border-collapse:collapse;width:100%;min-width:760px;font-size:13.5px}
+.rt th,.rt td{padding:10px 12px;border-bottom:1px solid var(--border);text-align:left;vertical-align:top}
+.rt th{background:var(--surface-2);font-size:12.5px;color:var(--muted);white-space:nowrap}
+.rt tr:last-child td{border-bottom:0}
+.rt td:first-child{white-space:nowrap}
+.rt tr{scroll-margin-top:90px}
+.rt code{font-size:12.5px}
+.req{font:700 11px var(--sans);padding:1px 7px;border-radius:999px;background:var(--red-soft);color:var(--red);white-space:nowrap}
+.opt{font:600 11px var(--sans);color:var(--muted);white-space:nowrap}
+.bgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:10px}
+.src-note{font-size:13px;color:var(--muted);margin:14px 0 0}
+.empty{margin-top:16px}
+.ctabs{margin:6px 0 4px}
+/*cc-site-css*/
+.ccp-ov{position:fixed;inset:0;z-index:300;background:rgba(12,10,8,.55);-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px);display:flex;justify-content:center;align-items:flex-start;padding:calc(env(safe-area-inset-top,0px) + 9vh) max(16px,env(safe-area-inset-right,0px)) 16px max(16px,env(safe-area-inset-left,0px))}
+.ccp-ov[hidden]{display:none}
+.ccp{width:min(680px,100%);max-height:min(74vh,660px);display:flex;flex-direction:column;border-radius:18px;background:var(--surface);color:var(--text);border:1px solid var(--border);box-shadow:0 30px 80px rgba(0,0,0,.35);overflow:hidden;animation:ccpIn .22s cubic-bezier(.2,.8,.3,1)}
+@keyframes ccpIn{from{opacity:0;transform:translateY(-10px) scale(.98)}}
+.ccp-top{display:flex;align-items:center;gap:10px;padding:14px 16px;border-bottom:1px solid var(--border);color:var(--muted)}
+.ccp-top svg{width:18px;height:18px;flex:none}
+.ccp-top input{flex:1;min-width:0;border:0;background:transparent;color:var(--text);font:16px var(--sans);outline:none}
+.ccp-top input::-webkit-search-cancel-button{display:none}
+.ccp kbd{font:600 11px var(--mono);padding:2px 6px;border-radius:6px;border:1px solid var(--border);color:var(--muted);background:var(--surface-2);white-space:nowrap}
+.ccp-list{overflow-y:auto;padding:6px 8px 10px;overscroll-behavior:contain}
+.ccp-g{font:700 11.5px var(--sans);color:var(--muted);letter-spacing:.06em;padding:12px 10px 4px}
+.ccp-i{display:flex;gap:10px;align-items:center;padding:8px 10px;border-radius:10px;color:var(--text);text-decoration:none}
+.ccp-i.on{background:var(--surface-2);box-shadow:inset 3px 0 0 var(--c,var(--accent))}
+.ccp-ic{width:30px;height:30px;border-radius:9px;display:grid;place-items:center;font:800 12px var(--sans);background:var(--c-soft,var(--surface-2));color:var(--c,var(--muted));flex:none}
+.ccp-i .tx{min-width:0;flex:1}
+.ccp-i b{display:block;font-size:14.5px;font-weight:600;line-height:1.35}
+.ccp-i small{display:block;font-size:12px;color:var(--muted);line-height:1.45;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ccp-i mark{background:color-mix(in srgb,var(--c,var(--accent)) 28%,transparent);color:inherit;border-radius:3px;padding:0 1px}
+.ccp-empty{padding:30px 12px;text-align:center;color:var(--muted);font-size:14px}
+.ccp-foot{display:flex;gap:14px;flex-wrap:wrap;padding:9px 16px;border-top:1px solid var(--border);font-size:12px;color:var(--muted)}
+.cc-credit{font-size:13px;color:var(--muted);border-top:1px solid var(--border);margin:22px 0 0;padding-top:16px}
+.cc-credit a{color:inherit}
+.cc-foot-nav{display:flex;flex-wrap:wrap;gap:6px 16px;margin:24px 0 0;padding-top:18px;border-top:1px solid var(--border);font-size:14px}
+.cc-foot-nav a{color:var(--muted);text-decoration:none;font-weight:600}
+.cc-foot-nav a:hover{color:var(--text);text-decoration:underline}
+.cc-foot-nav a[aria-current="page"]{color:var(--text)}
+.cc-foot-nav + .cc-credit{border-top:0;margin-top:10px;padding-top:0}
+@media (max-width:600px){.ccp-foot .ccp-k{display:none}.ccp-ov{padding-top:calc(env(safe-area-inset-top,0px) + 12px)}.ccp{max-height:calc(100vh - 40px)}}
+/* a11y: skip link */
+.skip{position:fixed;left:max(12px,env(safe-area-inset-left,0px));top:-80px;z-index:400;padding:10px 16px;border-radius:10px;background:var(--text);color:var(--bg);font:700 14px var(--sans);text-decoration:none;box-shadow:0 10px 30px rgba(0,0,0,.25);transition:top .2s}
+.skip:focus{top:calc(env(safe-area-inset-top,0px) + 10px);outline:2px solid var(--accent);outline-offset:2px}
+main:focus{outline:none}
+/* a11y: light-mode contrast (WCAG AA 4.5:1 for text on bg, soft tints and white) */
+:root{--accent:#a64f32;--green:#1c784e;--blue:#2a66bc;--red:#ba3347}
+/* a11y: dark mode uses dark text on light-colored fills */
+@media (prefers-color-scheme: dark){
+:root:not([data-theme="light"]) :is(.avatar,.brand-mark,.btn.primary,.chip-tag,.cwd,.cwd-badge,.dots button.on,.ghost,.lv-tag,.mission .box,.msg.you,.node .bdg,.pick-row .opts button.right,.q-opt.correct .k,.q-opt.wrong .k,.read-btn:not(:disabled):hover,.rnode.done .rn-n,.sg-head .phase,.sn.on span,.sn.seen span,.step.cur .st-n,.step.done .st-n,.stop i,.task .tb,.tcard.learned .tn){color:#16120f}
+}
+:root[data-theme="dark"] :is(.avatar,.brand-mark,.btn.primary,.chip-tag,.cwd,.cwd-badge,.dots button.on,.ghost,.lv-tag,.mission .box,.msg.you,.node .bdg,.pick-row .opts button.right,.q-opt.correct .k,.q-opt.wrong .k,.read-btn:not(:disabled):hover,.rnode.done .rn-n,.sg-head .phase,.sn.on span,.sn.seen span,.step.cur .st-n,.step.done .st-n,.stop i,.task .tb,.tcard.learned .tn){color:#16120f}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .node.blk::after,:root:not([data-theme="light"]) .node.okk::after,:root:not([data-theme="light"]) .steps-mini li::before{color:#16120f}}
+:root[data-theme="dark"] .node.blk::after,:root[data-theme="dark"] .node.okk::after,:root[data-theme="dark"] .steps-mini li::before{color:#16120f}
+/*/cc-site-css*/</style>
+</head>
+<body class="m-ref">
+<a class="skip" href="#main">跳到主要內容</a>
+<div class="progress"><span id="progressBar"></span></div>
+<header class="topbar">
+  <div class="wrap topbar-inner">
+    <a class="brand" href="index.html" title="回到學院首頁"><span class="brand-mark">CC</span><span class="brand-text">Kevin 的互動學院</span></a>
+    <span class="crumb">› 參考手冊</span>
+    <nav class="chapters" id="chapterNav" aria-label="分類">
+      <a href="#commands">斜線指令</a>
+      <a href="#flags">啟動旗標</a>
+      <a href="#fields">Frontmatter</a>
+      <a href="#builtins">內建 Skills 與代理</a>
+    </nav>
+    <button class="icon-btn" id="ccSearchBtn" aria-label="搜尋全站（⌘K）" title="搜尋全站（⌘K）"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg></button>
+    <button class="icon-btn" id="themeBtn" aria-label="切換深色／淺色"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="8"/><path d="M12 4a8 8 0 0 0 0 16z" fill="currentColor"/></svg></button>
+  </div>
+</header>
+
+<main id="main" tabindex="-1">
+<section id="hero" class="hero hero-sm">
+  <div class="wrap">
+    <span class="eyebrow">參考手冊 · 隨時查</span>
+    <h1>Claude Code<br><span class="grad">參考手冊</span></h1>
+    <p class="lead">斜線指令、啟動旗標、frontmatter 欄位、內建 Skills 與代理類型，一頁查完。可以搜尋、篩選、一鍵複製；任何頁面按 ⌘K 也搜得到這裡的每一筆。</p>
+    <div class="meta" id="refMeta"></div>
+  </div>
+</section>
+
+<section id="ref" class="chapter tight">
+  <div class="wrap">
+    <div class="seg rtabs" id="rtabs" role="tablist" aria-label="參考分類"></div>
+    <div class="rtools"><label class="search"><svg class="ic" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg><input id="rq" type="search" placeholder="搜尋名稱或說明，例如 compact、worktree、model" aria-label="搜尋參考手冊"></label><span class="rcount" id="rcount" aria-live="polite"></span></div>
+    <div class="chips rchips" id="rchips"></div>
+    <div id="rbody"></div>
+    <p class="src-note" id="rsrc"></p>
+  </div>
+</section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <h3>資料來源</h3>
+    <ul>
+      <li><a href="https://github.com/kevin801221/claude-code-zh-tw/blob/main/best-practice/claude-commands.md" target="_blank" rel="noopener">best-practice/claude-commands.md</a>（斜線指令、command frontmatter）</li>
+      <li><a href="https://github.com/kevin801221/claude-code-zh-tw/blob/main/best-practice/claude-cli-startup-flags.md" target="_blank" rel="noopener">best-practice/claude-cli-startup-flags.md</a>（啟動旗標、子命令、環境變數）</li>
+      <li><a href="https://github.com/kevin801221/claude-code-zh-tw/blob/main/best-practice/claude-skills.md" target="_blank" rel="noopener">best-practice/claude-skills.md</a>、<a href="https://github.com/kevin801221/claude-code-zh-tw/blob/main/best-practice/claude-subagents.md" target="_blank" rel="noopener">claude-subagents.md</a>（frontmatter、內建 Skills 與代理）</li>
+      <li><a href="https://code.claude.com/docs/en/commands" target="_blank" rel="noopener">Claude Code 官方文件：Commands</a>、<a href="https://code.claude.com/docs/en/cli-reference" target="_blank" rel="noopener">CLI reference</a></li>
+    </ul>
+    <p>Claude Code 更新很快，每一區都標註了來源的整理日期；若與官方文件不同，以官方文件為準。</p>
+  </div>
+<!--cc-credit--><div class="wrap"><nav class="cc-foot-nav" aria-label="全站頁面"><a href="index.html">首頁</a><a href="start.html">新手教學</a><a href="memory.html">Memory</a><a href="agent-teams.html">Agent Teams</a><a href="goal.html">/goal</a><a href="tips.html">心法集</a><a href="demos.html">功能演示館</a><a href="workflows.html">方法論館</a><a href="reference.html" aria-current="page">參考手冊</a><a href="exam.html">結業測驗</a></nav><p class="cc-credit">Kevin 的 Claude Code 互動學院 · <a href="https://github.com/kevin801221/claude-code-academy" target="_blank" rel="noopener">GitHub 原始碼</a> · 任何頁面按 ⌘K（或 Ctrl+K）搜尋全站</p></div><!--/cc-credit--></footer>
+
+<script>
+(() => {
+'use strict';
+const $ = (s, r = document) => r.querySelector(s);
+const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
+const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+const sleep = ms => new Promise(r => setTimeout(r, reduced ? Math.min(ms, 40) : ms));
+const restart = (el, cls) => { el.classList.remove(cls); void el.offsetWidth; el.classList.add(cls); };
+const root = document.documentElement;
+
+/* theme */
+const tb = $('#themeBtn');
+if (tb) tb.addEventListener('click', () => {
+  const cur = root.dataset.theme || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+  const next = cur === 'dark' ? 'light' : 'dark';
+  root.dataset.theme = next;
+  try { localStorage.setItem('cm-theme', next); } catch (e) {}
+});
+
+/* scroll progress */
+const bar = $('#progressBar');
+const onScroll = () => {
+  if (!bar) return;
+  const h = document.documentElement;
+  bar.style.width = (h.scrollTop / Math.max(1, h.scrollHeight - h.clientHeight) * 100).toFixed(2) + '%';
+};
+addEventListener('scroll', onScroll, { passive: true }); onScroll();
+
+/* chapter nav highlight */
+const nav = $('#chapterNav');
+if (nav) {
+  const links = $$('a', nav);
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (!e.isIntersecting) return;
+      links.forEach(a => {
+        const on = a.getAttribute('href') === '#' + e.target.id;
+        a.classList.toggle('on', on);
+        if (on && nav.scrollTo) nav.scrollTo({ left: a.offsetLeft - nav.clientWidth / 2 + a.clientWidth / 2, behavior: reduced ? 'auto' : 'smooth' });
+      });
+    });
+  }, { rootMargin: '-45% 0px -50% 0px' });
+  $$('section[id]').forEach(s => obs.observe(s));
+}
+
+/* reveal */
+const revObs = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (!e.isIntersecting) return;
+    e.target.classList.add('in');
+    revObs.unobserve(e.target);
+    e.target.dispatchEvent(new CustomEvent('revealed'));
+  });
+}, { threshold: 0.12 });
+$$('.reveal').forEach(el => revObs.observe(el));
+
+/* confetti */
+function confetti(el) {
+  if (reduced || !el) return;
+  const r = el.getBoundingClientRect();
+  const x = r.left + r.width / 2, y = r.top + r.height / 2;
+  const colors = ['var(--accent)', 'var(--green)', 'var(--blue)', 'var(--purple)', '#f2c14e'];
+  for (let i = 0; i < 40; i++) {
+    const p = document.createElement('i');
+    p.className = 'confetti';
+    p.style.left = x + 'px'; p.style.top = y + 'px';
+    p.style.background = colors[i % colors.length];
+    document.body.appendChild(p);
+    const ang = Math.random() * Math.PI * 2, dist = 70 + Math.random() * 150;
+    const dx = Math.cos(ang) * dist, dy = Math.sin(ang) * dist - 70;
+    p.animate([
+      { transform: 'translate(0,0) rotate(0deg)', opacity: 1 },
+      { transform: 'translate(' + dx + 'px,' + (dy + 140) + 'px) rotate(' + (Math.random() * 720) + 'deg)', opacity: 0 }
+    ], { duration: 1100 + Math.random() * 600, easing: 'cubic-bezier(.2,.6,.4,1)' }).finished.then(() => p.remove());
+  }
+}
+
+/* copy buttons */
+function copyText(text) {
+  if (navigator.clipboard && window.isSecureContext !== false) {
+    return navigator.clipboard.writeText(text).catch(() => fallbackCopy(text));
+  }
+  return fallbackCopy(text);
+}
+function fallbackCopy(text) {
+  return new Promise(res => {
+    const ta = document.createElement('textarea');
+    ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
+    document.body.appendChild(ta); ta.select();
+    try { document.execCommand('copy'); } catch (e) {}
+    ta.remove(); res();
+  });
+}
+document.addEventListener('click', e => {
+  const b = e.target.closest('[data-copy]');
+  if (!b) return;
+  const src = b.dataset.copy ? document.getElementById(b.dataset.copy) : b.closest('.code').querySelector('pre');
+  if (!src) return;
+  copyText(src.innerText.trim()).then(() => {
+    const old = b.dataset.label || b.textContent;
+    b.dataset.label = old;
+    b.textContent = '已複製 ✓';
+    setTimeout(() => { b.textContent = old; }, 1500);
+  });
+});
+
+/* progress storage (shared across pages) */
+function getProgress() {
+  try { return JSON.parse(localStorage.getItem('cca-progress') || '{}') || {}; } catch (e) { return {}; }
+}
+function saveProgress(key, score, total) {
+  try {
+    const p = getProgress();
+    if (!p[key] || score >= p[key].score) p[key] = { score, total };
+    localStorage.setItem('cca-progress', JSON.stringify(p));
+  } catch (e) {}
+}
+
+/* quiz engine */
+function quiz(box, QUIZ, key, nextLink) {
+  let qi = 0, qScore = 0, qRes = [];
+  function render() {
+    if (qi >= QUIZ.length) return result();
+    const Q = QUIZ[qi];
+    box.innerHTML = '<div class="q-anim"><div class="q-top"><span>第 ' + (qi + 1) + ' / ' + QUIZ.length + ' 題</span><div class="q-dots">' +
+      QUIZ.map((_, i) => '<i class="' + (qRes[i] === true ? 'ok' : qRes[i] === false ? 'no' : '') + (i === qi ? ' cur' : '') + '"></i>').join('') + '</div></div>' +
+      '<p class="q-text">' + Q.q + '</p><div class="q-opts">' +
+      Q.o.map((o, i) => '<button class="q-opt" data-i="' + i + '"><span class="k">' + 'ABCD'[i] + '</span><span>' + o + '</span></button>').join('') +
+      '</div><div class="q-exp"></div><button class="btn primary q-next" hidden>' + (qi === QUIZ.length - 1 ? '看結果' : '下一題') + ' →</button></div>';
+  }
+  function answer(i) {
+    const Q = QUIZ[qi], ok = i === Q.a;
+    const opts = $$('.q-opt', box);
+    opts.forEach(o => { o.disabled = true; });
+    opts[Q.a].classList.add('correct');
+    if (!ok) opts[i].classList.add('wrong');
+    qRes[qi] = ok; if (ok) qScore++;
+    $$('.q-dots i', box)[qi].classList.add(ok ? 'ok' : 'no');
+    const exp = $('.q-exp', box);
+    exp.innerHTML = (ok ? '<b style="color:var(--green)">✓ 答對了！</b> ' : '<b style="color:var(--red)">✕ 差一點。</b> ') + Q.e;
+    exp.classList.add('show');
+    const nx = $('.q-next', box); nx.hidden = false; nx.focus({ preventScroll: true });
+  }
+  function result() {
+    const pct = qScore / QUIZ.length, C = 2 * Math.PI * 60;
+    saveProgress(key, qScore, QUIZ.length);
+    const msg = qScore === QUIZ.length ? '滿分！這個模組你已經完全掌握。'
+      : pct >= 0.7 ? '很棒！回頭看看答錯的題目，就更完整了。'
+      : '建議再玩一次上面的互動區，加深印象後再挑戰。';
+    box.innerHTML = '<div class="q-anim q-result"><div class="ring"><svg viewBox="0 0 140 140"><circle class="bg" cx="70" cy="70" r="60"/><circle class="fg" cx="70" cy="70" r="60" stroke-dasharray="' + C + '" stroke-dashoffset="' + C + '"/></svg><div class="val">' + qScore + '/' + QUIZ.length + '</div></div>' +
+      '<h3>' + (qScore === QUIZ.length ? '完美通關' : '測驗完成') + '</h3><p>' + msg + '</p><div class="row-btns"><button class="btn q-retry">↻ 再測一次</button>' +
+      (nextLink ? '<a class="btn primary" href="' + nextLink[0] + '">' + nextLink[1] + ' →</a>' : '') + '</div></div>';
+    requestAnimationFrame(() => requestAnimationFrame(() => { $('.ring .fg', box).style.strokeDashoffset = C * (1 - pct); }));
+    if (pct >= 0.7) setTimeout(() => confetti($('.ring', box)), 700);
+  }
+  box.addEventListener('click', e => {
+    const o = e.target.closest('.q-opt');
+    if (o && !o.disabled) return answer(+o.dataset.i);
+    if (e.target.closest('.q-next')) { qi++; render(); return; }
+    if (e.target.closest('.q-retry')) { qi = 0; qScore = 0; qRes = []; render(); }
+  });
+  render();
+}
+
+/* typing helper for terminals */
+async function typeInto(el, text, speed) {
+  for (const ch of text) { el.textContent += ch; await sleep(speed || 45); }
+}
+
+window.CC = { $, $$, reduced, sleep, restart, confetti, quiz, getProgress, saveProgress, typeInto, copyText };
+})();
+</script>
+<script>
+(() => {
+'use strict';
+const { $, $$, copyText, reduced } = CC;
+const esc = s => String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+const md = s => esc(s).replace(/`([^`\n]+)`/g, '<code>$1</code>');
+const DATA = {"commands":{"updated":"2026-11-04（Claude Code v2.1.318）","source":"https://github.com/kevin801221/claude-code-zh-tw/blob/main/best-practice/claude-commands.md","items":[{"name":"/design consent、/design revoke","args":"","cat":"驗證","desc":"授予或撤銷 Claude 存取 Claude Design（claude.ai/design）的權限；Claude 要你執行時，請自行在提示字元輸入","id":"cmd-design-consent-design-revoke"},{"name":"/design-login","args":"","cat":"驗證","desc":"以 claude.ai 帳號授權 /design-sync 存取 design system；此獨立版 Design 站點將於 2026/12/14 前關閉","id":"cmd-design-login"},{"name":"/login","args":"","cat":"驗證","desc":"登入你的 Anthropic 帳號","id":"cmd-login"},{"name":"/logout","args":"","cat":"驗證","desc":"登出你的 Anthropic 帳號","id":"cmd-logout"},{"name":"/setup-bedrock","args":"","cat":"驗證","desc":"以互動精靈設定 Amazon Bedrock 的驗證、區域與模型鎖定；設定 CLAUDE_CODE_USE_BEDROCK=1 後才會出現在選單","id":"cmd-setup-bedrock"},{"name":"/setup-vertex","args":"","cat":"驗證","desc":"以互動精靈設定 Google Cloud Agent Platform 的驗證、專案、區域與模型鎖定；需先設 CLAUDE_CODE_USE_VERTEX=1","id":"cmd-setup-vertex"},{"name":"/upgrade","args":"","cat":"驗證","desc":"開啟升級頁面以切換到更高方案層級；瀏覽器無法開啟時顯示登入提示，不印出網址","id":"cmd-upgrade"},{"name":"/auto-mode-setup","args":"","cat":"設定","desc":"從你的專案與近期 session 草擬 autoMode.environment 項目，檢視草稿後存進使用者設定","id":"cmd-auto-mode-setup"},{"name":"/color","args":"[color|default]","cat":"設定","desc":"設定當前 session 的提示列顏色（red、blue、green 等 8 色）；default 重設，不帶引數則隨機挑色","id":"cmd-color"},{"name":"/config","args":"[key=value ...]","cat":"設定","desc":"開啟設定介面調整主題、模型、輸出風格等偏好；傳 key=value 可直接設定，如 /config theme=dark。別名 /settings","id":"cmd-config"},{"name":"/focus","args":"","cat":"設定","desc":"切換 focus 檢視，只顯示最後的 prompt、一行工具呼叫摘要與最終回覆；選擇跨 session 保留，僅限全螢幕繪製模式","id":"cmd-focus"},{"name":"/import","args":"[codex|gemini|cursor] [--dry-run] [--yes]","cat":"設定","desc":"把 Codex、Gemini CLI 或 Cursor 的設定（指令檔、MCP server、命令、子代理、skills）匯入 Claude Code","id":"cmd-import"},{"name":"/keybindings","args":"","cat":"設定","desc":"開啟你的鍵盤快捷鍵檔案","id":"cmd-keybindings"},{"name":"/output-style","args":"[style]","cat":"設定","desc":"列出輸出風格或切換到某一個，例如 /output-style concise","id":"cmd-output-style"},{"name":"/permissions","args":"","cat":"設定","desc":"管理工具權限的 allow、ask、deny 規則，也可管理工作目錄、檢視 auto 模式拒絕紀錄。別名 /allowed-tools","id":"cmd-permissions"},{"name":"/powerup","args":"","cat":"設定","desc":"透過附動畫示範的快速互動課程，探索 Claude Code 功能","id":"cmd-powerup"},{"name":"/privacy-settings","args":"","cat":"設定","desc":"檢視與更新你的隱私設定。僅 Pro、Max、Ultra 方案訂閱者可用","id":"cmd-privacy-settings"},{"name":"/radio","args":"","cat":"設定","desc":"在瀏覽器開啟 Claude FM lo-fi 電台；沒有瀏覽器可用時印出串流網址","id":"cmd-radio"},{"name":"/sandbox","args":"","cat":"設定","desc":"切換 sandbox 模式。僅在支援的平台可用","id":"cmd-sandbox"},{"name":"/scroll-speed","args":"","cat":"設定","desc":"互動式調整滑鼠滾輪捲動速度。僅在全螢幕繪製模式可用，JetBrains 終端機不可用","id":"cmd-scroll-speed"},{"name":"/statusline","args":"","cat":"設定","desc":"設定 Claude Code 狀態列：描述你想要的樣子，或不帶引數從你的 shell 提示字元自動設定","id":"cmd-statusline"},{"name":"/stickers","args":"","cat":"設定","desc":"訂購 Claude Code 貼紙","id":"cmd-stickers"},{"name":"/terminal-setup","args":"","cat":"設定","desc":"為 VS Code、Cursor、Zed 等安裝 Shift+Enter 換行快捷鍵；Apple Terminal 改啟用 Option+Enter 換行","id":"cmd-terminal-setup"},{"name":"/theme","args":"","cat":"設定","desc":"變更色彩主題：淺色／深色、色盲友善、ANSI、跟隨終端機的 Auto 選項，以及自訂主題","id":"cmd-theme"},{"name":"/tui","args":"[default|fullscreen]","cat":"設定","desc":"設定終端機 UI 繪製器並以該模式重啟，對話完整保留；fullscreen 為無閃爍的 alt-screen 繪製器","id":"cmd-tui"},{"name":"/voice","args":"[hold|tap|off]","cat":"設定","desc":"切換語音聽寫，或以特定模式啟用。需要 Claude.ai 帳號","id":"cmd-voice"},{"name":"/autocompact","args":"[auto|<tokens>]","cat":"脈絡","desc":"設定脈絡視窗滿到多少時自動壓縮；可傳大小（如 500k）或用 auto 回到預設，值會存進使用者設定","id":"cmd-autocompact"},{"name":"/context","args":"[all]","cat":"脈絡","desc":"以彩色格狀圖視覺化當前脈絡使用量，並提供最佳化建議與容量警告；傳 all 展開逐項細目","id":"cmd-context"},{"name":"/cost","args":"","cat":"脈絡","desc":"/usage 的別名","id":"cmd-cost"},{"name":"/insights","args":"","cat":"脈絡","desc":"產生 HTML 報告，分析這台機器上的 Claude Code session：專案、使用方式、出錯處與值得試的功能","id":"cmd-insights"},{"name":"/rate-limit-options","args":"","cat":"脈絡","desc":"碰到 claude.ai 用量上限時，顯示繼續工作的方式：等待重設後自動繼續、加購用量額度或升級方案","id":"cmd-rate-limit-options"},{"name":"/stats","args":"","cat":"脈絡","desc":"/usage 的別名，開在 Stats 分頁","id":"cmd-stats"},{"name":"/status","args":"","cat":"脈絡","desc":"開啟設定介面的 Status 分頁，顯示版本、模型、帳號與連線狀態；Claude 回應中也能執行","id":"cmd-status"},{"name":"/usage","args":"","cat":"脈絡","desc":"顯示 session 成本、方案用量上限與活動統計。別名 /cost、/stats","id":"cmd-usage"},{"name":"/usage-credits","args":"","cat":"脈絡","desc":"碰到上限時設定用量額度；無帳務權限的 Team／Enterprise 成員則向管理員申請。舊名 /extra-usage","id":"cmd-usage-credits"},{"name":"/bug","args":"[report]","cat":"除錯","desc":"回報 bug 或分享對話，可選擇包含多少 session 歷史並在送出前確認；第三方供應商時存成本機封存。別名 /share","id":"cmd-bug"},{"name":"/feedback","args":"[report]","cat":"除錯","desc":"送出 Claude Code 產品回饋，開啟與 /bug 相同的對話框；不帶引數時可檢視 Claude 草擬的回饋草稿","id":"cmd-feedback"},{"name":"/heapdump","args":"","cat":"除錯","desc":"將 heap 快照與記憶體細目寫到 ~/Desktop 供診斷；只分享 -diagnostics.json，因 .heapsnapshot 含對話與憑證","id":"cmd-heapdump"},{"name":"/help","args":"","cat":"除錯","desc":"顯示說明與可用命令","id":"cmd-help"},{"name":"/release-notes","args":"","cat":"除錯","desc":"在互動式版本選擇器中檢視 changelog，可看特定版本或所有版本的發行說明","id":"cmd-release-notes"},{"name":"/tasks","args":"","cat":"除錯","desc":"檢視與管理當前 session 的背景工作，包括已完成的子代理。也可用 /bashes","id":"cmd-tasks"},{"name":"/copy","args":"[N]","cat":"匯出","desc":"複製最後一則助理回覆到剪貼簿，/copy 2 複製倒數第二則；有程式碼區塊時可挑選個別區塊，按 w 寫入檔案","id":"cmd-copy"},{"name":"/export","args":"[filename]","cat":"匯出","desc":"把當前對話匯出成純文字；帶檔名時直接寫入該檔，不帶時開啟對話框選擇複製到剪貼簿或存檔","id":"cmd-export"},{"name":"/agents","args":"","cat":"擴充功能","desc":"印出提醒：請 Claude 建立或管理子代理，或直接編輯 .claude/agents/ 或 ~/.claude/agents/（舊版為互動介面）","id":"cmd-agents"},{"name":"/chrome","args":"","cat":"擴充功能","desc":"設定 Claude in Chrome","id":"cmd-chrome"},{"name":"/hooks","args":"","cat":"擴充功能","desc":"檢視 hook 設定","id":"cmd-hooks"},{"name":"/ide","args":"","cat":"擴充功能","desc":"管理 IDE 整合並顯示狀態","id":"cmd-ide"},{"name":"/mcp","args":"[reconnect (<server>|all)|enable|disable [<server>|all]]","cat":"擴充功能","desc":"管理 MCP server 連線與 OAuth 驗證；不帶引數開啟互動清單，或用 reconnect、enable、disable 直接操作","id":"cmd-mcp"},{"name":"/plugin","args":"[subcommand]","cat":"擴充功能","desc":"管理 Claude Code 外掛；不帶引數開啟外掛選單，或傳 list、install、enable、disable 等子命令直接執行","id":"cmd-plugin"},{"name":"/reload-plugins","args":"[--force]","cat":"擴充功能","desc":"重新載入所有啟用的外掛以套用待處理變更，不需重啟；若會改變 MCP 工具而使 prompt cache 失效則跳過，除非傳 --force","id":"cmd-reload-plugins"},{"name":"/reload-skills","args":"","cat":"擴充功能","desc":"重新掃描 skill 與命令目錄，讓 session 期間新增或變更的 skill 不需重啟即可使用","id":"cmd-reload-skills"},{"name":"/skill-doctor","args":"","cat":"擴充功能","desc":"顯示每個 skill 佔用的脈絡成本與使用頻率，幫你找出該關掉的 skill","id":"cmd-skill-doctor"},{"name":"/skills","args":"","cat":"擴充功能","desc":"列出可用 skill 並可過濾；按 t 依 token 數排序，按 Space／Enter 切換對 Claude 與 / 選單的可見性","id":"cmd-skills"},{"name":"/memory","args":"","cat":"記憶","desc":"編輯 CLAUDE.md 檔案、啟用或停用自動記憶，以及檢視自動記憶項目","id":"cmd-memory"},{"name":"/advisor","args":"[model|off]","cat":"模型","desc":"啟用或停用 advisor 工具，在任務關鍵時刻諮詢第二個模型；可傳 fable、opus、sonnet 或完整 model ID，off 停用","id":"cmd-advisor"},{"name":"/effort","args":"[level|auto|status|ultracode [on|off]]","cat":"模型","desc":"設定努力等級（low 到 xhigh、max 或 auto，max 僅限該 session）；status 印出當前值；可開關 ultracode","id":"cmd-effort"},{"name":"/fast","args":"[on|off]","cat":"模型","desc":"開關 fast 模式；Claude 回應中執行會立即切換，但正在跑的回合仍以原速度完成","id":"cmd-fast"},{"name":"/model","args":"[model]","cat":"模型","desc":"切換 AI 模型並存為新 session 的預設；可用左右方向鍵調整努力等級，在選擇器按 s 只套用於當前 session","id":"cmd-model"},{"name":"/passes","args":"","cat":"模型","desc":"分享一週免費 Claude Code 給朋友；只有帳號符合資格時才看得到","id":"cmd-passes"},{"name":"/plan","args":"[description]","cat":"模型","desc":"直接從提示字元進入 plan 模式；可附描述立刻開始該任務，例如 /plan fix the auth bug","id":"cmd-plan"},{"name":"/add-dir","args":"<path>","cat":"專案","desc":"為當前 session 新增可存取檔案的工作目錄（輸入部分路徑按 Tab 補全）；多數 .claude/ 設定不會從中被探索","id":"cmd-add-dir"},{"name":"/diff","args":"","cat":"專案","desc":"檢視工作樹中的變更，包含 Claude 目前為止所做的編輯","id":"cmd-diff"},{"name":"/init","args":"","cat":"專案","desc":"用 CLAUDE.md 指南初始化專案；設定 CLAUDE_CODE_NEW_INIT=1 可進入涵蓋 skills、hooks 與個人記憶檔的互動流程","id":"cmd-init"},{"name":"/review","args":"[low|medium|high|xhigh|max|ultra] [--fix] [--comment] [--max-findings n|all|default] [pr#|branch|path]","cat":"專案","desc":"/code-review 的別名：檢視當前 diff，或指定的 PR 編號、分支或路徑（如 /review 1234），接受相同等級與旗標","id":"cmd-review"},{"name":"/security-review","args":"","cat":"專案","desc":"分析當前分支待處理變更的安全漏洞（注入、驗證問題、資料外洩等），比對 origin 預設分支；需要 origin remote","id":"cmd-security-review"},{"name":"/team-onboarding","args":"","cat":"專案","desc":"從你的 Claude Code 使用歷史產生團隊上手指南（分析過去 30 天的 session、命令與 MCP），隊友貼上即可快速設定","id":"cmd-team-onboarding"},{"name":"/ultrareview","args":"[PR or branch]","cat":"專案","desc":"在雲端沙箱執行深度多代理程式碼檢視；為 /code-review ultra 的別名。Pro、Max、Ultra 含 3 次免費執行","id":"cmd-ultrareview"},{"name":"/autofix-pr","args":"[prompt]","cat":"遠端","desc":"產生雲端 session 監看當前分支的 PR，在 CI 失敗或審查者留言時推送修正；需要 gh CLI 與雲端 session 存取權","id":"cmd-autofix-pr"},{"name":"/desktop","args":"","cat":"遠端","desc":"在 Claude Code 桌面 App 中接續當前 session；需要 macOS 或 x64 Windows 與 Claude 訂閱。別名 /app","id":"cmd-desktop"},{"name":"/install-github-app","args":"","cat":"遠端","desc":"安裝 Claude GitHub App，可設定 GitHub Actions workflow 與 secrets；僅支援 github.com","id":"cmd-install-github-app"},{"name":"/install-slack-app","args":"","cat":"遠端","desc":"安裝 Claude Slack app，開啟瀏覽器完成 OAuth 流程","id":"cmd-install-slack-app"},{"name":"/mobile","args":"","cat":"遠端","desc":"顯示下載 Claude 行動 App 的 QR code。別名 /ios、/android","id":"cmd-mobile"},{"name":"/remote-control","args":"","cat":"遠端","desc":"讓這個 session 可從 claude.ai 進行 Remote Control（需要 claude.ai 訂閱）。別名 /rc","id":"cmd-remote-control"},{"name":"/remote-env","args":"","cat":"遠端","desc":"為你從 CLI 啟動的雲端 session 選擇預設雲端環境","id":"cmd-remote-env"},{"name":"/schedule","args":"[description]","cat":"遠端","desc":"以對話方式建立、更新、列出或執行雲端排程任務（舊稱 routines），也能查詢近期執行狀況。別名 /routines","id":"cmd-schedule"},{"name":"/teleport","args":"","cat":"遠端","desc":"把雲端 session 拉進這個終端機：開啟選擇器並抓取分支與對話。也可用 /tp，需要 claude.ai 訂閱","id":"cmd-teleport"},{"name":"/web-setup","args":"","cat":"遠端","desc":"用本機 gh CLI 憑證連接 GitHub 帳號，以使用雲端 session","id":"cmd-web-setup"},{"name":"/artifacts","args":"","cat":"Session 管理","desc":"列出你擁有或被分享的 artifacts，可附掛到 session、在瀏覽器開啟或複製連結","id":"cmd-artifacts"},{"name":"/background","args":"[prompt]","cat":"Session 管理","desc":"把當前 session 卸離成背景代理執行並釋放終端機；可附 prompt 再送一個指示，用 claude agents 監看。別名 /bg","id":"cmd-background"},{"name":"/branch","args":"[name]","cat":"Session 管理","desc":"在當前這點建立對話分支，嘗試不同方向而不失去原對話；可用 /resume 回到原對話","id":"cmd-branch"},{"name":"/btw","args":"[question]","cat":"Session 管理","desc":"針對當前 session 問個支線問題，不會加進對話；不帶問題時顯示最近的支線問題與答案","id":"cmd-btw"},{"name":"/cd","args":"<path>","cat":"Session 管理","desc":"把這個 session 移到新的工作目錄並保留對話；輸入部分路徑可看到建議，按 Tab 接受","id":"cmd-cd"},{"name":"/clear","args":"[name]","cat":"Session 管理","desc":"以空白脈絡開始新對話；可傳名稱為前一個對話在 /resume 選擇器中貼標籤。別名 /reset、/new","id":"cmd-clear"},{"name":"/compact","args":"[instructions]","cat":"Session 管理","desc":"摘要目前為止的對話以釋放脈絡；可選擇性傳入摘要的聚焦指示","id":"cmd-compact"},{"name":"/exit","args":"","cat":"Session 管理","desc":"離開 CLI；在附掛的背景 session 中則是卸離，session 繼續執行。別名 /quit","id":"cmd-exit"},{"name":"/fork","args":"[prompt]","cat":"Session 管理","desc":"把當前對話複製到新的背景 session，你繼續在這裡工作；傳 prompt 則副本立刻開始處理，否則等待第一個 prompt","id":"cmd-fork"},{"name":"/goal","args":"[condition|clear]","cat":"Session 管理","desc":"設定目標，Claude 會跨回合持續工作直到條件滿足；不帶引數顯示當前目標，clear 等可提前移除","id":"cmd-goal"},{"name":"/list-agents","args":"","cat":"Session 管理","desc":"列出 Claude 可傳訊的子代理、agent team 隊友與其他 session 及其名稱；也可用 /peers，需啟用跨 session 傳訊","id":"cmd-list-agents"},{"name":"/recap","args":"","cat":"Session 管理","desc":"隨時產生當前 session 的一行摘要","id":"cmd-recap"},{"name":"/rename","args":"[name]","cat":"Session 管理","desc":"重新命名當前 session 並顯示在提示列；不帶名稱時從對話歷史自動產生。-p 模式也可用","id":"cmd-rename"},{"name":"/restart","args":"","cat":"Session 管理","desc":"重啟 Claude Code 並接續此 session 以套用已安裝的更新；需 Pro、Max 或 Ultra 與原生安裝。別名 /update","id":"cmd-restart"},{"name":"/resume","args":"[session]","cat":"Session 管理","desc":"依 ID 或名稱接續對話，或開啟 session 選擇器；接續執行中的 session 會讓這個終端機附掛到它。別名 /continue","id":"cmd-resume"},{"name":"/rewind","args":"","cat":"Session 管理","desc":"把對話與／或程式碼倒回先前某一點，或從選定訊息開始摘要。別名 /checkpoint、/undo","id":"cmd-rewind"},{"name":"/stop","args":"","cat":"Session 管理","desc":"停止你附掛的背景 session，保留逐字稿與 worktree；只想卸離請用 /exit 或按 ←","id":"cmd-stop"},{"name":"/subtask","args":"<task>","cat":"Session 管理","desc":"產生 fork 子代理：繼承完整對話的背景子代理，你繼續工作，它完成後結果會回到這個對話","id":"cmd-subtask"},{"name":"/workflows","args":"","cat":"Session 管理","desc":"開啟 workflow 進度檢視，監看、暫停、恢復或儲存執行中與已完成的 workflow","id":"cmd-workflows"}]},"flags":{"updated":"2026-03-02","source":"https://github.com/kevin801221/claude-code-zh-tw/blob/main/best-practice/claude-cli-startup-flags.md","groups":[{"name":"Session 管理","items":[{"flag":"--continue, -c","desc":"接續當前目錄最近一次的對話","example":"","id":"flag-continue"},{"flag":"--resume, -r","desc":"依 ID 或名稱接續特定 session，或顯示互動選擇器","example":"","id":"flag-resume"},{"flag":"--from-pr <NUMBER|URL>","desc":"接續與特定 GitHub PR 關聯的 session","example":"","id":"flag-from-pr"},{"flag":"--fork-session","desc":"接續時建立新的 session ID（搭配 --resume 或 --continue 使用）","example":"","id":"flag-fork-session"},{"flag":"--session-id <UUID>","desc":"使用特定 session ID（必須是合法 UUID）","example":"","id":"flag-session-id"},{"flag":"--no-session-persistence","desc":"停用 session 持久化（僅 print 模式）","example":"","id":"flag-no-session-persistence"},{"flag":"--remote","desc":"在 claude.ai 建立新的網頁 session","example":"","id":"flag-remote"},{"flag":"--teleport","desc":"在你的本機終端機接續網頁 session","example":"","id":"flag-teleport"}]},{"name":"模型與設定","items":[{"flag":"--model <NAME>","desc":"以別名（sonnet、opus、haiku）或完整 model ID 設定模型","example":"","id":"flag-model"},{"flag":"--fallback-model <NAME>","desc":"預設模型過載時自動退回的模型（僅 print 模式）","example":"","id":"flag-fallback-model"},{"flag":"--betas <LIST>","desc":"API 請求中要帶的 beta header（僅 API key 使用者）","example":"","id":"flag-betas"}]},{"name":"權限與安全","items":[{"flag":"--dangerously-skip-permissions","desc":"跳過所有權限提示。請極度謹慎使用","example":"","id":"flag-dangerously-skip-permissions"},{"flag":"--allow-dangerously-skip-permissions","desc":"讓權限略過成為一個選項，但不直接啟用","example":"","id":"flag-allow-dangerously-skip-permissions"},{"flag":"--permission-mode <MODE>","desc":"以指定權限模式啟動：default、plan、acceptEdits、bypassPermissions","example":"","id":"flag-permission-mode"},{"flag":"--allowedTools <TOOLS>","desc":"不需提示即可執行的工具（使用權限規則語法）","example":"","id":"flag-allowedtools"},{"flag":"--disallowedTools <TOOLS>","desc":"完全從模型脈絡中移除的工具","example":"","id":"flag-disallowedtools"},{"flag":"--tools <TOOLS>","desc":"限制 Claude 可用的內建工具（用 \"\" 全部停用）","example":"","id":"flag-tools"},{"flag":"--permission-prompt-tool <TOOL>","desc":"指定在非互動模式下處理權限提示的 MCP 工具","example":"","id":"flag-permission-prompt-tool"}]},{"name":"輸出與格式","items":[{"flag":"--print, -p","desc":"印出回覆而不進入互動模式（headless／SDK 模式）","example":"","id":"flag-print"},{"flag":"--output-format <FORMAT>","desc":"輸出格式：text、json、stream-json","example":"","id":"flag-output-format"},{"flag":"--input-format <FORMAT>","desc":"輸入格式：text、stream-json","example":"","id":"flag-input-format"},{"flag":"--json-schema <SCHEMA>","desc":"取得符合 schema 且經驗證的 JSON（僅 print 模式）","example":"","id":"flag-json-schema"},{"flag":"--include-partial-messages","desc":"包含部分串流事件（需要 --print 與 --output-format=stream-json）","example":"","id":"flag-include-partial-messages"},{"flag":"--verbose","desc":"啟用詳細記錄，輸出完整的逐回合內容","example":"","id":"flag-verbose"}]},{"name":"System Prompt","items":[{"flag":"--system-prompt <TEXT>","desc":"用自訂文字取代整個 system prompt","example":"","id":"flag-system-prompt"},{"flag":"--system-prompt-file <PATH>","desc":"從檔案載入 system prompt 以取代預設（僅 print 模式）","example":"","id":"flag-system-prompt-file"},{"flag":"--append-system-prompt <TEXT>","desc":"把自訂文字附加到預設 system prompt 之後","example":"","id":"flag-append-system-prompt"},{"flag":"--append-system-prompt-file <PATH>","desc":"把檔案內容附加到預設 prompt 之後（僅 print 模式）","example":"","id":"flag-append-system-prompt-file"}]},{"name":"代理與子代理","items":[{"flag":"--agent <NAME>","desc":"為當前 session 指定代理","example":"","id":"flag-agent"},{"flag":"--agents <JSON>","desc":"透過 JSON 動態定義自訂子代理","example":"","id":"flag-agents"},{"flag":"--teammate-mode <MODE>","desc":"設定 agent team 顯示方式：auto、in-process、tmux","example":"","id":"flag-teammate-mode"}]},{"name":"MCP 與外掛","items":[{"flag":"--mcp-config <PATH|JSON>","desc":"從 JSON 檔或字串載入 MCP server","example":"","id":"flag-mcp-config"},{"flag":"--strict-mcp-config","desc":"只用 --mcp-config 中的 MCP server，忽略其他所有來源","example":"","id":"flag-strict-mcp-config"},{"flag":"--plugin-dir <PATH>","desc":"僅為此 session 從目錄載入外掛（可重複使用）","example":"","id":"flag-plugin-dir"}]},{"name":"目錄與工作區","items":[{"flag":"--add-dir <PATH>","desc":"新增 Claude 可存取的額外工作目錄","example":"","id":"flag-add-dir"},{"flag":"--worktree, -w","desc":"在隔離的 git worktree 中啟動 Claude（從 HEAD 分支出來）","example":"","id":"flag-worktree"}]},{"name":"預算與上限","items":[{"flag":"--max-budget-usd <AMOUNT>","desc":"API 呼叫在停止前的最大美元金額（僅 print 模式）","example":"","id":"flag-max-budget-usd"},{"flag":"--max-turns <NUMBER>","desc":"限制代理回合數（僅 print 模式）","example":"","id":"flag-max-turns"}]},{"name":"整合","items":[{"flag":"--chrome","desc":"啟用 Chrome 瀏覽器整合以進行網頁自動化","example":"","id":"flag-chrome"},{"flag":"--no-chrome","desc":"為此 session 停用 Chrome 瀏覽器整合","example":"","id":"flag-no-chrome"},{"flag":"--ide","desc":"啟動時若剛好只有一個合法 IDE 可用則自動連線","example":"","id":"flag-ide"}]},{"name":"初始化與維護","items":[{"flag":"--init","desc":"執行初始化 hook 並啟動互動模式","example":"","id":"flag-init"},{"flag":"--init-only","desc":"執行初始化 hook 後結束（不進入互動 session）","example":"","id":"flag-init-only"},{"flag":"--maintenance","desc":"執行維護 hook 後結束","example":"","id":"flag-maintenance"}]},{"name":"除錯與診斷","items":[{"flag":"--debug <CATEGORIES>","desc":"啟用除錯模式，可選擇性過濾類別（例如 \"api,hooks\"）","example":"claude --debug \"api,hooks\"","id":"flag-debug"}]},{"name":"設定覆寫","items":[{"flag":"--settings <PATH|JSON>","desc":"要載入的設定 JSON 檔路徑或 JSON 字串","example":"","id":"flag-settings"},{"flag":"--setting-sources <LIST>","desc":"要載入的來源清單，以逗號分隔：user、project、local","example":"","id":"flag-setting-sources"},{"flag":"--disable-slash-commands","desc":"為此 session 停用所有 skill 與 slash command","example":"","id":"flag-disable-slash-commands"}]},{"name":"版本與說明","items":[{"flag":"--version, -v","desc":"輸出版本號","example":"","id":"flag-version"},{"flag":"--help, -h","desc":"顯示說明資訊","example":"","id":"flag-help"}]}],"subcommands":[{"name":"claude","desc":"啟動互動式 REPL","id":"sub-claude"},{"name":"claude \"query\"","desc":"以初始 prompt 啟動 REPL","id":"sub-claude-query"},{"name":"claude agents","desc":"列出已設定的代理","id":"sub-claude-agents"},{"name":"claude auth","desc":"管理 Claude Code 驗證","id":"sub-claude-auth"},{"name":"claude doctor","desc":"從命令列執行診斷","id":"sub-claude-doctor"},{"name":"claude install","desc":"安裝或切換 Claude Code 原生建置版本","id":"sub-claude-install"},{"name":"claude mcp","desc":"設定 MCP server（add、remove、list、get、enable）","id":"sub-claude-mcp"},{"name":"claude plugin","desc":"管理 Claude Code 外掛","id":"sub-claude-plugin"},{"name":"claude remote-control","desc":"管理 remote control session","id":"sub-claude-remote-control"},{"name":"claude setup-token","desc":"建立長期 token 供訂閱使用","id":"sub-claude-setup-token"},{"name":"claude update / claude upgrade","desc":"更新到最新版本","id":"sub-claude-update-claude-upgrade"}],"env":[{"name":"CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1","desc":"啟用實驗性 agent teams。也可透過 env 設定（見設定參考）","id":"env-claude-code-experimental-agent-teams"},{"name":"CLAUDE_CODE_TMPDIR","desc":"覆寫內部檔案的暫存目錄。也可透過 env 鍵設定","id":"env-claude-code-tmpdir"},{"name":"CLAUDE_CODE_ADDITIONAL_DIRECTORIES_CLAUDE_MD=1","desc":"啟用額外目錄的 CLAUDE.md 載入。也可透過 env 鍵設定","id":"env-claude-code-additional-directories-claude-md"},{"name":"DISABLE_AUTOUPDATER=1","desc":"停用自動更新。也可透過 env 鍵設定","id":"env-disable-autoupdater"},{"name":"CLAUDE_CODE_EFFORT_LEVEL","desc":"控制思考深度（見設定參考）","id":"env-claude-code-effort-level"},{"name":"USE_BUILTIN_RIPGREP=0","desc":"使用系統 ripgrep 而非內建版本（Alpine Linux）","id":"env-use-builtin-ripgrep"},{"name":"CLAUDE_CODE_SIMPLE","desc":"啟用 simple 模式（只有 Bash + Edit 工具）。也可透過 env 鍵設定","id":"env-claude-code-simple"},{"name":"CLAUDE_BASH_NO_LOGIN=1","desc":"BashTool 跳過 login shell","id":"env-claude-bash-no-login"},{"name":"CCR_FORCE_BUNDLE=1","desc":"使用 claude --remote 時強制打包／上傳本機 repository。也可透過 env 鍵設定","id":"env-ccr-force-bundle"}]},"fields":{"skills":{"source":"https://github.com/kevin801221/claude-code-zh-tw/blob/main/best-practice/claude-skills.md","updated":"2026-11-04","fields":[{"name":"name","type":"string","required":false,"desc":"顯示名稱與 /slash-command 識別名；省略時以目錄名稱為準。","example":"","id":"field-skills-name"},{"name":"description","type":"string","required":false,"desc":"建議填寫。說明這個 skill 做什麼；會顯示在自動完成中，也是 Claude 自動探索的依據。","example":"","id":"field-skills-description"},{"name":"when_to_use","type":"string","required":false,"desc":"補充說明 Claude 何時該呼叫此 skill（觸發語句與範例請求）；在 skill 清單中附加於 description 之後，計入 1,536 字元上限。","example":"","id":"field-skills-when-to-use"},{"name":"argument-hint","type":"string","required":false,"desc":"自動完成時顯示的引數提示，例如 [issue-number]、[filename]。","example":"[issue-number]","id":"field-skills-argument-hint"},{"name":"arguments","type":"string/list","required":false,"desc":"具名位置引數，供 skill 內容中的 $name 代換使用；接受空白分隔字串或 YAML 清單，名稱依序對應引數位置。","example":"","id":"field-skills-arguments"},{"name":"disable-model-invocation","type":"boolean","required":false,"desc":"設為 true 可防止 Claude 自動呼叫此 skill。","example":"true","id":"field-skills-disable-model-invocation"},{"name":"user-invocable","type":"boolean","required":false,"desc":"設為 false 可從「/」選單隱藏，skill 變成純背景知識，用於代理預載。","example":"false","id":"field-skills-user-invocable"},{"name":"allowed-tools","type":"string/list","required":false,"desc":"此 skill 作用時，不需權限提示即可使用的工具。","example":"","id":"field-skills-allowed-tools"},{"name":"disallowed-tools","type":"string/list","required":false,"desc":"skill 作用期間從 Claude 可用工具池移除的工具（例如在背景迴圈中封鎖 AskUserQuestion）；接受空白／逗號分隔字串或 YAML 清單，限制在下一則訊息解除。","example":"AskUserQuestion","id":"field-skills-disallowed-tools"},{"name":"model","type":"string","required":false,"desc":"此 skill 執行時使用的模型，例如 haiku、sonnet、opus。","example":"haiku","id":"field-skills-model"},{"name":"effort","type":"string","required":false,"desc":"呼叫時覆寫模型的努力等級：low、medium、high、xhigh、max。","example":"high","id":"field-skills-effort"},{"name":"context","type":"string","required":false,"desc":"設為 fork 可讓 skill 在隔離的子代理脈絡中執行。","example":"fork","id":"field-skills-context"},{"name":"agent","type":"string","required":false,"desc":"設定 context: fork 時使用的子代理類型，預設為 general-purpose。","example":"general-purpose","id":"field-skills-agent"},{"name":"background","type":"boolean","required":false,"desc":"僅在 context: fork 時生效；設為 false 會在呼叫的那一回合等待 fork 子代理的結果，而非丟到背景（預設 true）。需要 v2.1.218+。","example":"false","id":"field-skills-background"},{"name":"hooks","type":"object","required":false,"desc":"僅作用於此 skill 的生命週期 hook。","example":"","id":"field-skills-hooks"},{"name":"paths","type":"string/list","required":false,"desc":"限制 skill 自動啟用時機的 glob 樣式；接受逗號分隔字串或 YAML 清單，Claude 只在處理符合的檔案時載入此 skill。","example":"","id":"field-skills-paths"},{"name":"shell","type":"string","required":false,"desc":"!`command` 區塊使用的 shell：bash（預設）或 powershell；使用 powershell 需要 CLAUDE_CODE_USE_POWERSHELL_TOOL=1。","example":"powershell","id":"field-skills-shell"},{"name":"metadata","type":"YAML map","required":false,"desc":"自由格式 YAML map，放你自己的鍵值資料，供你的工具從 SKILL.md 讀取；Claude Code 不處理其內容，非 map 值會被丟棄。勿以既有欄位名（如 paths）當鍵。","example":"","id":"field-skills-metadata"},{"name":"license","type":"string","required":false,"desc":"此 skill 適用的授權條款；屬於 Agent Skills 規格的一部分，Claude Code 接受此欄位但不會據此行動。","example":"","id":"field-skills-license"},{"name":"compatibility","type":"string","required":false,"desc":"skill 的環境需求（上限 500 字元），例如適用產品或系統先決條件；屬於 Agent Skills 規格，Claude Code 接受此欄位但不會據此行動。","example":"","id":"field-skills-compatibility"}]},"subagents":{"source":"https://github.com/kevin801221/claude-code-zh-tw/blob/main/best-practice/claude-subagents.md","updated":"2026-11-05","fields":[{"name":"name","type":"string","required":true,"desc":"唯一識別名稱，使用小寫字母與連字號。","example":"","id":"field-subagents-name"},{"name":"description","type":"string","required":true,"desc":"說明何時該呼叫此子代理；描述中寫入「PROACTIVELY」可讓 Claude 自動呼叫。","example":"","id":"field-subagents-description"},{"name":"tools","type":"string/list","required":false,"desc":"以逗號分隔的工具白名單，省略時繼承全部工具；支援以 Agent(agent_type) 語法限制可生成的子代理，舊別名 Task(agent_type) 仍可用。","example":"Read, Write, Edit, Bash","id":"field-subagents-tools"},{"name":"disallowedTools","type":"string/list","required":false,"desc":"要拒絕的工具，會從繼承或指定的工具清單中移除。","example":"","id":"field-subagents-disallowedtools"},{"name":"model","type":"string","required":false,"desc":"使用的模型：sonnet、opus、haiku、完整 model ID（如 claude-opus-4-6）或 inherit；預設為 inherit。","example":"sonnet","id":"field-subagents-model"},{"name":"permissionMode","type":"string","required":false,"desc":"權限模式：default、acceptEdits、auto、dontAsk、bypassPermissions 或 plan。","example":"acceptEdits","id":"field-subagents-permissionmode"},{"name":"maxTurns","type":"integer","required":false,"desc":"子代理停止前的最大代理回合數。","example":"","id":"field-subagents-maxturns"},{"name":"skills","type":"list","required":false,"desc":"啟動時預載進代理脈絡的 skill 名稱；會注入完整內容，而不只是標示為可用。","example":"","id":"field-subagents-skills"},{"name":"mcpServers","type":"list","required":false,"desc":"此子代理專用的 MCP server，可填 server 名稱字串或行內 {name: config} 物件。","example":"","id":"field-subagents-mcpservers"},{"name":"hooks","type":"object","required":false,"desc":"僅作用於此子代理的生命週期 hook；支援所有 hook 事件，最常用的是 PreToolUse、PostToolUse、Stop。","example":"","id":"field-subagents-hooks"},{"name":"memory","type":"string","required":false,"desc":"持久記憶的範圍：user、project 或 local。","example":"project","id":"field-subagents-memory"},{"name":"background","type":"boolean","required":false,"desc":"設為 true 則永遠以背景任務執行（預設 false）。","example":"true","id":"field-subagents-background"},{"name":"effort","type":"string","required":false,"desc":"此子代理作用時覆寫的努力等級：low、medium、high、xhigh、max（僅 Opus 4.6）；預設繼承 session。","example":"high","id":"field-subagents-effort"},{"name":"isolation","type":"string","required":false,"desc":"設為 worktree 則在臨時 git worktree 中執行，沒有變更時自動清除。","example":"worktree","id":"field-subagents-isolation"},{"name":"initialPrompt","type":"string","required":false,"desc":"此代理以主 session 代理身分執行時（透過 --agent 或 agent 設定），自動送出作為第一個使用者回合；命令與 skill 都會被處理，並接在使用者的 prompt 之前。","example":"","id":"field-subagents-initialprompt"},{"name":"color","type":"string","required":false,"desc":"子代理在任務清單與逐字稿中的顯示顏色：red、blue、green、yellow、purple、orange、pink 或 cyan。","example":"blue","id":"field-subagents-color"}]},"commands":{"source":"https://github.com/kevin801221/claude-code-zh-tw/blob/main/best-practice/claude-commands.md","updated":"2026-11-04","fields":[{"name":"name","type":"string","required":false,"desc":"顯示在「/」選單中的命令名稱；省略時以目錄名稱為準。","example":"","id":"field-commands-name"},{"name":"description","type":"string","required":false,"desc":"建議填寫。說明命令做什麼，顯示於自動完成並供 Claude 自動探索；省略時取 markdown 內容第一個非空行。與 when_to_use 合併後截斷於 1,536 字元，關鍵情境寫在前面。","example":"","id":"field-commands-description"},{"name":"when_to_use","type":"string","required":false,"desc":"補充說明 Claude 何時該呼叫此 skill（觸發語句或範例請求）；在清單中附加於 description 之後，計入 1,536 字元上限。","example":"","id":"field-commands-when-to-use"},{"name":"argument-hint","type":"string","required":false,"desc":"自動完成時顯示的提示，標示預期的引數，例如 [issue-number]、[filename] [format]。","example":"[issue-number]","id":"field-commands-argument-hint"},{"name":"arguments","type":"string/list","required":false,"desc":"具名位置引數，供命令內容中的 $name 代換使用；接受空白分隔字串或 YAML 清單，名稱依序對應引數位置。","example":"","id":"field-commands-arguments"},{"name":"disable-model-invocation","type":"boolean","required":false,"desc":"設為 true 可防止 Claude 自動呼叫此命令，也會阻止它被預載進子代理，或在 session 範圍的排程任務以它為 prompt 觸發時執行。預設 false。","example":"true","id":"field-commands-disable-model-invocation"},{"name":"user-invocable","type":"boolean","required":false,"desc":"設為 false 可從「/」選單隱藏，命令變成純背景知識；你輸入 /name 時 Claude Code 也不會執行它。預設 true。","example":"false","id":"field-commands-user-invocable"},{"name":"paths","type":"string/list","required":false,"desc":"限制此 skill 何時啟用的 glob 樣式（逗號分隔字串或 YAML 清單）；Claude 只在處理符合的檔案時自動載入。樣式相對於當前工作目錄，目錄外的檔案不會匹配。","example":"","id":"field-commands-paths"},{"name":"allowed-tools","type":"string/list","required":false,"desc":"呼叫此 skill 的那一回合中，Claude 不需詢問權限即可使用的工具；送出下一則訊息時授權即解除。接受空白或逗號分隔字串，或 YAML 清單。","example":"","id":"field-commands-allowed-tools"},{"name":"disallowed-tools","type":"string/list","required":false,"desc":"此命令作用期間從工具池移除的工具（適合絕不該呼叫某些工具的自主 skill）；接受空白／逗號分隔字串或 YAML 清單，下一則訊息時解除；仍有其他工具時無法移除 EndConversation。","example":"","id":"field-commands-disallowed-tools"},{"name":"model","type":"string","required":false,"desc":"此命令執行時用的模型（haiku、sonnet、opus 等；inherit 沿用當前模型），只套用於當前回合；若被組織的 availableModels 排除或 auto 模式不支援則忽略。","example":"haiku","id":"field-commands-model"},{"name":"effort","type":"string","required":false,"desc":"此 skill 作用時的努力等級，會覆寫 session 的努力等級；選項為 low、medium、high、xhigh、max，可用等級取決於模型。","example":"high","id":"field-commands-effort"},{"name":"context","type":"string","required":false,"desc":"設為 fork 可在 fork 出的子代理脈絡中執行。","example":"fork","id":"field-commands-context"},{"name":"agent","type":"string","required":false,"desc":"設定 context: fork 時使用的子代理類型，預設為 general-purpose。","example":"general-purpose","id":"field-commands-agent"},{"name":"background","type":"boolean","required":false,"desc":"僅在 context: fork 時生效；設為 false 會在呼叫此 skill 的那一回合等待 fork 子代理的結果，而非丟到背景執行（預設 true）。需要 v2.1.218 以上。","example":"false","id":"field-commands-background"},{"name":"shell","type":"string","required":false,"desc":"!`command` 區塊的 shell：bash（預設）或 powershell；除部分 Windows 環境外，需設 CLAUDE_CODE_USE_POWERSHELL_TOOL=1。","example":"powershell","id":"field-commands-shell"},{"name":"metadata","type":"object","required":false,"desc":"自由格式 YAML map，放你自己的鍵值資料，供你的工具從 SKILL.md 讀取；Claude Code 不處理其內容，非 map 值會被丟棄。勿以 paths 等保留欄位名當鍵。","example":"","id":"field-commands-metadata"},{"name":"license","type":"string","required":false,"desc":"依 Agent Skills 規格，此 skill 適用的授權條款；Claude Code 接受此欄位但不會據此行動。","example":"","id":"field-commands-license"},{"name":"compatibility","type":"string","required":false,"desc":"依 Agent Skills 規格，此 skill 的環境需求（例如適用產品或系統先決條件），最多 500 字元；Claude Code 接受此欄位但不會據此行動。","example":"","id":"field-commands-compatibility"},{"name":"hooks","type":"object","required":false,"desc":"此 skill 被呼叫時由 Claude Code 註冊的 hook，並在 session 剩餘時間持續生效。","example":"","id":"field-commands-hooks"}]},"builtin_skills":[{"name":"code-review","desc":"以指定努力等級檢查當前 diff 的正確性 bug（low/medium 回報較少但信心高；high～max 涵蓋更廣）；--comment 會把結果貼成行內 PR 留言。","id":"bskill-code-review"},{"name":"batch","desc":"跨多個檔案批次執行命令。","id":"bskill-batch"},{"name":"debug","desc":"除錯失敗的命令或程式碼問題。","id":"bskill-debug"},{"name":"loop","desc":"以固定間隔重複執行 prompt 或 slash command（最長 3 天）。","id":"bskill-loop"},{"name":"claude-api","desc":"用 Claude API 或 Anthropic SDK 建構應用；偵測到 anthropic／@anthropic-ai/sdk 的 import 時觸發。","id":"bskill-claude-api"},{"name":"fewer-permission-prompts","desc":"掃描逐字稿找出常見的唯讀 Bash／MCP 呼叫，在 .claude/settings.json 加入依優先順序排列的白名單，以減少權限提示。","id":"bskill-fewer-permission-prompts"},{"name":"run","desc":"啟動並操作專案的 app，在真實 app（而非只靠測試）中確認變更有效。需要 v2.1.145。","id":"bskill-run"},{"name":"verify","desc":"建置並執行 app，確認程式碼變更達到預期，不會退回去只跑測試或型別檢查。需要 v2.1.145。","id":"bskill-verify"},{"name":"run-skill-generator","desc":"教 /run 與 /verify 如何建置與啟動專案，並在 .claude/skills/run-<name>/ 記錄專案專屬的啟動配方。需要 v2.1.145。","id":"bskill-run-skill-generator"},{"name":"simplify","desc":"以四個 review 代理平行檢視變更的程式碼，找出重用、簡化、效率、抽象層級等清理機會；自 v2.1.154 起不找正確性 bug（請用 /code-review）。","id":"bskill-simplify"},{"name":"design","desc":"把 UI 原型、畫面流程、海報等畫成畫布上的 artboard 並發佈為 artifact（Claude Design 編輯器研究預覽）；僅 Anthropic API 可用。","id":"bskill-design"},{"name":"design-sync","desc":"把 repo 的 React 設計系統轉換後上傳到 Claude Design；首次同步會驗證每個元件，大型 repo 可能需數小時。僅 Anthropic API 可用。","id":"bskill-design-sync"},{"name":"dataviz","desc":"設計圖表、圖形與儀表板，附色票驗證器以產生無障礙且一致的視覺化；任何媒介中的圖表、plot 或資料視覺化請求都會觸發。v2.1.198 引入。","id":"bskill-dataviz"},{"name":"doctor","desc":"針對你的 Claude Code 設定做安裝／健康檢查；唯一不受 disableBundledSkills 影響的內建 skill，該設定開啟時仍可輸入使用。","id":"bskill-doctor"},{"name":"review","desc":"對 GitHub pull request 做快速、單趟、唯讀的檢視；需要多代理深入檢視時請改用 /code-review <level> <pr#>。","id":"bskill-review"},{"name":"security-review","desc":"檢視當前 diff 的安全漏洞並建議修補；加 --fix 可套用檢視結果，加 --comment 則貼成行內 GitHub PR 留言。","id":"bskill-security-review"},{"name":"workflow-authoring","desc":"載入撰寫動態 workflow 腳本的參考文件（腳本 API、resume 行為、品質模式與實作範例）；僅在動態 workflow 啟用時可用。需要 v2.1.248。","id":"bskill-workflow-authoring"},{"name":"skill-doctor","desc":"回報哪些已載入的 skill 沒被用到、各自佔用多少脈絡成本，方便你裁掉它們。v2.1.261 引入。","id":"bskill-skill-doctor"},{"name":"update-config","desc":"描述任何設定變更（允許某命令、設環境變數、加 hook），Claude 就會透過 settings.json 修改對應設定檔；主題、模型等簡單選項請改用 /config。","id":"bskill-update-config"},{"name":"slides","desc":"依你的需求說明製作新簡報（Claude Slides artifact），例如 /slides a quarterly review for the sales team。","id":"bskill-slides"},{"name":"artifact-capabilities","desc":"載入已發佈 artifact 可用的 runtime capability 參考文件，例如呼叫 connector 或提供檔案下載，也列出你的帳號有哪些。","id":"bskill-artifact-capabilities"},{"name":"artifact-diagramming","desc":"載入 artifact 圖解指南：何時該畫圖、畫什麼，以及如何寫出淺色與深色主題都清楚的行內 SVG。通常由 Claude 自行載入。需要 v2.1.221+。","id":"bskill-artifact-diagramming"},{"name":"claude-in-chrome","desc":"讓 Claude 在你的瀏覽器中執行任務（測試頁面、填表單、讀 console log）；Chrome 整合啟用時可用，例如 claude --chrome。","id":"bskill-claude-in-chrome"},{"name":"artifact-design","desc":"載入已發佈 artifact 頁面的設計指南與基本功（版面、主題、尺寸與文案風格）；Claude 通常會在建構任何 artifact 前自行載入。v2.1.281 引入。","id":"bskill-artifact-design"},{"name":"plugin-authoring","desc":"製作、修改或除錯 mod：改變 Claude 自身介面或行為的東西，如即時面板、側欄、狀態列、toast、slash command 或 hook。需要 v2.1.287+。","id":"bskill-plugin-authoring"}],"agent_types":[{"name":"general-purpose","desc":"處理複雜多步驟任務的預設代理類型，適用於研究、程式碼搜尋與自主工作。","model":"inherit","tools":"全部","id":"agent-general-purpose"},{"name":"Explore","desc":"快速搜尋與探索 codebase，針對找檔案、搜尋程式碼與回答 codebase 問題最佳化。","model":"haiku","tools":"唯讀（無 Write、Edit）","id":"agent-explore"},{"name":"Plan","desc":"plan 模式下的前置研究：在寫程式前探索 codebase 並設計實作方向。","model":"inherit","tools":"唯讀（無 Write、Edit）","id":"agent-plan"},{"name":"statusline-setup","desc":"設定使用者的 Claude Code 狀態列。","model":"sonnet","tools":"Read、Edit","id":"agent-statusline-setup"},{"name":"claude-code-guide","desc":"回答關於 Claude Code 功能、Agent SDK 與 Claude API 的問題。","model":"haiku","tools":"Glob、Grep、Read、WebFetch、WebSearch","id":"agent-claude-code-guide"}]}};
+const C = DATA.commands || { items: [] }, F = DATA.flags || { groups: [], env: [], subcommands: [] }, D = DATA.fields || {};
+const KINDS = [['skills', 'Skills'], ['subagents', 'Subagents'], ['commands', 'Commands']];
+const CAT_ORDER = ['Session 管理', '脈絡', '記憶', '專案', '模型', '設定', '擴充功能', '匯出', '遠端', '除錯', '驗證'];
+const CATS = [...new Set(C.items.map(x => x.cat))].sort((a, b) => (CAT_ORDER.indexOf(a) + 1 || 99) - (CAT_ORDER.indexOf(b) + 1 || 99));
+const nFlags = F.groups.reduce((s, g) => s + g.items.length, 0) + (F.subcommands || []).length + (F.env || []).length;
+const nFields = KINDS.reduce((s, k) => s + ((D[k[0]] || {}).fields || []).length, 0);
+const nBuilt = (D.builtin_skills || []).length + (D.agent_types || []).length;
+const TABS = [['commands', '斜線指令', C.items.length], ['flags', '啟動旗標', nFlags], ['fields', 'Frontmatter 欄位', nFields], ['builtins', '內建 Skills 與代理', nBuilt]];
+let tab = 'commands', q = '', chip = 'all';
+$('#refMeta').innerHTML = '<span>' + C.items.length + ' 個斜線指令</span><span>' + nFlags + ' 個旗標、子命令與環境變數</span><span>' + nFields + ' 個 frontmatter 欄位</span><span>' + nBuilt + ' 個內建 Skills 與代理</span>';
+const hit = (...xs) => !q || xs.join(' ').toLowerCase().includes(q);
+const cpBtn = t => '<button class="cp" data-ct="' + esc(t) + '" aria-label="複製 ' + esc(t) + '">複製</button>';
+const dated = (src, upd) => '整理自 <a href="' + esc(src) + '" target="_blank" rel="noopener">claude-code-zh-tw</a>' + (upd ? '（資料日期：' + esc(upd) + '）' : '') + '；如與官方文件不同，以官方為準。';
+
+function renderTabs() {
+  $('#rtabs').innerHTML = TABS.map(t => '<button role="tab" data-t="' + t[0] + '" aria-selected="' + (t[0] === tab) + '" class="' + (t[0] === tab ? 'on' : '') + '">' + t[1] + '<span class="n">' + t[2] + '</span></button>').join('');
+  let chips = [];
+  if (tab === 'commands') chips = CATS;
+  else if (tab === 'flags') chips = F.groups.map(g => g.name).concat((F.subcommands || []).length ? ['子命令'] : [], (F.env || []).length ? ['環境變數'] : []);
+  else if (tab === 'fields') chips = KINDS.map(k => k[1]);
+  else chips = ['內建 Skills', '代理類型'];
+  if (chip !== 'all' && !chips.includes(chip)) chip = 'all';
+  $('#rchips').innerHTML = '<button class="chip-btn' + (chip === 'all' ? ' on' : '') + '" data-c="all">全部</button>' + chips.map(c => '<button class="chip-btn' + (chip === c ? ' on' : '') + '" data-c="' + esc(c) + '">' + esc(c) + '</button>').join('');
+}
+function renderBody() {
+  let h = '', n = 0, src = '';
+  if (tab === 'commands') {
+    CATS.forEach(cat => {
+      if (chip !== 'all' && chip !== cat) return;
+      const rows = C.items.filter(x => x.cat === cat && hit(x.name, x.args, x.desc, x.cat));
+      if (!rows.length) return;
+      n += rows.length;
+      h += '<div class="rgrp"><h2>' + esc(cat) + '<span>' + rows.length + '</span></h2><div class="rlist">' + rows.map(x => '<div class="rrow" id="' + x.id + '"><span class="rname">' + esc(x.name) + '</span>' + (x.args ? '<span class="rargs">' + esc(x.args) + '</span>' : '') + '<p>' + md(x.desc) + '</p>' + cpBtn(x.name) + '</div>').join('') + '</div></div>';
+    });
+    src = dated(C.source, C.updated);
+  } else if (tab === 'flags') {
+    F.groups.forEach(g => {
+      if (chip !== 'all' && chip !== g.name) return;
+      const rows = g.items.filter(x => hit(x.flag, x.desc, x.example, g.name));
+      if (!rows.length) return;
+      n += rows.length;
+      h += '<div class="rgrp"><h2>' + esc(g.name) + '<span>' + rows.length + '</span></h2><div class="rlist">' + rows.map(x => '<div class="rrow" id="' + x.id + '"><span class="rname">' + esc(x.flag) + '</span><p>' + esc(x.desc) + '</p>' + (x.example ? '<code class="rex">' + esc(x.example) + '</code>' : '') + cpBtn(x.example || x.flag.split(',')[0].trim()) + '</div>').join('') + '</div></div>';
+    });
+    [['子命令', F.subcommands || []], ['環境變數', F.env || []]].forEach(([nm, list]) => {
+      if (chip !== 'all' && chip !== nm) return;
+      const rows = list.filter(x => hit(x.name, x.desc));
+      if (!rows.length) return;
+      n += rows.length;
+      h += '<div class="rgrp"><h2>' + nm + '<span>' + rows.length + '</span></h2><div class="rlist">' + rows.map(x => '<div class="rrow" id="' + x.id + '"><span class="rname">' + esc(x.name) + '</span><p>' + esc(x.desc) + '</p>' + cpBtn(x.name) + '</div>').join('') + '</div></div>';
+    });
+    src = dated(F.source, F.updated);
+  } else if (tab === 'fields') {
+    KINDS.forEach(([k, label]) => {
+      const sec = D[k] || { fields: [] };
+      if (chip !== 'all' && chip !== label) return;
+      const rows = sec.fields.filter(x => hit(x.name, x.type, x.desc, x.example, label));
+      if (!rows.length) return;
+      n += rows.length;
+      h += '<div class="rgrp"><h2>' + label + ' frontmatter<span>' + rows.length + ' 個欄位' + (sec.updated ? '・' + esc(sec.updated) : '') + '</span></h2><div class="rtable-wrap" tabindex="0" role="region" aria-label="' + label + ' frontmatter 欄位表"><table class="rt"><thead><tr><th>欄位</th><th>型別</th><th>必填</th><th>說明</th><th>範例</th></tr></thead><tbody>' +
+        rows.map(x => '<tr id="' + x.id + '"><td><code>' + esc(x.name) + '</code></td><td>' + esc(x.type || '—') + '</td><td>' + (x.required ? '<span class="req">必填</span>' : '<span class="opt">選填</span>') + '</td><td>' + md(x.desc) + '</td><td>' + (x.example ? '<code>' + esc(x.example) + '</code>' : '—') + '</td></tr>').join('') + '</tbody></table></div></div>';
+    });
+    src = dated((D.skills || {}).source || '', '');
+  } else {
+    [['內建 Skills', D.builtin_skills || []], ['代理類型', D.agent_types || []]].forEach(([nm, list]) => {
+      if (chip !== 'all' && chip !== nm) return;
+      const rows = list.filter(x => hit(x.name, x.desc, x.model, x.tools));
+      if (!rows.length) return;
+      n += rows.length;
+      h += '<div class="rgrp"><h2>' + nm + '<span>' + rows.length + '</span></h2><div class="bgrid">' + rows.map(x => '<div class="rrow" id="' + x.id + '"><span class="rname">' + esc(x.name) + '</span><p>' + esc(x.desc) + '</p>' + (x.model || x.tools ? '<span class="rex">' + esc([x.model ? 'model: ' + x.model : '', x.tools ? 'tools: ' + x.tools : ''].filter(Boolean).join('　')) + '</span>' : '') + cpBtn(x.name) + '</div>').join('') + '</div></div>';
+    });
+    src = dated((D.skills || {}).source || '', '');
+  }
+  $('#rbody').innerHTML = h || '<div class="empty">找不到符合「' + esc(q) + '」的項目，換個關鍵字試試。</div>';
+  $('#rcount').textContent = '顯示 ' + n + ' 筆';
+  $('#rsrc').innerHTML = src;
+}
+function setTab(t, keepQ) {
+  tab = t;
+  if (!keepQ) chip = 'all';
+  renderTabs(); renderBody();
+}
+function route(scroll) {
+  const h = location.hash.slice(1);
+  let t = TABS.some(x => x[0] === h) ? h : null, target = null;
+  if (!t && h) {
+    target = h;
+    t = /^cmd-/.test(h) ? 'commands' : /^(flag|env|sub)-/.test(h) ? 'flags' : /^field-/.test(h) ? 'fields' : /^(bskill|agent)-/.test(h) ? 'builtins' : null;
+  }
+  if (t) { q = ''; $('#rq').value = ''; chip = 'all'; setTab(t, true); }
+  else if (!$('#rtabs').children.length) setTab(tab);
+  if (target) {
+    const el = document.getElementById(target);
+    if (el) { el.scrollIntoView({ behavior: reduced ? 'auto' : 'smooth', block: 'center' }); el.classList.remove('flash'); void el.offsetWidth; el.classList.add('flash'); }
+  } else if (t && scroll) {
+    const top = document.getElementById('ref').getBoundingClientRect().top + window.scrollY - 70;
+    window.scrollTo({ top: Math.max(0, top), behavior: reduced ? 'auto' : 'smooth' });
+  }
+}
+$('#rtabs').addEventListener('click', e => { const b = e.target.closest('button[data-t]'); if (b) { try { history.replaceState(null, '', '#' + b.dataset.t); } catch (err) {} setTab(b.dataset.t); } });
+$('#rchips').addEventListener('click', e => { const b = e.target.closest('[data-c]'); if (!b) return; chip = b.dataset.c; renderTabs(); renderBody(); });
+$('#rq').addEventListener('input', e => { q = e.target.value.trim().toLowerCase(); renderBody(); });
+$('#rbody').addEventListener('click', e => {
+  const b = e.target.closest('.cp'); if (!b) return;
+  copyText(b.dataset.ct).then(() => { b.textContent = '已複製 ✓'; setTimeout(() => { b.textContent = '複製'; }, 1400); });
+});
+addEventListener('hashchange', () => route(true));
+route(false);
+})();
+</script>
+<!--cc-site-->
+<script src="search-index.js"></script>
+<script>
+(() => {
+'use strict';
+const IDX = window.CC_INDEX || { items: [], map: [] };
+const esc = s => String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+const ICON = { page: ['頁', 'c-accent'], learn: ['教', 'c-green'], mod: ['課', 'c-green'], tip: ['心', 'c-accent'], demo: ['演', 'c-purple'], wf: ['法', 'c-blue'], stage: ['階', 'c-blue'], ref: ['查', 'c-purple'], term: ['詞', 'c-green'] };
+const GROUP = { page: '頁面', learn: '新手教學', mod: '模組章節', demo: '功能演示', wf: '方法論', stage: '方法論的階段', ref: '參考手冊', tip: '心法', term: '名詞' };
+const ORDER = ['page', 'learn', 'mod', 'demo', 'wf', 'ref', 'stage', 'tip', 'term'];
+const BOOST = { page: 3, learn: 2, mod: 2, demo: 2, wf: 2, ref: 1, term: 1, tip: 0, stage: 0 };
+const DATA = (IDX.items || []).map(a => ({ k: a[0], t: a[1], s: a[2], u: a[3], x: (a[1] + ' ' + a[2] + ' ' + (a[4] || '')).toLowerCase() }));
+
+const ov = document.createElement('div');
+ov.className = 'ccp-ov';
+ov.hidden = true;
+ov.innerHTML = '<div class="ccp" role="dialog" aria-modal="true" aria-label="搜尋全站"><div class="ccp-top"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg>' +
+  '<input type="search" id="ccpQ" placeholder="搜尋心法、功能、方法論、名詞…" autocomplete="off" spellcheck="false" aria-label="搜尋全站" aria-controls="ccpList"><kbd>Esc</kbd></div>' +
+  '<div class="ccp-list" id="ccpList" role="listbox"></div><div class="ccp-foot"><span>↑ ↓ 選擇</span><span>Enter 開啟</span><span class="ccp-k">⌘K／Ctrl+K 或 / 隨時叫出</span></div></div>';
+document.body.appendChild(ov);
+const q = ov.querySelector('#ccpQ'), list = ov.querySelector('#ccpList');
+let items = [], act = 0, lastFocus = null;
+
+function hl(text, terms) {
+  const low = text.toLowerCase(), mk = new Array(text.length).fill(false);
+  terms.forEach(t => { let i = low.indexOf(t); while (t && i >= 0) { for (let j = i; j < i + t.length; j++) mk[j] = true; i = low.indexOf(t, i + t.length); } });
+  let out = '', on = false;
+  for (let i = 0; i < text.length; i++) {
+    if (mk[i] && !on) { out += '<mark>'; on = true; }
+    if (!mk[i] && on) { out += '</mark>'; on = false; }
+    out += esc(text[i]);
+  }
+  return on ? out + '</mark>' : out;
+}
+function render() {
+  const raw = q.value.trim(), terms = raw.toLowerCase().split(/\s+/).filter(Boolean);
+  let groups;
+  if (!terms.length) {
+    groups = (IDX.map || []).map(g => ({ name: g.name, rows: g.items.map(a => ({ k: a[0], t: a[1], s: a[2], u: a[3] })) }));
+  } else {
+    const res = [];
+    DATA.forEach(d => {
+      if (!terms.every(t => d.x.includes(t))) return;
+      const tl = d.t.toLowerCase();
+      let sc = BOOST[d.k] || 0;
+      terms.forEach(t => { if (tl.includes(t)) sc += 3; if (tl.startsWith(t)) sc += 2; });
+      res.push([sc, d]);
+    });
+    res.sort((a, b) => b[0] - a[0]);
+    const top = res.slice(0, 60).map(r => r[1]);
+    groups = ORDER.map(k => ({ name: GROUP[k], rows: top.filter(d => d.k === k) })).filter(g => g.rows.length);
+  }
+  items = [];
+  let h = '';
+  groups.forEach(g => {
+    h += '<div class="ccp-g">' + esc(g.name) + '</div>';
+    g.rows.forEach(r => {
+      const i = items.length, ic = ICON[r.k] || ICON.page;
+      items.push(r);
+      h += '<a class="ccp-i ' + ic[1] + '" role="option" id="ccpo' + i + '" data-i="' + i + '" href="' + esc(r.u) + '"><span class="ccp-ic">' + ic[0] + '</span><span class="tx"><b>' + hl(r.t, terms) + '</b>' + (r.s ? '<small>' + hl(r.s, terms) + '</small>' : '') + '</span></a>';
+    });
+  });
+  list.innerHTML = h || (DATA.length ? '<div class="ccp-empty">找不到「' + esc(raw) + '」。換個關鍵字試試，例如 hooks、worktree、脈絡、grill。</div>' : '<div class="ccp-empty">搜尋索引還沒載入（search-index.js）。重新整理頁面再試一次。</div>');
+  setAct(0);
+}
+function setAct(i) {
+  if (!items.length) { q.removeAttribute('aria-activedescendant'); return; }
+  act = (i + items.length) % items.length;
+  list.querySelectorAll('.ccp-i').forEach(a => a.classList.toggle('on', +a.dataset.i === act));
+  const el = list.querySelector('#ccpo' + act);
+  if (el) { el.scrollIntoView({ block: 'nearest' }); q.setAttribute('aria-activedescendant', 'ccpo' + act); }
+}
+function go(i) {
+  const r = items[i];
+  if (!r) return;
+  close(false);
+  location.href = r.u;
+}
+function open() {
+  if (!ov.hidden) return;
+  lastFocus = document.activeElement;
+  ov.hidden = false;
+  q.value = '';
+  render();
+  document.documentElement.style.overflow = 'hidden';
+  setTimeout(() => q.focus(), 0);
+}
+function close(restoreFocus) {
+  if (ov.hidden) return;
+  ov.hidden = true;
+  document.documentElement.style.overflow = '';
+  if (restoreFocus !== false && lastFocus && lastFocus.focus) lastFocus.focus();
+}
+q.addEventListener('input', render);
+q.addEventListener('keydown', e => {
+  if (e.key === 'ArrowDown') { e.preventDefault(); setAct(act + 1); }
+  else if (e.key === 'ArrowUp') { e.preventDefault(); setAct(act - 1); }
+  else if (e.key === 'Enter') { e.preventDefault(); go(act); }
+  else if (e.key === 'Escape') { e.preventDefault(); close(); }
+});
+ov.addEventListener('click', e => {
+  if (e.target === ov) { close(); return; }
+  const a = e.target.closest('.ccp-i');
+  if (a) { e.preventDefault(); go(+a.dataset.i); }
+});
+list.addEventListener('mousemove', e => { const a = e.target.closest('.ccp-i'); if (a && +a.dataset.i !== act) setAct(+a.dataset.i); });
+document.addEventListener('keydown', e => {
+  if ((e.metaKey || e.ctrlKey) && (e.key === 'k' || e.key === 'K')) { e.preventDefault(); if (ov.hidden) open(); else close(); return; }
+  const typing = e.target && e.target.closest && e.target.closest('input, textarea, select, [contenteditable]');
+  if (e.key === '/' && ov.hidden && !typing && !e.metaKey && !e.ctrlKey && !e.altKey) { e.preventDefault(); open(); }
+});
+const btn = document.getElementById('ccSearchBtn');
+if (btn) btn.addEventListener('click', open);
+window.CCSearch = { open, close };
+
+/* skip link: move focus without touching the hash (pages route on hashchange) */
+const skip = document.querySelector('a.skip');
+if (skip) skip.addEventListener('click', e => {
+  const m = document.getElementById('main');
+  if (!m) return;
+  e.preventDefault();
+  m.focus({ preventScroll: true });
+  m.scrollIntoView({ block: 'start' });
+});
+
+/* daily tip (index only) */
+const dt = document.getElementById('dailyTip');
+const DAILY = IDX.daily || [];
+if (dt && DAILY.length) {
+  const now = new Date();
+  let di = Math.floor(Date.UTC(now.getFullYear(), now.getMonth(), now.getDate()) / 864e5) % DAILY.length;
+  const show = anim => {
+    const t = DAILY[di];
+    dt.innerHTML = '<span class="dl-ic" aria-hidden="true">今</span><div class="dl-b"><span class="dl-k">今日心法 · ' + esc(t[2]) + '</span><a class="dl-t" href="' + esc(t[3]) + '">' + esc(t[0]) + '</a><p>' + esc(t[1]) + '</p><div class="dl-a"><a class="btn small primary" href="' + esc(t[3]) + '">照著做 →</a><button class="btn small" type="button" data-next>換一條</button></div></div>';
+    if (anim) { dt.classList.remove('pop'); void dt.offsetWidth; dt.classList.add('pop'); }
+  };
+  show(false);
+  dt.hidden = false;
+  dt.addEventListener('click', e => {
+    if (!e.target.closest('[data-next]')) return;
+    di = (di + 1 + Math.floor(Math.random() * Math.max(1, DAILY.length - 1))) % DAILY.length;
+    show(true);
+  });
+}
+})();
+</script>
+<!--/cc-site--></body>
+</html>

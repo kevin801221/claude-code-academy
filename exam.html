@@ -1,0 +1,873 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>結業測驗｜Kevin 的 Claude Code 互動學院</title><!--cc-meta-->
+<meta name="description" content="Kevin 的 Claude Code 互動學院結業測驗：從 57 題題庫隨機抽 20 題，答對 80% 以上產生結業證書。">
+<link rel="canonical" href="https://kevin801221.github.io/claude-code-academy/exam.html">
+<meta property="og:url" content="https://kevin801221.github.io/claude-code-academy/exam.html">
+<meta property="og:title" content="結業測驗｜Kevin 的 Claude Code 互動學院">
+<meta property="og:description" content="Kevin 的 Claude Code 互動學院結業測驗：從 57 題題庫隨機抽 20 題，答對 80% 以上產生結業證書。">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Kevin 的 Claude Code 互動學院">
+<meta property="og:locale" content="zh_TW">
+<meta property="og:image" content="https://kevin801221.github.io/claude-code-academy/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Kevin 的 Claude Code 互動學院">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://kevin801221.github.io/claude-code-academy/og.png">
+<meta name="theme-color" content="#c65f3c">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%23d9734e'/%3E%3Cstop offset='1' stop-color='%237c4ddb'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='64' height='64' rx='16' fill='url(%23g)'/%3E%3Ctext x='32' y='42' font-family='Arial,Helvetica,sans-serif' font-size='26' font-weight='800' fill='white' text-anchor='middle'%3ECC%3C/text%3E%3C/svg%3E">
+<!--/cc-meta-->
+<script>document.documentElement.classList.add('js');try{var t=localStorage.getItem('cm-theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
+<style>
+:root{
+  --sans:-apple-system,BlinkMacSystemFont,"PingFang TC","Noto Sans TC","Microsoft JhengHei","Segoe UI",sans-serif;
+  --mono:"SF Mono",ui-monospace,Menlo,Consolas,"Liberation Mono",monospace;
+  --bg:#faf7f2; --surface:#ffffff; --surface-2:#f3eee6; --text:#1d1915; --muted:#6b635a; --border:#e6ded2;
+  --accent:#c65f3c; --accent-2:#e8916a; --accent-soft:#fbe8de;
+  --green:#1f8456; --green-soft:#dbf1e5;
+  --blue:#2c6bc4; --blue-soft:#e0eafa;
+  --purple:#7646d6; --purple-soft:#ece4fc;
+  --red:#c2364a; --red-soft:#fbe0e4;
+  --yellow:#c9922a;
+  --term-bg:#1b1815; --term-text:#efe9e0; --term-muted:#9a9187;
+  --shadow:0 1px 2px rgba(40,30,20,.05),0 8px 24px rgba(40,30,20,.07);
+  --mod:var(--accent); --mod-soft:var(--accent-soft); --mod-2:var(--purple);
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#13110f; --surface:#1c1916; --surface-2:#262220; --text:#efe9e0; --muted:#a59c91; --border:#37302a;
+    --accent:#e8845c; --accent-2:#f2a581; --accent-soft:#3a251b;
+    --green:#4cc38a; --green-soft:#16302a; --blue:#6ea4f0; --blue-soft:#182a44;
+    --purple:#ab8cf6; --purple-soft:#2a2142; --red:#f06b7d; --red-soft:#3d1c22; --yellow:#e0b252;
+    --term-bg:#0c0b0a; --shadow:0 1px 2px rgba(0,0,0,.3),0 10px 30px rgba(0,0,0,.35);
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#13110f; --surface:#1c1916; --surface-2:#262220; --text:#efe9e0; --muted:#a59c91; --border:#37302a;
+  --accent:#e8845c; --accent-2:#f2a581; --accent-soft:#3a251b;
+  --green:#4cc38a; --green-soft:#16302a; --blue:#6ea4f0; --blue-soft:#182a44;
+  --purple:#ab8cf6; --purple-soft:#2a2142; --red:#f06b7d; --red-soft:#3d1c22; --yellow:#e0b252;
+  --term-bg:#0c0b0a; --shadow:0 1px 2px rgba(0,0,0,.3),0 10px 30px rgba(0,0,0,.35);
+  color-scheme:dark;
+}
+body.m-teams{--mod:var(--blue);--mod-soft:var(--blue-soft);--mod-2:var(--purple)}
+body.m-goal{--mod:var(--green);--mod-soft:var(--green-soft);--mod-2:var(--blue)}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:70px}
+body{margin:0;background:var(--bg);color:var(--text);font:16px/1.75 var(--sans);-webkit-font-smoothing:antialiased;transition:background .3s,color .3s}
+main{overflow-x:clip}
+.wrap{max-width:1100px;margin:0 auto;padding-left:max(20px,env(safe-area-inset-left,0px));padding-right:max(20px,env(safe-area-inset-right,0px))}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:55;background:var(--bg)}
+h1,h2,h3,h4{line-height:1.3;margin:0}
+p{margin:0 0 1em}
+a{color:var(--mod)}
+code{font-family:var(--mono);font-size:.86em;background:var(--surface-2);border:1px solid var(--border);padding:.05em .4em;border-radius:6px;word-break:break-word}
+.c-accent{--c:var(--accent);--c-soft:var(--accent-soft)}
+.c-green{--c:var(--green);--c-soft:var(--green-soft)}
+.c-blue{--c:var(--blue);--c-soft:var(--blue-soft)}
+.c-purple{--c:var(--purple);--c-soft:var(--purple-soft)}
+.c-red{--c:var(--red);--c-soft:var(--red-soft)}
+.hint{font-weight:400;font-size:12.5px;color:var(--muted)}
+.ic{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex:none}
+
+/* top bar */
+.progress{position:fixed;top:env(safe-area-inset-top,0px);left:0;right:0;height:3px;z-index:60;pointer-events:none}
+.progress span{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--mod),var(--mod-2))}
+.topbar{position:sticky;top:env(safe-area-inset-top,0px);z-index:50;background:color-mix(in srgb,var(--bg) 86%,transparent);backdrop-filter:saturate(1.4) blur(10px);-webkit-backdrop-filter:saturate(1.4) blur(10px);border-bottom:1px solid var(--border)}
+.topbar-inner{display:flex;align-items:center;gap:12px;height:58px}
+.brand{display:flex;align-items:center;gap:10px;font-weight:700;color:var(--text);text-decoration:none;white-space:nowrap;flex:none}
+.brand-mark{width:30px;height:30px;border-radius:9px;background:linear-gradient(135deg,var(--accent),var(--purple));color:#fff;display:grid;place-items:center;font:800 11.5px var(--mono)}
+.crumb{flex:none;color:var(--mod);font-weight:700;font-size:14px;white-space:nowrap}
+.chapters{display:flex;gap:2px;overflow-x:auto;scrollbar-width:none;flex:1;min-width:0}
+.chapters::-webkit-scrollbar{display:none}
+.chapters a{flex:none;padding:5px 11px;border-radius:999px;color:var(--muted);text-decoration:none;font-size:13.5px;white-space:nowrap;transition:color .2s,background .2s}
+.chapters a:hover{color:var(--text);background:var(--surface-2)}
+.chapters a.on{color:var(--mod);background:var(--mod-soft);font-weight:600}
+.icon-btn{flex:none;width:36px;height:36px;border-radius:10px;border:1px solid var(--border);background:var(--surface);color:var(--text);cursor:pointer;display:grid;place-items:center}
+.icon-btn svg{width:18px;height:18px}
+@media (max-width:760px){.brand-text{display:none}}
+
+/* buttons */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:10px 18px;border-radius:999px;border:1px solid var(--border);background:var(--surface);color:var(--text);font:600 15px/1.2 var(--sans);cursor:pointer;text-decoration:none;transition:transform .15s,background .2s,box-shadow .2s,border-color .2s}
+.btn:hover:not(:disabled){transform:translateY(-1px);box-shadow:var(--shadow)}
+.btn.primary{background:var(--mod);border-color:var(--mod);color:#fff}
+.btn.small{padding:6px 13px;font-size:13px}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+button:focus-visible,.btn:focus-visible,[role="button"]:focus-visible,a:focus-visible,input:focus-visible{outline:2px solid var(--mod);outline-offset:2px}
+
+/* hero */
+.hero{padding:68px 0 64px;position:relative}
+.hero::before{content:"";position:absolute;inset:0;background-image:radial-gradient(var(--border) 1.2px,transparent 1.2px);background-size:22px 22px;-webkit-mask-image:radial-gradient(ellipse at 72% 40%,#000 15%,transparent 68%);mask-image:radial-gradient(ellipse at 72% 40%,#000 15%,transparent 68%);animation:drift 40s linear infinite;pointer-events:none}
+@keyframes drift{to{background-position:220px 110px}}
+.hero-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:48px;align-items:center;position:relative}
+.eyebrow{display:inline-block;font:700 12.5px var(--sans);letter-spacing:.06em;color:var(--mod);background:var(--mod-soft);padding:4px 12px;border-radius:999px;margin-bottom:18px}
+.hero h1{font-size:clamp(34px,5.6vw,60px);letter-spacing:-.02em;margin-bottom:18px}
+.grad{background:linear-gradient(90deg,var(--mod),var(--mod-2));-webkit-background-clip:text;background-clip:text;color:transparent}
+.lead{font-size:18px;color:var(--muted);max-width:32em}
+.hero-cta{display:flex;flex-wrap:wrap;gap:10px;margin:26px 0 22px}
+.meta{display:flex;flex-wrap:wrap;gap:8px 18px;font-size:13px;color:var(--muted)}
+.meta span{display:inline-flex;align-items:center;gap:6px}
+
+/* chapters */
+.chapter{padding:84px 0;border-top:1px solid var(--border)}
+.ch-head{display:flex;gap:18px;align-items:flex-start;margin-bottom:34px}
+.ch-num{font:800 14px var(--mono);color:var(--mod);background:var(--mod-soft);padding:6px 10px;border-radius:10px;flex:none;margin-top:5px}
+.ch-head h2{font-size:clamp(25px,3.4vw,36px);letter-spacing:-.01em}
+.ch-head p{margin:.45em 0 0;color:var(--muted);max-width:46em}
+.js .reveal{transition:transform .7s cubic-bezier(.2,.7,.2,1)}.js .reveal:not(.in){transform:translateY(14px)}
+
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:32px;align-items:start}
+.panel-card{background:var(--surface);border:1px solid var(--border);border-radius:18px;padding:22px;box-shadow:var(--shadow)}
+.panel-title{display:flex;justify-content:space-between;align-items:baseline;gap:4px 10px;flex-wrap:wrap;font-weight:700;font-size:14px;margin-bottom:10px}
+.sub-h{font-size:20px;margin:0 0 12px}
+.callout{display:flex;gap:12px;align-items:flex-start;padding:14px 18px;border-radius:14px;background:var(--c-soft,var(--mod-soft));border:1px solid var(--c,var(--mod));font-size:15px;margin-top:18px}
+.callout b{color:var(--c,var(--mod))}
+.callout a{color:var(--c,var(--mod));font-weight:700}
+.seg{display:inline-flex;flex-wrap:wrap;gap:4px;padding:4px;background:var(--surface-2);border-radius:12px;border:1px solid var(--border)}
+.seg button{border:0;background:transparent;color:var(--muted);font:600 14px var(--sans);padding:8px 14px;border-radius:9px;cursor:pointer;transition:.2s}
+.seg button.on{background:var(--surface);color:var(--mod);box-shadow:var(--shadow)}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip-btn{border:1px solid var(--border);background:var(--surface);color:var(--muted);font:600 13px var(--sans);padding:5px 12px;border-radius:999px;cursor:pointer;transition:.2s}
+.chip-btn.on{border-color:var(--c,var(--mod));color:var(--c,var(--mod));background:var(--c-soft,var(--mod-soft))}
+.empty{color:var(--muted);font-size:13px;border:1px dashed var(--border);border-radius:10px;padding:22px 12px;text-align:center}
+
+/* terminal */
+.term{background:var(--term-bg);border-radius:14px;overflow:hidden;font:13px/1.75 var(--mono);color:var(--term-text);min-width:0}
+.term-bar{display:flex;align-items:center;gap:7px;padding:10px 14px;background:rgba(255,255,255,.05)}
+.term-bar i{width:11px;height:11px;border-radius:50%;background:#ff5f57}
+.term-bar i:nth-child(2){background:#febc2e}.term-bar i:nth-child(3){background:#28c840}
+.term-bar span{margin-left:8px;color:var(--term-muted);font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.term-body{padding:14px 16px 16px}
+.tl{white-space:pre-wrap;word-break:break-word}
+.tl .ps{color:#f2a581}
+.tl.ok{color:#7ee2a8}.tl.warn{color:#f5c26b}.tl.muted{color:var(--term-muted)}.tl.info{color:#8ab8ff}.tl.bad{color:#ff8a98}.tl.hl{color:#d3b8ff}
+.caret{display:inline-block;width:8px;height:1.05em;background:var(--term-text);vertical-align:-2px;margin-left:1px;animation:blink 1s steps(1) infinite}
+.hero .term{box-shadow:0 24px 60px rgba(20,10,0,.28);transform:rotate(-.6deg);animation:float 7s ease-in-out infinite}
+.hero .term .term-body{min-height:260px;font-size:13.5px}
+
+/* code block */
+.code{border-radius:12px;overflow:hidden;background:var(--term-bg);color:var(--term-text);margin:12px 0}
+.code-bar{display:flex;justify-content:space-between;align-items:center;padding:6px 8px 6px 14px;background:rgba(255,255,255,.06);font:12px var(--mono);color:var(--term-muted)}
+.copy{border:1px solid rgba(255,255,255,.18);background:transparent;color:var(--term-text);font:600 12px var(--sans);padding:3px 10px;border-radius:7px;cursor:pointer}
+.copy:hover{background:rgba(255,255,255,.1)}
+.code pre{margin:0;padding:12px 16px 14px;font:13.5px/1.8 var(--mono);white-space:pre-wrap;word-break:break-word}
+.code .cm{color:var(--term-muted)}
+.code .ps{color:#f2a581}
+
+/* quiz */
+.quiz{max-width:780px;margin:0 auto;padding:26px}
+.q-anim{animation:slideIn .45s cubic-bezier(.2,.7,.2,1)}
+.q-top{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:14px;font-size:13.5px;color:var(--muted)}
+.q-dots{display:flex;gap:6px}
+.q-dots i{width:10px;height:10px;border-radius:50%;background:var(--border);transition:.3s}
+.q-dots i.ok{background:var(--green)}.q-dots i.no{background:var(--red)}
+.q-dots i.cur{outline:2px solid var(--mod);outline-offset:2px}
+.q-text{font-size:clamp(18px,2.2vw,21px);font-weight:700;margin:0 0 18px;line-height:1.55}
+.q-opts{display:flex;flex-direction:column;gap:10px}
+.q-opt{text-align:left;padding:12px 16px;border-radius:12px;border:1px solid var(--border);background:var(--bg);color:var(--text);font:15px/1.55 var(--sans);cursor:pointer;display:flex;gap:12px;align-items:center;transition:transform .2s,border-color .2s,background .2s}
+.q-opt .k{font:700 13px var(--mono);width:28px;height:28px;border-radius:8px;background:var(--surface-2);display:grid;place-items:center;flex:none;transition:.2s}
+.q-opt:hover:not(:disabled){border-color:var(--mod);transform:translateX(4px)}
+.q-opt.correct{border-color:var(--green);background:var(--green-soft)}
+.q-opt.correct .k{background:var(--green);color:#fff}
+.q-opt.wrong{border-color:var(--red);background:var(--red-soft);animation:shake .4s}
+.q-opt.wrong .k{background:var(--red);color:#fff}
+.q-opt:disabled{cursor:default}
+.q-exp{margin-top:14px;padding:12px 16px;border-radius:12px;background:var(--surface-2);font-size:14.5px;display:none}
+.q-exp.show{display:block;animation:popIn .35s}
+.q-next{margin-top:16px}
+.q-result{text-align:center;padding:10px 0}
+.ring{width:150px;height:150px;margin:0 auto 10px;position:relative}
+.ring svg{width:100%;height:100%;transform:rotate(-90deg)}
+.ring circle{fill:none;stroke-width:12}
+.ring .bg{stroke:var(--surface-2)}
+.ring .fg{stroke:var(--mod);stroke-linecap:round;transition:stroke-dashoffset 1.3s cubic-bezier(.2,.7,.2,1)}
+.ring .val{position:absolute;inset:0;display:grid;place-items:center;font:800 32px var(--sans)}
+.q-result h3{font-size:22px;margin:8px 0}
+.q-result p{color:var(--muted)}
+.q-result .row-btns{display:flex;flex-wrap:wrap;gap:10px;justify-content:center}
+
+/* module nav */
+.mod-nav{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:8px}
+.mod-nav a{display:block;padding:18px 20px;border-radius:16px;border:1px solid var(--border);background:var(--surface);color:var(--text);text-decoration:none;transition:.2s}
+.mod-nav a:hover{border-color:var(--mod);transform:translateY(-2px);box-shadow:var(--shadow)}
+.mod-nav small{display:block;color:var(--muted);font-size:13px}
+.mod-nav b{font-size:17px}
+.mod-nav .next{text-align:right}
+
+footer{padding:56px 0 70px;border-top:1px solid var(--border);color:var(--muted);font-size:14.5px}
+footer h3{color:var(--text);font-size:17px;margin:0 0 10px}
+footer ul{padding-left:20px;margin:0 0 18px}
+footer li{margin:4px 0}
+.confetti{position:fixed;width:8px;height:12px;border-radius:2px;pointer-events:none;z-index:100}
+
+@keyframes popIn{from{opacity:0;transform:translateY(5px)}}
+@keyframes blink{50%{opacity:0}}
+@keyframes bump{40%{transform:scale(1.13)}}
+@keyframes shake{20%{transform:translateX(-6px)}40%{transform:translateX(6px)}60%{transform:translateX(-4px)}80%{transform:translateX(3px)}}
+@keyframes chipIn{from{opacity:0;transform:scale(.85)}}
+@keyframes slideIn{from{opacity:0;transform:translateX(18px)}}
+@keyframes float{50%{transform:rotate(-.6deg) translateY(-8px)}}
+@keyframes pulse{50%{box-shadow:0 0 0 6px var(--c-soft,var(--mod-soft))}}
+
+@media (max-width:900px){
+  .hero-grid,.grid-2{grid-template-columns:1fr}
+  .hero-grid{gap:36px}
+}
+@media (max-width:600px){
+  .wrap{padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+  .chapter{padding:60px 0}
+  .hero{padding:44px 0 48px}
+  .panel-card,.quiz{padding:16px}
+  .ch-head{gap:12px}
+  .mod-nav{grid-template-columns:1fr}
+  .crumb{font-size:13px}
+}
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}
+}
+
+
+
+body.m-exam{--mod:var(--accent);--mod-soft:var(--accent-soft);--mod-2:var(--purple)}
+.hero.hero-sm{padding:48px 0 26px}
+.hero-sm h1{font-size:clamp(30px,4.6vw,50px)}
+.hero-sm .lead{max-width:42em}
+.chapter.tight{padding-top:24px;border-top:0}
+.exam{max-width:820px;margin:0 auto}
+.rules{list-style:none;padding:0;margin:14px 0 18px;display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px}
+.rules li{padding:12px 14px;border-radius:12px;background:var(--surface-2);font-size:14px}
+.rules b{display:block;font-size:22px;color:var(--mod);font-variant-numeric:tabular-nums}
+.namef{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:6px 0 16px}
+.namef label{font-weight:700;font-size:14px}
+.namef input{flex:1;min-width:200px;padding:10px 14px;border-radius:12px;border:1px solid var(--border);background:var(--bg);color:var(--text);font:15px var(--sans)}
+.best{font-size:13.5px;color:var(--muted);margin:12px 0 0}
+.q-cat{display:inline-block;font:700 11.5px var(--sans);padding:2px 9px;border-radius:999px;background:var(--c-soft);color:var(--c);margin-bottom:8px}
+.q-link{display:inline-block;margin-top:8px;font-weight:700;font-size:13.5px}
+.bd{display:flex;flex-direction:column;gap:8px;margin:18px auto;max-width:560px;text-align:left}
+.bd-row{display:grid;grid-template-columns:120px 1fr 52px;gap:10px;align-items:center;font-size:13.5px}
+.bd-row .bar{height:10px;border-radius:99px;background:var(--surface-2);overflow:hidden}
+.bd-row .bar span{display:block;height:100%;background:var(--c);border-radius:99px;width:0;transition:width 1s cubic-bezier(.2,.7,.2,1)}
+.bd-row em{font-style:normal;font-weight:800;text-align:right;font-variant-numeric:tabular-nums}
+.review{margin-top:26px;text-align:left}
+.review h3{font-size:18px;margin-bottom:10px}
+.rv{padding:12px 14px;border-radius:12px;border:1px solid var(--border);background:var(--bg);margin-bottom:10px;font-size:14px}
+.rv b{display:block;margin-bottom:4px}
+.rv .yours{color:var(--red)}
+.rv .right{color:var(--green)}
+.cert{margin-top:26px}
+.cert img{width:100%;max-width:760px;height:auto;border-radius:12px;box-shadow:var(--shadow);border:1px solid var(--border)}
+.cert .row-btns{margin:14px 0 6px}
+.cert-hint{font-size:12.5px;color:var(--muted);margin:0}
+.near{padding:14px 16px;border-radius:14px;background:var(--surface-2);margin-top:16px;font-size:14.5px}
+@media (max-width:600px){.bd-row{grid-template-columns:90px 1fr 46px}}
+/*cc-site-css*/
+.ccp-ov{position:fixed;inset:0;z-index:300;background:rgba(12,10,8,.55);-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px);display:flex;justify-content:center;align-items:flex-start;padding:calc(env(safe-area-inset-top,0px) + 9vh) max(16px,env(safe-area-inset-right,0px)) 16px max(16px,env(safe-area-inset-left,0px))}
+.ccp-ov[hidden]{display:none}
+.ccp{width:min(680px,100%);max-height:min(74vh,660px);display:flex;flex-direction:column;border-radius:18px;background:var(--surface);color:var(--text);border:1px solid var(--border);box-shadow:0 30px 80px rgba(0,0,0,.35);overflow:hidden;animation:ccpIn .22s cubic-bezier(.2,.8,.3,1)}
+@keyframes ccpIn{from{opacity:0;transform:translateY(-10px) scale(.98)}}
+.ccp-top{display:flex;align-items:center;gap:10px;padding:14px 16px;border-bottom:1px solid var(--border);color:var(--muted)}
+.ccp-top svg{width:18px;height:18px;flex:none}
+.ccp-top input{flex:1;min-width:0;border:0;background:transparent;color:var(--text);font:16px var(--sans);outline:none}
+.ccp-top input::-webkit-search-cancel-button{display:none}
+.ccp kbd{font:600 11px var(--mono);padding:2px 6px;border-radius:6px;border:1px solid var(--border);color:var(--muted);background:var(--surface-2);white-space:nowrap}
+.ccp-list{overflow-y:auto;padding:6px 8px 10px;overscroll-behavior:contain}
+.ccp-g{font:700 11.5px var(--sans);color:var(--muted);letter-spacing:.06em;padding:12px 10px 4px}
+.ccp-i{display:flex;gap:10px;align-items:center;padding:8px 10px;border-radius:10px;color:var(--text);text-decoration:none}
+.ccp-i.on{background:var(--surface-2);box-shadow:inset 3px 0 0 var(--c,var(--accent))}
+.ccp-ic{width:30px;height:30px;border-radius:9px;display:grid;place-items:center;font:800 12px var(--sans);background:var(--c-soft,var(--surface-2));color:var(--c,var(--muted));flex:none}
+.ccp-i .tx{min-width:0;flex:1}
+.ccp-i b{display:block;font-size:14.5px;font-weight:600;line-height:1.35}
+.ccp-i small{display:block;font-size:12px;color:var(--muted);line-height:1.45;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ccp-i mark{background:color-mix(in srgb,var(--c,var(--accent)) 28%,transparent);color:inherit;border-radius:3px;padding:0 1px}
+.ccp-empty{padding:30px 12px;text-align:center;color:var(--muted);font-size:14px}
+.ccp-foot{display:flex;gap:14px;flex-wrap:wrap;padding:9px 16px;border-top:1px solid var(--border);font-size:12px;color:var(--muted)}
+.cc-credit{font-size:13px;color:var(--muted);border-top:1px solid var(--border);margin:22px 0 0;padding-top:16px}
+.cc-credit a{color:inherit}
+.cc-foot-nav{display:flex;flex-wrap:wrap;gap:6px 16px;margin:24px 0 0;padding-top:18px;border-top:1px solid var(--border);font-size:14px}
+.cc-foot-nav a{color:var(--muted);text-decoration:none;font-weight:600}
+.cc-foot-nav a:hover{color:var(--text);text-decoration:underline}
+.cc-foot-nav a[aria-current="page"]{color:var(--text)}
+.cc-foot-nav + .cc-credit{border-top:0;margin-top:10px;padding-top:0}
+@media (max-width:600px){.ccp-foot .ccp-k{display:none}.ccp-ov{padding-top:calc(env(safe-area-inset-top,0px) + 12px)}.ccp{max-height:calc(100vh - 40px)}}
+/* a11y: skip link */
+.skip{position:fixed;left:max(12px,env(safe-area-inset-left,0px));top:-80px;z-index:400;padding:10px 16px;border-radius:10px;background:var(--text);color:var(--bg);font:700 14px var(--sans);text-decoration:none;box-shadow:0 10px 30px rgba(0,0,0,.25);transition:top .2s}
+.skip:focus{top:calc(env(safe-area-inset-top,0px) + 10px);outline:2px solid var(--accent);outline-offset:2px}
+main:focus{outline:none}
+/* a11y: light-mode contrast (WCAG AA 4.5:1 for text on bg, soft tints and white) */
+:root{--accent:#a64f32;--green:#1c784e;--blue:#2a66bc;--red:#ba3347}
+/* a11y: dark mode uses dark text on light-colored fills */
+@media (prefers-color-scheme: dark){
+:root:not([data-theme="light"]) :is(.avatar,.brand-mark,.btn.primary,.chip-tag,.cwd,.cwd-badge,.dots button.on,.ghost,.lv-tag,.mission .box,.msg.you,.node .bdg,.pick-row .opts button.right,.q-opt.correct .k,.q-opt.wrong .k,.read-btn:not(:disabled):hover,.rnode.done .rn-n,.sg-head .phase,.sn.on span,.sn.seen span,.step.cur .st-n,.step.done .st-n,.stop i,.task .tb,.tcard.learned .tn){color:#16120f}
+}
+:root[data-theme="dark"] :is(.avatar,.brand-mark,.btn.primary,.chip-tag,.cwd,.cwd-badge,.dots button.on,.ghost,.lv-tag,.mission .box,.msg.you,.node .bdg,.pick-row .opts button.right,.q-opt.correct .k,.q-opt.wrong .k,.read-btn:not(:disabled):hover,.rnode.done .rn-n,.sg-head .phase,.sn.on span,.sn.seen span,.step.cur .st-n,.step.done .st-n,.stop i,.task .tb,.tcard.learned .tn){color:#16120f}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .node.blk::after,:root:not([data-theme="light"]) .node.okk::after,:root:not([data-theme="light"]) .steps-mini li::before{color:#16120f}}
+:root[data-theme="dark"] .node.blk::after,:root[data-theme="dark"] .node.okk::after,:root[data-theme="dark"] .steps-mini li::before{color:#16120f}
+/*/cc-site-css*/</style>
+</head>
+<body class="m-exam">
+<a class="skip" href="#main">跳到主要內容</a>
+<div class="progress"><span id="progressBar"></span></div>
+<header class="topbar">
+  <div class="wrap topbar-inner">
+    <a class="brand" href="index.html" title="回到學院首頁"><span class="brand-mark">CC</span><span class="brand-text">Kevin 的互動學院</span></a>
+    <span class="crumb">› 結業測驗</span>
+    <nav class="chapters" id="chapterNav" aria-label="網站">
+      <a href="start.html">新手教學</a>
+      <a href="tips.html">心法集</a>
+      <a href="demos.html">功能演示館</a>
+      <a href="workflows.html">方法論館</a>
+    </nav>
+    <button class="icon-btn" id="ccSearchBtn" aria-label="搜尋全站（⌘K）" title="搜尋全站（⌘K）"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg></button>
+    <button class="icon-btn" id="themeBtn" aria-label="切換深色／淺色"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="8"/><path d="M12 4a8 8 0 0 0 0 16z" fill="currentColor"/></svg></button>
+  </div>
+</header>
+
+<main id="main" tabindex="-1">
+<section id="hero" class="hero hero-sm">
+  <div class="wrap">
+    <span class="eyebrow">結業測驗 · 20 題</span>
+    <h1>結業測驗<br><span class="grad">拿一張證書</span></h1>
+    <p class="lead">從全站題庫隨機抽 20 題，涵蓋三個模組、功能演示、方法論與心法。每題作答後馬上看解析；答對 80% 以上，就能產生寫上你名字的結業證書。</p>
+  </div>
+</section>
+<section id="examSec" class="chapter tight">
+  <div class="wrap"><div class="panel-card quiz exam" id="exam" aria-live="polite"></div></div>
+</section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <p>題目依本站各頁內容出題；功能相關題目以 Claude Code 官方文件（2026 年 11 月）為準。成績只記在這台裝置的瀏覽器裡。</p>
+  </div>
+<!--cc-credit--><div class="wrap"><nav class="cc-foot-nav" aria-label="全站頁面"><a href="index.html">首頁</a><a href="start.html">新手教學</a><a href="memory.html">Memory</a><a href="agent-teams.html">Agent Teams</a><a href="goal.html">/goal</a><a href="tips.html">心法集</a><a href="demos.html">功能演示館</a><a href="workflows.html">方法論館</a><a href="reference.html">參考手冊</a><a href="exam.html" aria-current="page">結業測驗</a></nav><p class="cc-credit">Kevin 的 Claude Code 互動學院 · <a href="https://github.com/kevin801221/claude-code-academy" target="_blank" rel="noopener">GitHub 原始碼</a> · 任何頁面按 ⌘K（或 Ctrl+K）搜尋全站</p></div><!--/cc-credit--></footer>
+
+<script>
+(() => {
+'use strict';
+const $ = (s, r = document) => r.querySelector(s);
+const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
+const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+const sleep = ms => new Promise(r => setTimeout(r, reduced ? Math.min(ms, 40) : ms));
+const restart = (el, cls) => { el.classList.remove(cls); void el.offsetWidth; el.classList.add(cls); };
+const root = document.documentElement;
+
+/* theme */
+const tb = $('#themeBtn');
+if (tb) tb.addEventListener('click', () => {
+  const cur = root.dataset.theme || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+  const next = cur === 'dark' ? 'light' : 'dark';
+  root.dataset.theme = next;
+  try { localStorage.setItem('cm-theme', next); } catch (e) {}
+});
+
+/* scroll progress */
+const bar = $('#progressBar');
+const onScroll = () => {
+  if (!bar) return;
+  const h = document.documentElement;
+  bar.style.width = (h.scrollTop / Math.max(1, h.scrollHeight - h.clientHeight) * 100).toFixed(2) + '%';
+};
+addEventListener('scroll', onScroll, { passive: true }); onScroll();
+
+/* chapter nav highlight */
+const nav = $('#chapterNav');
+if (nav) {
+  const links = $$('a', nav);
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (!e.isIntersecting) return;
+      links.forEach(a => {
+        const on = a.getAttribute('href') === '#' + e.target.id;
+        a.classList.toggle('on', on);
+        if (on && nav.scrollTo) nav.scrollTo({ left: a.offsetLeft - nav.clientWidth / 2 + a.clientWidth / 2, behavior: reduced ? 'auto' : 'smooth' });
+      });
+    });
+  }, { rootMargin: '-45% 0px -50% 0px' });
+  $$('section[id]').forEach(s => obs.observe(s));
+}
+
+/* reveal */
+const revObs = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (!e.isIntersecting) return;
+    e.target.classList.add('in');
+    revObs.unobserve(e.target);
+    e.target.dispatchEvent(new CustomEvent('revealed'));
+  });
+}, { threshold: 0.12 });
+$$('.reveal').forEach(el => revObs.observe(el));
+
+/* confetti */
+function confetti(el) {
+  if (reduced || !el) return;
+  const r = el.getBoundingClientRect();
+  const x = r.left + r.width / 2, y = r.top + r.height / 2;
+  const colors = ['var(--accent)', 'var(--green)', 'var(--blue)', 'var(--purple)', '#f2c14e'];
+  for (let i = 0; i < 40; i++) {
+    const p = document.createElement('i');
+    p.className = 'confetti';
+    p.style.left = x + 'px'; p.style.top = y + 'px';
+    p.style.background = colors[i % colors.length];
+    document.body.appendChild(p);
+    const ang = Math.random() * Math.PI * 2, dist = 70 + Math.random() * 150;
+    const dx = Math.cos(ang) * dist, dy = Math.sin(ang) * dist - 70;
+    p.animate([
+      { transform: 'translate(0,0) rotate(0deg)', opacity: 1 },
+      { transform: 'translate(' + dx + 'px,' + (dy + 140) + 'px) rotate(' + (Math.random() * 720) + 'deg)', opacity: 0 }
+    ], { duration: 1100 + Math.random() * 600, easing: 'cubic-bezier(.2,.6,.4,1)' }).finished.then(() => p.remove());
+  }
+}
+
+/* copy buttons */
+function copyText(text) {
+  if (navigator.clipboard && window.isSecureContext !== false) {
+    return navigator.clipboard.writeText(text).catch(() => fallbackCopy(text));
+  }
+  return fallbackCopy(text);
+}
+function fallbackCopy(text) {
+  return new Promise(res => {
+    const ta = document.createElement('textarea');
+    ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
+    document.body.appendChild(ta); ta.select();
+    try { document.execCommand('copy'); } catch (e) {}
+    ta.remove(); res();
+  });
+}
+document.addEventListener('click', e => {
+  const b = e.target.closest('[data-copy]');
+  if (!b) return;
+  const src = b.dataset.copy ? document.getElementById(b.dataset.copy) : b.closest('.code').querySelector('pre');
+  if (!src) return;
+  copyText(src.innerText.trim()).then(() => {
+    const old = b.dataset.label || b.textContent;
+    b.dataset.label = old;
+    b.textContent = '已複製 ✓';
+    setTimeout(() => { b.textContent = old; }, 1500);
+  });
+});
+
+/* progress storage (shared across pages) */
+function getProgress() {
+  try { return JSON.parse(localStorage.getItem('cca-progress') || '{}') || {}; } catch (e) { return {}; }
+}
+function saveProgress(key, score, total) {
+  try {
+    const p = getProgress();
+    if (!p[key] || score >= p[key].score) p[key] = { score, total };
+    localStorage.setItem('cca-progress', JSON.stringify(p));
+  } catch (e) {}
+}
+
+/* quiz engine */
+function quiz(box, QUIZ, key, nextLink) {
+  let qi = 0, qScore = 0, qRes = [];
+  function render() {
+    if (qi >= QUIZ.length) return result();
+    const Q = QUIZ[qi];
+    box.innerHTML = '<div class="q-anim"><div class="q-top"><span>第 ' + (qi + 1) + ' / ' + QUIZ.length + ' 題</span><div class="q-dots">' +
+      QUIZ.map((_, i) => '<i class="' + (qRes[i] === true ? 'ok' : qRes[i] === false ? 'no' : '') + (i === qi ? ' cur' : '') + '"></i>').join('') + '</div></div>' +
+      '<p class="q-text">' + Q.q + '</p><div class="q-opts">' +
+      Q.o.map((o, i) => '<button class="q-opt" data-i="' + i + '"><span class="k">' + 'ABCD'[i] + '</span><span>' + o + '</span></button>').join('') +
+      '</div><div class="q-exp"></div><button class="btn primary q-next" hidden>' + (qi === QUIZ.length - 1 ? '看結果' : '下一題') + ' →</button></div>';
+  }
+  function answer(i) {
+    const Q = QUIZ[qi], ok = i === Q.a;
+    const opts = $$('.q-opt', box);
+    opts.forEach(o => { o.disabled = true; });
+    opts[Q.a].classList.add('correct');
+    if (!ok) opts[i].classList.add('wrong');
+    qRes[qi] = ok; if (ok) qScore++;
+    $$('.q-dots i', box)[qi].classList.add(ok ? 'ok' : 'no');
+    const exp = $('.q-exp', box);
+    exp.innerHTML = (ok ? '<b style="color:var(--green)">✓ 答對了！</b> ' : '<b style="color:var(--red)">✕ 差一點。</b> ') + Q.e;
+    exp.classList.add('show');
+    const nx = $('.q-next', box); nx.hidden = false; nx.focus({ preventScroll: true });
+  }
+  function result() {
+    const pct = qScore / QUIZ.length, C = 2 * Math.PI * 60;
+    saveProgress(key, qScore, QUIZ.length);
+    const msg = qScore === QUIZ.length ? '滿分！這個模組你已經完全掌握。'
+      : pct >= 0.7 ? '很棒！回頭看看答錯的題目，就更完整了。'
+      : '建議再玩一次上面的互動區，加深印象後再挑戰。';
+    box.innerHTML = '<div class="q-anim q-result"><div class="ring"><svg viewBox="0 0 140 140"><circle class="bg" cx="70" cy="70" r="60"/><circle class="fg" cx="70" cy="70" r="60" stroke-dasharray="' + C + '" stroke-dashoffset="' + C + '"/></svg><div class="val">' + qScore + '/' + QUIZ.length + '</div></div>' +
+      '<h3>' + (qScore === QUIZ.length ? '完美通關' : '測驗完成') + '</h3><p>' + msg + '</p><div class="row-btns"><button class="btn q-retry">↻ 再測一次</button>' +
+      (nextLink ? '<a class="btn primary" href="' + nextLink[0] + '">' + nextLink[1] + ' →</a>' : '') + '</div></div>';
+    requestAnimationFrame(() => requestAnimationFrame(() => { $('.ring .fg', box).style.strokeDashoffset = C * (1 - pct); }));
+    if (pct >= 0.7) setTimeout(() => confetti($('.ring', box)), 700);
+  }
+  box.addEventListener('click', e => {
+    const o = e.target.closest('.q-opt');
+    if (o && !o.disabled) return answer(+o.dataset.i);
+    if (e.target.closest('.q-next')) { qi++; render(); return; }
+    if (e.target.closest('.q-retry')) { qi = 0; qScore = 0; qRes = []; render(); }
+  });
+  render();
+}
+
+/* typing helper for terminals */
+async function typeInto(el, text, speed) {
+  for (const ch of text) { el.textContent += ch; await sleep(speed || 45); }
+}
+
+window.CC = { $, $$, reduced, sleep, restart, confetti, quiz, getProgress, saveProgress, typeInto, copyText };
+})();
+</script>
+<script>
+(() => {
+'use strict';
+const { $, $$, confetti, reduced } = CC;
+const esc = s => String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+const CATS = {
+  mem: ['模組：Memory', 'c-accent'], teams: ['模組：Agent Teams', 'c-blue'], goal: ['模組：/goal', 'c-green'],
+  demo: ['功能演示', 'c-purple'], wf: ['方法論', 'c-blue'], tip: ['心法', 'c-accent']
+};
+const QUOTA = { mem: 2, teams: 2, goal: 2, demo: 8, wf: 3, tip: 3 };
+const PASS = 0.8;
+const BANK = [
+  { c: 'mem', q: '你在 /mymonorepo/frontend 執行 claude，啟動當下會載入哪些 CLAUDE.md？', o: ['只有 /mymonorepo/frontend/CLAUDE.md', '/mymonorepo/CLAUDE.md 和 /mymonorepo/frontend/CLAUDE.md', 'monorepo 裡全部四個 CLAUDE.md', '只有 /mymonorepo/CLAUDE.md'], a: 1, e: '祖先載入：從 cwd 往上走，cwd 本身與祖先目錄的 CLAUDE.md 都在啟動時載入。', l: 'memory.html#ch2' },
+  { c: 'mem', q: 'Claude 啟動時往上找 CLAUDE.md，會一路走到哪裡為止？', o: ['git repo 的根目錄', '家目錄 ~', '檔案系統根目錄', '不往上，只看當前目錄'], a: 2, e: '它會從當前工作目錄往上走到檔案系統根目錄，載入沿途找到的每一個 CLAUDE.md。', l: 'memory.html#ch2' },
+  { c: 'mem', q: '從 /mymonorepo 啟動後，backend/CLAUDE.md 什麼時候會進入脈絡？', o: ['啟動時立即載入', 'Claude 讀取或編輯 backend/ 裡的檔案時', '永遠不會', '只有重新開一個 session 時'], a: 1, e: '子目錄的 CLAUDE.md 採延遲載入：在 session 中操作到該子目錄的檔案時才會納入。', l: 'memory.html#ch2' },
+  { c: 'mem', q: '你在 frontend/ 工作，兄弟目錄 api/CLAUDE.md 會怎樣？', o: ['啟動時載入', '讀 frontend 的檔案時順便載入', '預設不會進入脈絡', '會以全域身分載入'], a: 2, e: '兄弟目錄預設不載入；例外是用 --add-dir 加入該目錄，並設定 CLAUDE_CODE_ADDITIONAL_DIRECTORIES_CLAUDE_MD=1。', l: 'memory.html#ch5' },
+  { c: 'mem', q: '想讓某些指令套用到「所有專案」的每個 session，應該放在哪裡？', o: ['/mymonorepo/CLAUDE.md', '~/.claude/CLAUDE.md', 'CLAUDE.local.md', '每個元件的 CLAUDE.md'], a: 1, e: '家目錄的 ~/.claude/CLAUDE.md 是全域記憶，套用到所有專案。', l: 'memory.html#ch1' },
+  { c: 'mem', q: '不想分享給團隊的個人指令，該怎麼處理？', o: ['寫進根層級 CLAUDE.md', '寫在 CLAUDE.local.md，並加進 .gitignore', '寫在 backend/CLAUDE.md', '寫在 README.md'], a: 1, e: 'CLAUDE.local.md 放個人偏好；用 /init 選個人選項時會自動加進 .gitignore。', l: 'memory.html#ch6' },
+  { c: 'mem', q: 'CLAUDE.md 想引用另一個檔案的內容，官方的寫法是？', o: ['@path/to/file', '#include path/to/file', '{{ path/to/file }}', 'import path/to/file'], a: 0, e: '用 @path 匯入（最多 4 層）；匯入的內容在啟動時就會載入。', l: 'memory.html#docs-memory' },
+  { c: 'mem', q: '想確認 Claude 目前載入了哪些 CLAUDE.md 與規則檔，可以用？', o: ['/memory 或 /context', '/export', '/rename', '/clear'], a: 0, e: '官方文件建議用 /memory 或 /context 查看；沒列出來的，Claude 就看不到。', l: 'memory.html#docs-memory' },
+  { c: 'teams', q: 'Agent Teams 和子代理最大的差別是？', o: ['隊友們共用同一個脈絡視窗', '每個隊友是獨立的 Claude Code session，有自己完整的脈絡視窗', '子代理會自動載入 MCP，隊友不會', '兩者只是名稱不同'], a: 1, e: '子代理在單一 session 內工作、把結果回傳；隊友是獨立 session，有完整脈絡，不繼承 lead 的對話紀錄。', l: 'agent-teams.html#t1' },
+  { c: 'teams', q: 'Agent Teams 的隊友之間怎麼協調？', o: ['互相讀取對方的脈絡', '共享任務清單，也能直接互傳訊息', '每完成一步就 git commit', '由子代理幫忙轉傳'], a: 1, e: '官方文件：透過共享任務清單與訊息（mailbox）協調。', l: 'agent-teams.html#docs-teams' },
+  { c: 'teams', q: '開啟實驗性 Agent Teams 功能的環境變數是？', o: ['CLAUDE_TEAMS=on', 'AGENT_MODE=team', 'CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1', '不需要任何設定'], a: 2, e: '設為 1 即可，也可以寫進 settings.json 的 env。', l: 'agent-teams.html#t3' },
+  { c: 'teams', q: '想讓隊友以分割窗格顯示，官方做法是？', o: ['只要在 tmux 裡啟動就會自動分割', '把 teammateMode 設為 auto 或 tmux', '一定要用 VS Code 終端機', '無法分割'], a: 1, e: '預設是 in-process；分割窗格需要 tmux 或 iTerm2，並把 teammateMode 設為 auto 或 tmux。', l: 'agent-teams.html#docs-teams' },
+  { c: 'teams', q: '時間編排工作流中，/time-orchestrator 應該怎麼呼叫 time-agent？', o: ['用 Agent 工具（不是 bash）', '用 bash 直接執行', '用 Skill 工具', '把 agent 的內容複製進 command'], a: 0, e: '共享任務清單明確要求：Command 使用 Agent 工具；skill 才用 Skill 工具。', l: 'agent-teams.html#t2' },
+  { c: 'teams', q: 'time-svg-creator skill 應該如何取得時間？', o: ['自己再執行一次 date', '從脈絡讀取收到的時間，絕不重抓', '呼叫外部時間 API', '請使用者輸入'], a: 1, e: '整條管線用同一份資料：skill 使用 command 透過脈絡傳來的時間。', l: 'agent-teams.html#t2' },
+  { c: 'goal', q: '/goal 的作用是什麼？', o: ['每隔固定時間執行一次指令', '讓 Claude 跨回合持續工作，直到某個條件成立', '讓每一次工具呼叫自動核准', '在專案裡建立一份目標文件'], a: 1, e: '/goal <condition> 讓 Claude 一回合接一回合做，直到條件成立。', l: 'goal.html#g1' },
+  { c: 'goal', q: '誰負責評估 /goal 的條件是否成立？', o: ['使用者手動確認', '小型快速模型（預設 Haiku）', '另一位 Agent Teams 隊友', '不需要評估'], a: 1, e: '每回合結束，條件與對話會送給設定的小型快速模型判斷。', l: 'goal.html#g1' },
+  { c: 'goal', q: '想清除目前的目標，要輸入什麼？', o: ['/goal end', '/goal done', '/goal clear', '/goal exit'], a: 2, e: '用 /goal clear；也接受 stop、off、reset、none、cancel 等別名。', l: 'goal.html#g2' },
+  { c: 'goal', q: '/goal、/loop、auto 模式的驅動方式分別是？', o: ['時間／條件／逐工具', '條件／時間／逐工具', '逐工具／時間／條件', '三者完全相同'], a: 1, e: '/goal 條件驅動、/loop 時間驅動、auto 模式逐工具，三者互補。', l: 'goal.html#g3' },
+  { c: 'goal', q: '評估 /goal 條件時，評估模型會自己執行指令或讀檔嗎？', o: ['不會，只根據對話裡已經出現的內容判斷', '會讀取專案所有檔案', '會自己跑測試', '會上網查資料'], a: 0, e: '所以條件要寫成 Claude 能「秀出來」的結果，例如指令的結束碼。', l: 'demos.html#goal' },
+  { c: 'goal', q: '「請代理幫你草擬 /goal prompt」這個技巧，拿到代理寫的內容後要做什麼？', o: ['再請代理重寫一次', '複製貼上，把開頭改成 /goal', '存成 CLAUDE.md', '交給子代理執行'], a: 1, e: '把代理給的內容貼回來，開頭改成 /goal，它就會持續做到完成。', l: 'goal.html#g5' },
+  { c: 'demo', q: 'Plan 模式下，Claude 會做什麼？', o: ['直接修改程式碼', '讀檔、探索並擬定計畫，不改原始碼', '自動 push 到遠端', '只回答問題，不讀任何檔案'], a: 1, e: 'Plan 模式只探索與擬計畫；核准後才切到可以編輯的模式。', l: 'demos.html#permissions' },
+  { c: 'demo', q: '權限規則的評估順序是？', o: ['allow → ask → deny', 'deny → ask → allow，第一個符合的生效', '依設定檔裡的書寫順序', '隨機'], a: 1, e: '任何層級的 deny 都勝過 allow，連 bypassPermissions 也擋得住。', l: 'demos.html#permissions' },
+  { c: 'demo', q: '打開倒回（rewind）選單的方法是？', o: ['/rewind，或輸入框空白時連按兩下 Esc', '/undo', 'Ctrl+Z', '/reset'], a: 0, e: '選單列出你送出過的每個 prompt，可以還原程式碼、對話或兩者。', l: 'demos.html#checkpoints' },
+  { c: 'demo', q: '下列哪一種修改，不會被 checkpoint 還原？', o: ['Claude 用 Edit 改的檔案', '只被 Bash 指令改過的檔案', 'Claude 用 Write 建立的檔案', '對話內容'], a: 1, e: 'Checkpoints 只追蹤檔案編輯工具；Bash 造成的變更要靠 git。', l: 'demos.html#checkpoints' },
+  { c: 'demo', q: '想看目前脈絡被哪些東西占用，用哪個指令？', o: ['/context', '/rename', '/export', '/branch'], a: 0, e: '/context 會顯示脈絡的使用情況。', l: 'demos.html#context' },
+  { c: 'demo', q: '/compact 和 /clear 的差別是？', o: ['兩者完全相同', '/compact 把對話換成摘要並繼續；/clear 以空白脈絡開始新對話', '/clear 會刪除專案記憶', '/compact 會關閉 session'], a: 1, e: '/compact 可以附上要保留的重點；/clear 之後舊對話仍可用 /resume 找回。', l: 'demos.html#context' },
+  { c: 'demo', q: '接續「目前目錄最近一次」對話，用哪個旗標？', o: ['claude --continue', 'claude --last', 'claude --again', 'claude --open'], a: 0, e: '--continue 接最近一次；--resume 可以挑要接哪一個 session。', l: 'demos.html#sessions' },
+  { c: 'demo', q: '想從某個時間點分出一條新對話、不影響原本的，可以用？', o: ['/branch', '/clear', '/compact', '/export'], a: 0, e: '也可以用 claude --continue --fork-session。', l: 'demos.html#sessions' },
+  { c: 'demo', q: '要讓 Claude 在獨立的 git worktree 裡啟動，用哪個指令？', o: ['claude --worktree <名稱>', 'claude --branch <名稱>', 'claude --isolate', '先 git clone 一份再啟動'], a: 0, e: 'Claude Code 會在 .claude/worktrees/<名稱>/ 建立 worktree，分支是 worktree-<名稱>。', l: 'demos.html#worktrees' },
+  { c: 'demo', q: '想把 .env 這類被 gitignore 的檔案複製進新的 worktree，要用？', o: ['.worktreeinclude', '.gitkeep', '.claudeignore', 'package.json 的 files 欄位'], a: 0, e: '在 .worktreeinclude 列出要複製的檔案。', l: 'demos.html#worktrees' },
+  { c: 'demo', q: '以非互動模式執行 Claude Code（適合腳本與 CI）的旗標是？', o: ['-p（--print）', '--headless', '--batch', '--quiet'], a: 0, e: '加上 -p 送出 prompt、把結果印出後結束。', l: 'demos.html#headless' },
+  { c: 'demo', q: 'Headless 模式想取得機器可讀的輸出，該怎麼做？', o: ['--output-format json 或 stream-json', '--json-only', '--raw', '--format=machine'], a: 0, e: '預設是 text；json 與 stream-json 適合程式處理。', l: 'demos.html#headless' },
+  { c: 'demo', q: '一個 skill 最建議寫的 frontmatter 欄位是？', o: ['description', 'version', 'author', 'icon'], a: 0, e: 'description 說清楚做什麼、什麼時候用，Claude 靠它判斷要不要叫用。', l: 'demos.html#skills' },
+  { c: 'demo', q: '想讓 skill 只能由你手動叫用，要加哪個設定？', o: ['disable-model-invocation: true', 'manual: true', 'user-only: yes', 'private: true'], a: 0, e: '加上後描述也會從脈絡移除，適合 /deploy 這類有副作用的流程。', l: 'demos.html#skills' },
+  { c: 'demo', q: '在工具執行前觸發、可以擋下這次呼叫的 hook 事件是？', o: ['PreToolUse', 'PostToolUse', 'Stop', 'SessionEnd'], a: 0, e: 'PostToolUse 在工具成功後才觸發，無法撤回動作。', l: 'demos.html#hooks' },
+  { c: 'demo', q: 'command hook 要阻擋動作，應以哪個結束碼離開？', o: ['0', '1', '2', '127'], a: 2, e: 'exit 2 代表阻擋，stderr 會回饋給 Claude；exit 0 也不等於自動核准。', l: 'demos.html#hooks' },
+  { c: 'demo', q: '子代理完成工作後，什麼會回到主對話？', o: ['只有最終報告', '完整的讀檔與搜尋紀錄', '什麼都不回傳', '它會改寫 CLAUDE.md'], a: 0, e: '大量的讀檔紀錄留在子代理自己的視窗，主脈絡保持乾淨。', l: 'demos.html#subagents' },
+  { c: 'demo', q: '專案的自訂子代理檔案放在哪裡？', o: ['.claude/agents/', '.claude/skills/', '.claude/hooks/', 'node_modules/'], a: 0, e: '個人的子代理放 ~/.claude/agents/。', l: 'demos.html#subagents' },
+  { c: 'demo', q: '新增一個遠端 HTTP MCP 伺服器，指令是？', o: ['claude mcp add --transport http <名稱> <url>', 'claude add-server <url>', 'npm install mcp-<名稱>', 'claude --mcp <url>'], a: 0, e: '本機伺服器則用 stdio，以 -- 隔開要執行的指令。', l: 'demos.html#mcp' },
+  { c: 'demo', q: '想讓隊友共用同一份 MCP 設定，應該用哪個範圍？', o: ['project（寫進 .mcp.json）', 'local', 'user', '沒有辦法共用'], a: 0, e: 'project 範圍寫進 .mcp.json，可以提交；隊友第一次會被要求核准。', l: 'demos.html#mcp' },
+  { c: 'demo', q: 'Plugin 的 manifest 放在哪裡？', o: ['.claude-plugin/plugin.json', 'package.json', 'plugin.yaml', '.claude/plugin.md'], a: 0, e: '唯一必填欄位是 name，它會成為 skill 指令的前綴。', l: 'demos.html#plugins' },
+  { c: 'demo', q: '在本機測試一個還沒發布的 plugin，用？', o: ['claude --plugin-dir ./my-plugin', 'claude --test-plugin', 'npm link', 'claude plugin publish'], a: 0, e: '改了檔案後執行 /reload-plugins 重新載入。', l: 'demos.html#plugins' },
+  { c: 'demo', q: '固定間隔的 /loop（例如 /loop 5m）要怎麼停止？', o: ['請 Claude 取消它（Esc 和 Ctrl+C 停不了）', '按 Esc', '關掉網路', '它永遠不會停'], a: 0, e: '另外，循環任務 7 天後也會自動到期。', l: 'demos.html#loop' },
+  { c: 'demo', q: '不給間隔的 /loop（例如 /loop 檢查 CI）會怎樣？', o: ['每秒執行一次', 'Claude 每輪自己選 1 分鐘到 1 小時的延遲', '只執行一次', '出現錯誤'], a: 1, e: '有動靜就等短一點，沒動靜就等久一點，並印出原因。', l: 'demos.html#loop' },
+  { c: 'wf', q: 'Matt Pocock 的主流程中，在 repo 裡用來逼問、對齊需求的第一步是？', o: ['/grill-with-docs', '/grill-me-with-docs', '/plan', '/spec'], a: 0, e: '沒有工作目錄時才改用 /grill-me。', l: 'workflows.html#mattpocock' },
+  { c: 'wf', q: 'Matt Pocock 流程的最後一步是？', o: ['/retro', '/deploy', '/ship', '/done'], a: 0, e: '回顧這次的過程，改善下一次的環境。', l: 'workflows.html#mattpocock' },
+  { c: 'wf', q: 'Superpowers 的技能通常怎麼啟用？', o: ['多半自動觸發', '每一步都要打斜線指令', '要到網頁後台設定', '只能在 CI 裡用'], a: 0, e: '從 brainstorming 到收尾開發分支，整條流程都會在適當時機自動觸發。', l: 'workflows.html#superpowers' },
+  { c: 'wf', q: 'Compound Engineering 最後一步 /ce-compound 在做什麼？', o: ['把這次的經驗沉澱下來，讓下一次更容易', '合併 PR', '壓縮脈絡', '部署到正式環境'], a: 0, e: '核心理念：每一單位的工程工作都應該讓後續工作更容易。', l: 'workflows.html#compound' },
+  { c: 'wf', q: 'GitHub Spec Kit 在 Claude Code 裡的指令寫法是？', o: ['/speckit-specify（連字號）', '/spec specify', '/sk:specify', 'specify --claude'], a: 0, e: '參考文件裡的 /speckit.specify 只是點號寫法；在 Claude Code 中是連字號形式的 skill。', l: 'workflows.html#speckit' },
+  { c: 'wf', q: 'GSD 用什麼保存跨 session 的記憶？', o: ['.planning/ 底下的產物', 'CLAUDE.local.md', '瀏覽器的 localStorage', '不保存'], a: 0, e: '重活交給全新 context 的子代理，進度與決策留在 .planning/。', l: 'workflows.html#gsd' },
+  { c: 'wf', q: '哪一種專案最適合用 BMAD Method？', o: ['greenfield 產品、會有多個 epic', '修一個錯字', '只寫一份文件', '只做 code review'], a: 0, e: '明顯又低風險的小修改，官方說不必用 BMad。', l: 'workflows.html#bmad' },
+  { c: 'tip', q: 'Boris 建議多數 session 從哪個模式開始？', o: ['Plan 模式', 'bypassPermissions', 'Headless', '沒有建議'], a: 0, e: '先在 Plan 模式把計畫談好，再切到可以編輯的模式。', l: 'tips.html#t-boris-13-6' },
+  { c: 'tip', q: '要提升 Claude 產出的品質，Boris 認為最重要的一件事是？', o: ['給 Claude 驗證自己工作的方法', '寫更長的 prompt', '關閉所有測試', '每次都重開 session'], a: 0, e: '能自己驗證（跑測試、看畫面），品質會大幅提升。', l: 'tips.html#t-boris-13-13' },
+  { c: 'tip', q: 'Claude 走錯方向時，Thariq 建議怎麼做？', o: ['倒回到失敗之前，帶著新認知重下 prompt', '一路糾正它', '馬上關掉 Claude Code', '把錯誤寫進程式碼註解'], a: 0, e: '糾正會把失敗的嘗試留在脈絡裡；倒回讓脈絡保持乾淨。', l: 'tips.html#t-thariq-sessions-4' },
+  { c: 'tip', q: '開始一個不相關的新任務時，Thariq 的建議是？', o: ['開一個新的 session', '繼續用同一個長 session', '先 /compact 三次', '改用另一個模型'], a: 0, e: '新任務用新 session，避免不相關的脈絡干擾。', l: 'tips.html#t-thariq-sessions-3' },
+  { c: 'tip', q: 'Karpathy 說：思考可以外包給 AI，但不能外包什麼？', o: ['理解', '打字', '測試', '部署'], a: 0, e: '你仍然要真正理解系統，才能判斷 AI 的產出對不對。', l: 'tips.html#t-karpathy-9' },
+  { c: 'tip', q: '團隊共用 CLAUDE.md 的心法是？', o: ['Claude 每次犯錯，就把教訓寫進團隊共用的 CLAUDE.md', '每個人各寫一份、不要 commit', '只寫在 README', 'CLAUDE.md 越長越好'], a: 0, e: '把錯誤變成規則並 commit 進 git，下次就不會再犯。', l: 'tips.html#t-boris-13-4' }
+];
+
+const shuffle = a => { for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+const box = $('#exam');
+const load = k => { try { return localStorage.getItem(k); } catch (e) { return null; } };
+const store = (k, v) => { try { localStorage.setItem(k, v); } catch (e) {} };
+let state = null;
+
+function intro() {
+  let best = null;
+  try { best = JSON.parse(load('cca-exam') || 'null'); } catch (e) {}
+  const total = Object.values(QUOTA).reduce((a, b) => a + b, 0);
+  box.innerHTML = '<div class="q-anim ex-intro"><h2 class="sub-h">準備好了嗎？</h2>' +
+    '<ul class="rules"><li><b>' + total + '</b>題，從 ' + BANK.length + ' 題題庫隨機抽</li><li><b>80%</b>以上可產生證書</li><li><b>6</b>個範圍：三個模組、功能、方法論、心法</li></ul>' +
+    '<div class="namef"><label for="exName">證書上的名字</label><input id="exName" maxlength="24" placeholder="例如：Kevin" autocomplete="name"></div>' +
+    '<button class="btn primary" id="exStart">開始測驗 →</button>' +
+    (best ? '<p class="best">你目前的最佳成績：' + best.best + '%' + (best.best >= PASS * 100 ? '（已達證書標準）' : '') + '</p>' : '') + '</div>';
+  const nm = $('#exName');
+  nm.value = load('cca-name') || '';
+  $('#exStart').addEventListener('click', () => { store('cca-name', nm.value.trim()); start(nm.value.trim()); });
+  nm.addEventListener('keydown', e => { if (e.key === 'Enter') $('#exStart').click(); });
+}
+function start(name) {
+  const qs = [];
+  Object.keys(QUOTA).forEach(c => { shuffle(BANK.filter(b => b.c === c)).slice(0, QUOTA[c]).forEach(b => qs.push(b)); });
+  shuffle(qs);
+  state = { name, qs: qs.map(b => { const order = shuffle(b.o.map((_, i) => i)); return { b, order, a: order.indexOf(b.a) }; }), i: 0, ans: [] };
+  renderQ();
+  const top = $('#examSec').getBoundingClientRect().top + window.scrollY - 70;
+  window.scrollTo({ top: Math.max(0, top), behavior: reduced ? 'auto' : 'smooth' });
+}
+function renderQ() {
+  const S = state, Q = S.qs[S.i], cat = CATS[Q.b.c];
+  box.innerHTML = '<div class="q-anim ' + cat[1] + '"><div class="q-top"><span>第 ' + (S.i + 1) + ' / ' + S.qs.length + ' 題</span><div class="q-dots">' +
+    S.qs.map((_, i) => '<i class="' + (S.ans[i] === true ? 'ok' : S.ans[i] === false ? 'no' : '') + (i === S.i ? ' cur' : '') + '"></i>').join('') + '</div></div>' +
+    '<span class="q-cat">' + cat[0] + '</span><p class="q-text">' + esc(Q.b.q) + '</p><div class="q-opts">' +
+    Q.order.map((oi, i) => '<button class="q-opt" data-i="' + i + '"><span class="k">' + 'ABCD'[i] + '</span><span>' + esc(Q.b.o[oi]) + '</span></button>').join('') +
+    '</div><div class="q-exp"></div><button class="btn primary q-next" hidden>' + (S.i === S.qs.length - 1 ? '看結果' : '下一題') + ' →</button></div>';
+}
+function answer(i) {
+  const S = state, Q = S.qs[S.i], ok = i === Q.a;
+  const opts = $$('.q-opt', box);
+  opts.forEach(o => { o.disabled = true; });
+  opts[Q.a].classList.add('correct');
+  if (!ok) opts[i].classList.add('wrong');
+  S.ans[S.i] = ok;
+  Q.picked = i;
+  $$('.q-dots i', box)[S.i].classList.add(ok ? 'ok' : 'no');
+  const exp = $('.q-exp', box);
+  exp.innerHTML = (ok ? '<b style="color:var(--green)">✓ 答對了！</b> ' : '<b style="color:var(--red)">✕ 差一點。</b> ') + esc(Q.b.e) + '<br><a class="q-link" href="' + esc(Q.b.l) + '">去複習這一段 →</a>';
+  exp.classList.add('show');
+  const nx = $('.q-next', box); nx.hidden = false; nx.focus({ preventScroll: true });
+}
+function result() {
+  const S = state, n = S.qs.length, score = S.ans.filter(Boolean).length, pct = Math.round(score / n * 100), C2 = 2 * Math.PI * 60;
+  let best = null;
+  try { best = JSON.parse(load('cca-exam') || 'null'); } catch (e) {}
+  if (!best || pct >= best.best) store('cca-exam', JSON.stringify({ best: pct, name: S.name }));
+  const by = {};
+  S.qs.forEach((Q, i) => { const c = Q.b.c; by[c] = by[c] || [0, 0]; by[c][1]++; if (S.ans[i]) by[c][0]++; });
+  const wrong = S.qs.filter((Q, i) => !S.ans[i]);
+  const passed = score / n >= PASS;
+  box.innerHTML = '<div class="q-anim q-result"><div class="ring"><svg viewBox="0 0 140 140"><circle class="bg" cx="70" cy="70" r="60"/><circle class="fg" cx="70" cy="70" r="60" stroke-dasharray="' + C2 + '" stroke-dashoffset="' + C2 + '"/></svg><div class="val">' + score + '/' + n + '</div></div>' +
+    '<h3>' + (pct === 100 ? '滿分通過！' : passed ? '恭喜通過結業測驗！' : '再接再厲') + '</h3><p>答對 ' + pct + '%' + (passed ? '，已達證書標準。' : '，還差 ' + Math.max(1, Math.ceil(n * PASS) - score) + ' 題就能拿到證書。') + '</p>' +
+    '<div class="bd">' + Object.keys(QUOTA).filter(c => by[c]).map(c => '<div class="bd-row ' + CATS[c][1] + '"><span>' + CATS[c][0] + '</span><div class="bar"><span data-w="' + (by[c][0] / by[c][1] * 100) + '"></span></div><em>' + by[c][0] + '/' + by[c][1] + '</em></div>').join('') + '</div>' +
+    (passed ? '<div class="cert" id="cert"></div>' : '<div class="near">建議先複習答錯的題目，再挑戰一次。每次都會重新抽題。</div>') +
+    '<div class="row-btns" style="margin-top:16px"><button class="btn" id="exAgain">↻ 再考一次</button><a class="btn primary" href="index.html#path">回到學習路線</a></div>' +
+    (wrong.length ? '<div class="review"><h3>答錯的題目</h3>' + wrong.map(Q => '<div class="rv"><b>' + esc(Q.b.q) + '</b><span class="yours">你的答案：' + esc(Q.b.o[Q.order[Q.picked]]) + '</span><br><span class="right">正確答案：' + esc(Q.b.o[Q.b.a]) + '</span><br>' + esc(Q.b.e) + ' <a href="' + esc(Q.b.l) + '">複習 →</a></div>').join('') + '</div>' : '') + '</div>';
+  requestAnimationFrame(() => requestAnimationFrame(() => {
+    $('.ring .fg', box).style.strokeDashoffset = C2 * (1 - score / n);
+    $$('.bd-row .bar span', box).forEach(s => { s.style.width = s.dataset.w + '%'; });
+  }));
+  $('#exAgain').addEventListener('click', () => start(S.name));
+  if (passed) { makeCert(S.name, score, n, pct); setTimeout(() => confetti($('.ring', box)), 600); }
+}
+function makeCert(name, score, n, pct) {
+  const holder = $('#cert');
+  const cv = document.createElement('canvas');
+  cv.width = 1600; cv.height = 1130;
+  const x = cv.getContext && cv.getContext('2d');
+  if (!x) { holder.innerHTML = '<p class="cert-hint">這個瀏覽器無法產生證書圖片。</p>'; return; }
+  const F = '"PingFang TC","Noto Sans TC","Microsoft JhengHei","Heiti TC",sans-serif';
+  const now = new Date(), date = now.getFullYear() + ' 年 ' + (now.getMonth() + 1) + ' 月 ' + now.getDate() + ' 日';
+  x.fillStyle = '#fbf7f0'; x.fillRect(0, 0, 1600, 1130);
+  const g = x.createLinearGradient(0, 0, 1600, 1130); g.addColorStop(0, '#c65f3c'); g.addColorStop(1, '#7646d6');
+  x.strokeStyle = g; x.lineWidth = 16; x.strokeRect(44, 44, 1512, 1042);
+  x.lineWidth = 2; x.strokeRect(78, 78, 1444, 974);
+  x.textAlign = 'center';
+  x.fillStyle = '#a64f32'; x.font = '700 34px ' + F; x.fillText('Kevin 的 Claude Code 互動學院', 800, 196);
+  x.fillStyle = '#1d1915'; x.font = '800 104px ' + F; x.fillText('結業證書', 800, 336);
+  x.fillStyle = '#6b635a'; x.font = '400 34px ' + F; x.fillText('茲證明', 800, 448);
+  const nm = name || '學習者';
+  let size = 92; x.font = '800 ' + size + 'px ' + F;
+  while (x.measureText(nm).width > 1100 && size > 40) { size -= 4; x.font = '800 ' + size + 'px ' + F; }
+  x.fillStyle = g; x.fillText(nm, 800, 566);
+  x.strokeStyle = '#e6ded2'; x.lineWidth = 2; x.beginPath(); x.moveTo(470, 602); x.lineTo(1130, 602); x.stroke();
+  x.fillStyle = '#3a332c'; x.font = '400 36px ' + F;
+  x.fillText('完成 Kevin 的 Claude Code 互動學院結業測驗', 800, 680);
+  x.fillText('成績 ' + score + ' / ' + n + '（' + pct + '%）', 800, 736);
+  x.fillStyle = '#6b635a'; x.font = '400 26px ' + F;
+  x.fillText('涵蓋 CLAUDE.md 記憶、Agent Teams、/goal、核心功能演示、工作流方法論與實戰心法', 800, 800);
+  x.textAlign = 'left'; x.fillStyle = '#3a332c'; x.font = '400 28px ' + F; x.fillText(date, 170, 960);
+  x.strokeStyle = '#c9c0b3'; x.beginPath(); x.moveTo(170, 912); x.lineTo(560, 912); x.stroke();
+  x.fillStyle = '#6b635a'; x.font = '400 22px ' + F; x.fillText('頒發日期', 170, 1000);
+  x.save(); x.translate(1330, 920);
+  x.fillStyle = g; x.beginPath(); x.arc(0, 0, 92, 0, Math.PI * 2); x.fill();
+  x.strokeStyle = 'rgba(255,255,255,.6)'; x.lineWidth = 3; x.beginPath(); x.arc(0, 0, 76, 0, Math.PI * 2); x.stroke();
+  x.fillStyle = '#ffffff'; x.textAlign = 'center'; x.font = '800 52px ' + F; x.fillText('CC', 0, 10);
+  x.font = '700 18px ' + F; x.fillText('ACADEMY', 0, 42);
+  x.restore();
+  let url = '';
+  try { url = cv.toDataURL('image/png'); } catch (e) {}
+  holder.innerHTML = (url ? '<img src="' + url + '" alt="' + esc(nm) + ' 的結業證書">' : '') +
+    '<div class="row-btns"><button class="btn primary" id="certDl">下載證書（PNG）</button></div><p class="cert-hint">如果沒有開始下載，可以對圖片按右鍵（手機長按）另存。</p>';
+  $('#certDl').addEventListener('click', () => {
+    try {
+      cv.toBlob(b => {
+        if (!b) return;
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(b);
+        a.download = 'Claude-Code-互動學院-結業證書.png';
+        document.body.appendChild(a); a.click(); a.remove();
+        setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+      });
+    } catch (e) {}
+  });
+}
+box.addEventListener('click', e => {
+  const o = e.target.closest('.q-opt');
+  if (o && !o.disabled) { answer(+o.dataset.i); return; }
+  if (e.target.closest('.q-next')) { state.i++; if (state.i >= state.qs.length) result(); else renderQ(); }
+});
+intro();
+})();
+</script>
+<!--cc-site-->
+<script src="search-index.js"></script>
+<script>
+(() => {
+'use strict';
+const IDX = window.CC_INDEX || { items: [], map: [] };
+const esc = s => String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+const ICON = { page: ['頁', 'c-accent'], learn: ['教', 'c-green'], mod: ['課', 'c-green'], tip: ['心', 'c-accent'], demo: ['演', 'c-purple'], wf: ['法', 'c-blue'], stage: ['階', 'c-blue'], ref: ['查', 'c-purple'], term: ['詞', 'c-green'] };
+const GROUP = { page: '頁面', learn: '新手教學', mod: '模組章節', demo: '功能演示', wf: '方法論', stage: '方法論的階段', ref: '參考手冊', tip: '心法', term: '名詞' };
+const ORDER = ['page', 'learn', 'mod', 'demo', 'wf', 'ref', 'stage', 'tip', 'term'];
+const BOOST = { page: 3, learn: 2, mod: 2, demo: 2, wf: 2, ref: 1, term: 1, tip: 0, stage: 0 };
+const DATA = (IDX.items || []).map(a => ({ k: a[0], t: a[1], s: a[2], u: a[3], x: (a[1] + ' ' + a[2] + ' ' + (a[4] || '')).toLowerCase() }));
+
+const ov = document.createElement('div');
+ov.className = 'ccp-ov';
+ov.hidden = true;
+ov.innerHTML = '<div class="ccp" role="dialog" aria-modal="true" aria-label="搜尋全站"><div class="ccp-top"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg>' +
+  '<input type="search" id="ccpQ" placeholder="搜尋心法、功能、方法論、名詞…" autocomplete="off" spellcheck="false" aria-label="搜尋全站" aria-controls="ccpList"><kbd>Esc</kbd></div>' +
+  '<div class="ccp-list" id="ccpList" role="listbox"></div><div class="ccp-foot"><span>↑ ↓ 選擇</span><span>Enter 開啟</span><span class="ccp-k">⌘K／Ctrl+K 或 / 隨時叫出</span></div></div>';
+document.body.appendChild(ov);
+const q = ov.querySelector('#ccpQ'), list = ov.querySelector('#ccpList');
+let items = [], act = 0, lastFocus = null;
+
+function hl(text, terms) {
+  const low = text.toLowerCase(), mk = new Array(text.length).fill(false);
+  terms.forEach(t => { let i = low.indexOf(t); while (t && i >= 0) { for (let j = i; j < i + t.length; j++) mk[j] = true; i = low.indexOf(t, i + t.length); } });
+  let out = '', on = false;
+  for (let i = 0; i < text.length; i++) {
+    if (mk[i] && !on) { out += '<mark>'; on = true; }
+    if (!mk[i] && on) { out += '</mark>'; on = false; }
+    out += esc(text[i]);
+  }
+  return on ? out + '</mark>' : out;
+}
+function render() {
+  const raw = q.value.trim(), terms = raw.toLowerCase().split(/\s+/).filter(Boolean);
+  let groups;
+  if (!terms.length) {
+    groups = (IDX.map || []).map(g => ({ name: g.name, rows: g.items.map(a => ({ k: a[0], t: a[1], s: a[2], u: a[3] })) }));
+  } else {
+    const res = [];
+    DATA.forEach(d => {
+      if (!terms.every(t => d.x.includes(t))) return;
+      const tl = d.t.toLowerCase();
+      let sc = BOOST[d.k] || 0;
+      terms.forEach(t => { if (tl.includes(t)) sc += 3; if (tl.startsWith(t)) sc += 2; });
+      res.push([sc, d]);
+    });
+    res.sort((a, b) => b[0] - a[0]);
+    const top = res.slice(0, 60).map(r => r[1]);
+    groups = ORDER.map(k => ({ name: GROUP[k], rows: top.filter(d => d.k === k) })).filter(g => g.rows.length);
+  }
+  items = [];
+  let h = '';
+  groups.forEach(g => {
+    h += '<div class="ccp-g">' + esc(g.name) + '</div>';
+    g.rows.forEach(r => {
+      const i = items.length, ic = ICON[r.k] || ICON.page;
+      items.push(r);
+      h += '<a class="ccp-i ' + ic[1] + '" role="option" id="ccpo' + i + '" data-i="' + i + '" href="' + esc(r.u) + '"><span class="ccp-ic">' + ic[0] + '</span><span class="tx"><b>' + hl(r.t, terms) + '</b>' + (r.s ? '<small>' + hl(r.s, terms) + '</small>' : '') + '</span></a>';
+    });
+  });
+  list.innerHTML = h || (DATA.length ? '<div class="ccp-empty">找不到「' + esc(raw) + '」。換個關鍵字試試，例如 hooks、worktree、脈絡、grill。</div>' : '<div class="ccp-empty">搜尋索引還沒載入（search-index.js）。重新整理頁面再試一次。</div>');
+  setAct(0);
+}
+function setAct(i) {
+  if (!items.length) { q.removeAttribute('aria-activedescendant'); return; }
+  act = (i + items.length) % items.length;
+  list.querySelectorAll('.ccp-i').forEach(a => a.classList.toggle('on', +a.dataset.i === act));
+  const el = list.querySelector('#ccpo' + act);
+  if (el) { el.scrollIntoView({ block: 'nearest' }); q.setAttribute('aria-activedescendant', 'ccpo' + act); }
+}
+function go(i) {
+  const r = items[i];
+  if (!r) return;
+  close(false);
+  location.href = r.u;
+}
+function open() {
+  if (!ov.hidden) return;
+  lastFocus = document.activeElement;
+  ov.hidden = false;
+  q.value = '';
+  render();
+  document.documentElement.style.overflow = 'hidden';
+  setTimeout(() => q.focus(), 0);
+}
+function close(restoreFocus) {
+  if (ov.hidden) return;
+  ov.hidden = true;
+  document.documentElement.style.overflow = '';
+  if (restoreFocus !== false && lastFocus && lastFocus.focus) lastFocus.focus();
+}
+q.addEventListener('input', render);
+q.addEventListener('keydown', e => {
+  if (e.key === 'ArrowDown') { e.preventDefault(); setAct(act + 1); }
+  else if (e.key === 'ArrowUp') { e.preventDefault(); setAct(act - 1); }
+  else if (e.key === 'Enter') { e.preventDefault(); go(act); }
+  else if (e.key === 'Escape') { e.preventDefault(); close(); }
+});
+ov.addEventListener('click', e => {
+  if (e.target === ov) { close(); return; }
+  const a = e.target.closest('.ccp-i');
+  if (a) { e.preventDefault(); go(+a.dataset.i); }
+});
+list.addEventListener('mousemove', e => { const a = e.target.closest('.ccp-i'); if (a && +a.dataset.i !== act) setAct(+a.dataset.i); });
+document.addEventListener('keydown', e => {
+  if ((e.metaKey || e.ctrlKey) && (e.key === 'k' || e.key === 'K')) { e.preventDefault(); if (ov.hidden) open(); else close(); return; }
+  const typing = e.target && e.target.closest && e.target.closest('input, textarea, select, [contenteditable]');
+  if (e.key === '/' && ov.hidden && !typing && !e.metaKey && !e.ctrlKey && !e.altKey) { e.preventDefault(); open(); }
+});
+const btn = document.getElementById('ccSearchBtn');
+if (btn) btn.addEventListener('click', open);
+window.CCSearch = { open, close };
+
+/* skip link: move focus without touching the hash (pages route on hashchange) */
+const skip = document.querySelector('a.skip');
+if (skip) skip.addEventListener('click', e => {
+  const m = document.getElementById('main');
+  if (!m) return;
+  e.preventDefault();
+  m.focus({ preventScroll: true });
+  m.scrollIntoView({ block: 'start' });
+});
+
+/* daily tip (index only) */
+const dt = document.getElementById('dailyTip');
+const DAILY = IDX.daily || [];
+if (dt && DAILY.length) {
+  const now = new Date();
+  let di = Math.floor(Date.UTC(now.getFullYear(), now.getMonth(), now.getDate()) / 864e5) % DAILY.length;
+  const show = anim => {
+    const t = DAILY[di];
+    dt.innerHTML = '<span class="dl-ic" aria-hidden="true">今</span><div class="dl-b"><span class="dl-k">今日心法 · ' + esc(t[2]) + '</span><a class="dl-t" href="' + esc(t[3]) + '">' + esc(t[0]) + '</a><p>' + esc(t[1]) + '</p><div class="dl-a"><a class="btn small primary" href="' + esc(t[3]) + '">照著做 →</a><button class="btn small" type="button" data-next>換一條</button></div></div>';
+    if (anim) { dt.classList.remove('pop'); void dt.offsetWidth; dt.classList.add('pop'); }
+  };
+  show(false);
+  dt.hidden = false;
+  dt.addEventListener('click', e => {
+    if (!e.target.closest('[data-next]')) return;
+    di = (di + 1 + Math.floor(Math.random() * Math.max(1, DAILY.length - 1))) % DAILY.length;
+    show(true);
+  });
+}
+})();
+</script>
+<!--/cc-site--></body>
+</html>
