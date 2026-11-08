@@ -1,0 +1,1417 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Claude Memory</title>
+<script>
+document.documentElement.classList.add('js');
+try { var t = localStorage.getItem('cm-theme'); if (t) document.documentElement.dataset.theme = t; } catch (e) {}
+</script>
+<style>
+:root{
+  --sans:-apple-system,BlinkMacSystemFont,"PingFang TC","Noto Sans TC","Microsoft JhengHei","Segoe UI",sans-serif;
+  --mono:"SF Mono",ui-monospace,Menlo,Consolas,"Liberation Mono",monospace;
+  --bg:#faf7f2; --surface:#ffffff; --surface-2:#f3eee6; --text:#1d1915; --muted:#6b635a; --border:#e6ded2;
+  --accent:#c65f3c; --accent-2:#e8916a; --accent-soft:#fbe8de;
+  --green:#1f8456; --green-soft:#dbf1e5;
+  --blue:#2c6bc4; --blue-soft:#e0eafa;
+  --purple:#7646d6; --purple-soft:#ece4fc;
+  --red:#c2364a; --red-soft:#fbe0e4;
+  --yellow:#c9922a;
+  --term-bg:#1b1815; --term-text:#efe9e0; --term-muted:#9a9187;
+  --shadow:0 1px 2px rgba(40,30,20,.05),0 8px 24px rgba(40,30,20,.07);
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#13110f; --surface:#1c1916; --surface-2:#262220; --text:#efe9e0; --muted:#a59c91; --border:#37302a;
+    --accent:#e8845c; --accent-2:#f2a581; --accent-soft:#3a251b;
+    --green:#4cc38a; --green-soft:#16302a; --blue:#6ea4f0; --blue-soft:#182a44;
+    --purple:#ab8cf6; --purple-soft:#2a2142; --red:#f06b7d; --red-soft:#3d1c22; --yellow:#e0b252;
+    --term-bg:#0c0b0a; --shadow:0 1px 2px rgba(0,0,0,.3),0 10px 30px rgba(0,0,0,.35);
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#13110f; --surface:#1c1916; --surface-2:#262220; --text:#efe9e0; --muted:#a59c91; --border:#37302a;
+  --accent:#e8845c; --accent-2:#f2a581; --accent-soft:#3a251b;
+  --green:#4cc38a; --green-soft:#16302a; --blue:#6ea4f0; --blue-soft:#182a44;
+  --purple:#ab8cf6; --purple-soft:#2a2142; --red:#f06b7d; --red-soft:#3d1c22; --yellow:#e0b252;
+  --term-bg:#0c0b0a; --shadow:0 1px 2px rgba(0,0,0,.3),0 10px 30px rgba(0,0,0,.35);
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:70px}
+body{margin:0;background:var(--bg);color:var(--text);font:16px/1.75 var(--sans);-webkit-font-smoothing:antialiased;transition:background .3s,color .3s}
+main{overflow-x:clip}
+.wrap{max-width:1100px;margin:0 auto;padding-left:max(20px,env(safe-area-inset-left,0px));padding-right:max(20px,env(safe-area-inset-right,0px))}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:55;background:var(--bg)}
+h1,h2,h3,h4{line-height:1.3;margin:0}
+p{margin:0 0 1em}
+a{color:var(--accent)}
+code{font-family:var(--mono);font-size:.86em;background:var(--surface-2);border:1px solid var(--border);padding:.05em .4em;border-radius:6px;word-break:break-word}
+b,strong{font-weight:700}
+.c-accent{--c:var(--accent);--c-soft:var(--accent-soft)}
+.c-green{--c:var(--green);--c-soft:var(--green-soft)}
+.c-blue{--c:var(--blue);--c-soft:var(--blue-soft)}
+.c-purple{--c:var(--purple);--c-soft:var(--purple-soft)}
+.c-red{--c:var(--red);--c-soft:var(--red-soft)}
+
+/* ---------- top bar ---------- */
+.progress{position:fixed;top:env(safe-area-inset-top,0px);left:0;right:0;height:3px;z-index:60;pointer-events:none}
+.progress span{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--accent),var(--purple))}
+.topbar{position:sticky;top:env(safe-area-inset-top,0px);z-index:50;background:color-mix(in srgb,var(--bg) 86%,transparent);backdrop-filter:saturate(1.4) blur(10px);-webkit-backdrop-filter:saturate(1.4) blur(10px);border-bottom:1px solid var(--border)}
+.topbar-inner{display:flex;align-items:center;gap:14px;height:58px}
+.brand{display:flex;align-items:center;gap:10px;font-weight:700;color:var(--text);text-decoration:none;white-space:nowrap;flex:none}
+.brand-mark{width:30px;height:30px;border-radius:9px;background:var(--accent);color:#fff;display:grid;place-items:center;font:800 11px var(--mono);letter-spacing:.02em}
+.chapters{display:flex;gap:2px;overflow-x:auto;scrollbar-width:none;flex:1;min-width:0}
+.chapters::-webkit-scrollbar{display:none}
+.chapters a{flex:none;padding:5px 11px;border-radius:999px;color:var(--muted);text-decoration:none;font-size:13.5px;white-space:nowrap;transition:color .2s,background .2s}
+.chapters a:hover{color:var(--text);background:var(--surface-2)}
+.chapters a.on{color:var(--accent);background:var(--accent-soft);font-weight:600}
+.icon-btn{flex:none;width:36px;height:36px;border-radius:10px;border:1px solid var(--border);background:var(--surface);color:var(--text);cursor:pointer;display:grid;place-items:center}
+.icon-btn svg{width:18px;height:18px}
+@media (max-width:760px){.brand-text{display:none}}
+
+/* ---------- buttons ---------- */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:10px 18px;border-radius:999px;border:1px solid var(--border);background:var(--surface);color:var(--text);font:600 15px/1.2 var(--sans);cursor:pointer;text-decoration:none;transition:transform .15s,background .2s,box-shadow .2s,border-color .2s}
+.btn:hover:not(:disabled){transform:translateY(-1px);box-shadow:var(--shadow)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+.btn.small{padding:6px 13px;font-size:13px}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+button:focus-visible,.btn:focus-visible,[role="button"]:focus-visible,a:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+/* ---------- hero ---------- */
+.hero{padding:70px 0 64px;position:relative}
+.hero::before{content:"";position:absolute;inset:0;background-image:radial-gradient(var(--border) 1.2px,transparent 1.2px);background-size:22px 22px;-webkit-mask-image:radial-gradient(ellipse at 72% 40%,#000 15%,transparent 68%);mask-image:radial-gradient(ellipse at 72% 40%,#000 15%,transparent 68%);animation:drift 40s linear infinite;pointer-events:none}
+@keyframes drift{to{background-position:220px 110px}}
+.hero-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:48px;align-items:center;position:relative}
+.eyebrow{display:inline-block;font:700 12.5px var(--sans);letter-spacing:.08em;color:var(--accent);background:var(--accent-soft);padding:4px 12px;border-radius:999px;margin-bottom:18px}
+.hero h1{font-size:clamp(34px,5.6vw,60px);letter-spacing:-.02em;margin-bottom:18px}
+.grad{background:linear-gradient(90deg,var(--accent),var(--purple));-webkit-background-clip:text;background-clip:text;color:transparent}
+.lead{font-size:18px;color:var(--muted);max-width:32em}
+.hero-cta{display:flex;flex-wrap:wrap;gap:10px;margin:26px 0 28px}
+.hero-stats{display:flex;flex-wrap:wrap;gap:10px 26px;list-style:none;padding:0;margin:0;color:var(--muted);font-size:14px}
+.hero-stats b{font-size:22px;color:var(--text);margin-right:4px}
+.src-note{font-size:13px;color:var(--muted);margin-top:18px}
+.terminal{background:var(--term-bg);border-radius:16px;box-shadow:0 24px 60px rgba(20,10,0,.28);overflow:hidden;font:13.5px/1.8 var(--mono);color:var(--term-text);transform:rotate(-.6deg);animation:float 7s ease-in-out infinite}
+@keyframes float{50%{transform:rotate(-.6deg) translateY(-8px)}}
+.term-bar{display:flex;align-items:center;gap:7px;padding:11px 14px;background:rgba(255,255,255,.05)}
+.term-bar i{width:11px;height:11px;border-radius:50%;background:#ff5f57}
+.term-bar i:nth-child(2){background:#febc2e}.term-bar i:nth-child(3){background:#28c840}
+.term-bar span{margin-left:8px;color:var(--term-muted);font-size:12px}
+.term-body{padding:16px 18px 20px;min-height:268px}
+.tl{white-space:pre-wrap;word-break:break-all}
+.tl .ps{color:#f2a581}
+.tl.ok{color:#7ee2a8}.tl.warn{color:#f5c26b}.tl.muted{color:var(--term-muted)}.tl.lazy{color:#8ab8ff}
+.caret{display:inline-block;width:8px;height:1.05em;background:var(--term-text);vertical-align:-2px;margin-left:1px;animation:blink 1s steps(1) infinite}
+@keyframes blink{50%{opacity:0}}
+.pop{animation:popIn .35s ease both}
+@keyframes popIn{from{opacity:0;transform:translateY(5px)}}
+
+/* ---------- chapters ---------- */
+.chapter{padding:84px 0;border-top:1px solid var(--border)}
+.ch-head{display:flex;gap:18px;align-items:flex-start;margin-bottom:36px}
+.ch-num{font:800 14px var(--mono);color:var(--accent);background:var(--accent-soft);padding:6px 10px;border-radius:10px;flex:none;margin-top:5px}
+.ch-head h2{font-size:clamp(25px,3.4vw,36px);letter-spacing:-.01em}
+.ch-head p{margin:.45em 0 0;color:var(--muted);max-width:44em}
+.js .reveal{transition:transform .7s cubic-bezier(.2,.7,.2,1)}.js .reveal:not(.in){transform:translateY(14px)}
+
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:start}
+.panel-card{background:var(--surface);border:1px solid var(--border);border-radius:18px;padding:22px;box-shadow:var(--shadow)}
+
+/* ch1 */
+.big-quote{font-size:clamp(20px,2.4vw,25px);line-height:1.55;font-weight:600;border-left:4px solid var(--accent);padding-left:18px;margin-bottom:22px}
+.big-quote strong{color:var(--accent)}
+.link-card{display:flex;align-items:center;gap:14px;padding:14px 16px;border-radius:14px;border:1px solid var(--border);background:var(--surface);color:var(--text);text-decoration:none;transition:.2s;margin-top:8px}
+.link-card:hover{border-color:var(--accent);transform:translateY(-2px);box-shadow:var(--shadow)}
+.link-card .lk-ic{width:38px;height:38px;border-radius:10px;background:var(--accent-soft);color:var(--accent);display:grid;place-items:center;flex:none}
+.link-card small{display:block;color:var(--muted);font-size:13px;line-height:1.5}
+.layers-title{font-size:13px;font-weight:700;color:var(--muted);letter-spacing:.06em;margin-bottom:10px}
+.layers{display:flex;flex-direction:column;gap:10px;perspective:900px}
+.layer{display:flex;align-items:center;gap:14px;text-align:left;width:100%;padding:14px 16px;border-radius:14px;border:1px solid var(--border);background:var(--surface);color:var(--text);cursor:pointer;font:inherit;transition:transform .25s,box-shadow .2s,border-color .2s;box-shadow:var(--shadow)}
+.layers.in .layer{animation:layerIn .7s cubic-bezier(.2,.7,.2,1) backwards;animation-delay:calc(var(--i) * 130ms)}
+@keyframes layerIn{from{opacity:0;transform:translateY(-22px) rotateX(25deg)}}
+.layer:hover{transform:translateX(4px)}
+.layer.sel{border-color:var(--c);box-shadow:0 0 0 3px var(--c-soft)}
+.layer .bar{width:6px;align-self:stretch;border-radius:4px;background:var(--c);flex:none}
+.layer .lt{font:600 14px var(--mono);display:block;word-break:break-all}
+.layer .tg{display:inline-block;font-size:12px;font-weight:600;padding:1px 9px;border-radius:999px;background:var(--c-soft);color:var(--c);margin-top:3px}
+.layer-detail{margin-top:14px;padding:16px 18px;border-radius:14px;background:var(--c-soft);border:1px solid var(--c);font-size:15px;min-height:96px}
+.layer-detail.fade{animation:popIn .35s ease}
+.layer-detail h4{font:700 15px var(--mono);color:var(--c);margin-bottom:6px}
+.layer-detail p{margin:0}
+
+/* ch2 demos */
+.demo-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+.demo h3{display:flex;flex-wrap:wrap;align-items:center;gap:10px;font-size:20px;margin-bottom:6px}
+.demo .sub{color:var(--muted);font-size:14.5px;margin:0}
+.pill{font:700 12px var(--sans);padding:3px 10px;border-radius:999px;background:var(--c-soft);color:var(--c)}
+.demo-stage{position:relative;margin:18px 0 14px;padding:8px 56px 8px 8px;background:var(--surface-2);border-radius:14px;border:1px solid var(--border)}
+.demo-stage::after{content:"";position:absolute;right:26px;top:14px;bottom:14px;border-left:2px dashed var(--border)}
+.d-row{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:6px 10px;padding:9px 12px;border-radius:10px;font:13.5px var(--mono);transition:background .3s}
+.d-row.ind{padding-left:32px}.d-row.ind2{padding-left:56px}
+.d-row.scan{background:var(--accent-soft)}
+.d-row.reading{background:var(--blue-soft);animation:readPulse 1s ease infinite}
+@keyframes readPulse{50%{box-shadow:0 0 0 3px var(--blue-soft)}}
+.cwd{font-style:normal;font:700 10.5px var(--sans);padding:1px 6px;border-radius:5px;background:var(--accent);color:#fff;margin-left:6px;vertical-align:1px}
+.d-file{display:inline-flex;align-items:center;gap:6px;padding:2px 10px;border-radius:999px;border:1px dashed var(--muted);color:var(--muted);font-size:12.5px;transition:background .35s,color .35s,border-color .35s}
+.d-file .st:empty{display:none}
+.d-file.none{border-color:transparent;font-family:var(--sans)}
+.d-file.loaded{border-style:solid;border-color:var(--green);background:var(--green-soft);color:var(--green);animation:bump .5s}
+.d-file.lazy{border-style:solid;border-color:var(--blue);background:var(--blue-soft);color:var(--blue);animation:bump .5s}
+.d-file.wait{border-style:dashed;color:var(--muted)}
+.d-read{font:600 11.5px var(--sans);color:var(--blue)}
+@keyframes bump{40%{transform:scale(1.13)}}
+.d-bot{position:absolute;right:13px;top:0;opacity:0;transition:transform .55s cubic-bezier(.5,0,.3,1),opacity .3s;z-index:2}
+.demo-cap{min-height:3.6em;margin:0 0 14px;font-size:15px}
+.demo-cap.fade{animation:popIn .35s ease}
+
+/* bot */
+.botface{width:28px;height:28px;border-radius:50% 50% 44% 44%;background:var(--accent);display:flex;gap:5px;align-items:center;justify-content:center;box-shadow:0 4px 12px rgba(198,95,60,.4)}
+.botface i{width:4.5px;height:7px;border-radius:3px;background:#fff;animation:eye 4s infinite}
+@keyframes eye{0%,92%,100%{transform:none}95%{transform:scaleY(.15)}}
+
+/* ch3 simulator */
+.sim{padding:22px}
+.sim-controls{display:flex;flex-wrap:wrap;gap:16px 26px;align-items:flex-end}
+.ctrl-label{display:block;font-size:13px;color:var(--muted);margin-bottom:6px;font-weight:700}
+.seg{display:inline-flex;flex-wrap:wrap;gap:4px;padding:4px;background:var(--surface-2);border-radius:12px;border:1px solid var(--border)}
+.seg button{border:0;background:transparent;color:var(--muted);font:600 13px var(--mono);padding:7px 12px;border-radius:9px;cursor:pointer;transition:.2s}
+.seg button.on{background:var(--surface);color:var(--accent);box-shadow:var(--shadow)}
+.seg button:disabled{cursor:not-allowed;opacity:.6}
+.switch{display:inline-flex;align-items:center;gap:10px;font-size:14px;cursor:pointer;user-select:none;padding-bottom:6px}
+.switch input{position:absolute;opacity:0;pointer-events:none}
+.slider{width:40px;height:23px;border-radius:999px;background:var(--border);position:relative;transition:.25s;flex:none}
+.slider::after{content:"";position:absolute;top:3px;left:3px;width:17px;height:17px;border-radius:50%;background:#fff;transition:.25s;box-shadow:0 1px 3px rgba(0,0,0,.25)}
+.switch input:checked+.slider{background:var(--purple)}
+.switch input:checked+.slider::after{transform:translateX(17px)}
+.switch input:focus-visible+.slider{outline:2px solid var(--accent);outline-offset:2px}
+.switch input:disabled+.slider{opacity:.5}
+.ctrl-actions{display:flex;gap:8px;margin-left:auto}
+.sim-cmd{margin:16px 0;padding:10px 14px;background:var(--term-bg);color:var(--term-text);border-radius:10px;font:13.5px var(--mono);word-break:break-all}
+.sim-cmd .ps{color:#f2a581}
+.sim-grid{display:grid;grid-template-columns:1.1fr .9fr;gap:16px}
+.side{display:flex;flex-direction:column;gap:16px;min-width:0}
+.panel{border:1px solid var(--border);border-radius:14px;background:var(--bg);padding:14px;min-width:0}
+.panel-title{display:flex;justify-content:space-between;align-items:baseline;gap:4px 10px;flex-wrap:wrap;font-weight:700;font-size:14px;margin-bottom:10px}
+.hint{font-weight:400;font-size:12.5px;color:var(--muted)}
+.tree{position:relative;padding-right:46px}
+.tree::after{content:"";position:absolute;right:21px;top:10px;bottom:10px;border-left:2px dashed var(--border)}
+.tree .bot{position:absolute;right:7px;top:0;opacity:0;transition:transform .45s cubic-bezier(.5,0,.3,1),opacity .3s;z-index:3}
+.tree .bot.show{opacity:1}
+.row{display:flex;align-items:center;gap:8px;min-height:36px;padding:4px 8px 4px calc(8px + var(--d,0) * 18px);border-radius:9px;font:13.5px var(--mono);transition:background .3s,box-shadow .3s,opacity .3s;position:relative}
+.ic{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.row .nm{white-space:nowrap}
+.row .note{font:12px var(--sans);color:var(--muted);white-space:nowrap}
+.row.dir{font-weight:600}
+.row.dir .ic{color:var(--yellow)}
+.row.md .ic{color:var(--muted)}
+.row.file{color:var(--muted)}
+.row .st,.row .read-btn{margin-left:auto}
+.st{font:600 11.5px/1.6 var(--sans);padding:1px 9px;border-radius:999px;background:var(--surface-2);color:var(--muted);border:1px solid var(--border);white-space:nowrap;transition:background .3s,color .3s,border-color .3s}
+.row.s-start .st{background:var(--green-soft);color:var(--green);border-color:var(--green)}
+.row.s-start .ic{color:var(--green)}
+.row.s-lazy .st{background:var(--blue-soft);color:var(--blue);border-color:var(--blue)}
+.row.s-lazy .ic{color:var(--blue)}
+.row.s-global .st{background:var(--purple-soft);color:var(--purple);border-color:var(--purple)}
+.row.s-global .ic{color:var(--purple)}
+.row.s-wait .st{border-style:dashed}
+.row.s-out{opacity:.6}
+.row.s-block{opacity:1}
+.row.s-block .st{background:var(--red-soft);color:var(--red);border-color:var(--red)}
+.row.s-block .ic{color:var(--red)}
+.row.global.off{opacity:.45}
+.row.scan{background:var(--accent-soft)}
+.row.is-cwd{box-shadow:inset 3px 0 0 var(--accent)}
+.cwd-badge{display:none;font:700 10px var(--sans);padding:1px 6px;border-radius:5px;background:var(--accent);color:#fff;letter-spacing:.05em}
+.row.is-cwd .cwd-badge{display:inline-block}
+.row.reading{background:var(--blue-soft)}
+.row.flash{animation:flash .9s ease}
+@keyframes flash{0%{box-shadow:0 0 0 0 rgba(31,132,86,.55)}100%{box-shadow:0 0 0 12px rgba(31,132,86,0)}}
+.row.shake,.shake{animation:shake .45s}
+@keyframes shake{20%{transform:translateX(-6px)}40%{transform:translateX(6px)}60%{transform:translateX(-4px)}80%{transform:translateX(3px)}}
+.read-btn{font:600 12px var(--sans);padding:2px 10px;border-radius:999px;border:1px solid var(--blue);background:transparent;color:var(--blue);cursor:pointer;transition:.2s}
+.read-btn:not(:disabled){animation:glow 2.2s ease infinite}
+@keyframes glow{50%{box-shadow:0 0 0 4px var(--blue-soft)}}
+.read-btn:not(:disabled):hover{background:var(--blue);color:#fff}
+.read-btn:disabled{border-color:var(--border);color:var(--muted);cursor:not-allowed;opacity:.6}
+.tree-sep{height:1px;background:var(--border);margin:6px 0}
+.meter{height:10px;border-radius:999px;background:var(--surface-2);overflow:hidden;border:1px solid var(--border)}
+.meter span{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--purple),var(--green),var(--blue));transition:width .6s cubic-bezier(.2,.7,.2,1)}
+.meter-text{font-size:12.5px;color:var(--muted);margin:6px 0 10px}
+.ctx-list{display:flex;flex-direction:column;gap:6px;min-height:110px}
+.empty{color:var(--muted);font-size:13px;border:1px dashed var(--border);border-radius:10px;padding:22px 12px;text-align:center}
+.chip{display:flex;align-items:center;gap:8px;padding:6px 10px;border-radius:10px;border:1px solid var(--c);background:var(--c-soft);font:12.5px var(--mono);animation:chipIn .45s cubic-bezier(.2,.8,.3,1.3)}
+@keyframes chipIn{from{opacity:0;transform:scale(.85)}}
+.chip-name{flex:1;min-width:0;word-break:break-all}
+.chip-tag{font:700 11px var(--sans);padding:1px 7px;border-radius:6px;color:#fff;background:var(--c);flex:none}
+.chip-size{color:var(--muted);flex:none;font-size:11.5px}
+.ghost{position:fixed;z-index:80;pointer-events:none;padding:5px 10px;border-radius:9px;font:600 12px var(--mono);color:#fff;box-shadow:0 10px 24px rgba(0,0,0,.25);white-space:nowrap;background:var(--c)}
+.log-body{height:220px;overflow-y:auto;background:var(--term-bg);border-radius:10px;padding:10px 12px;font:12.5px/1.75 var(--mono);color:var(--term-text)}
+.log-line{animation:popIn .3s both;word-break:break-word}
+.log-line.cmd{color:#f2a581}.log-line.ok{color:#7ee2a8}.log-line.lazy{color:#8ab8ff}.log-line.bad{color:#ff8a98}.log-line.muted{color:var(--term-muted)}.log-line.title{color:#fff;font-weight:700;margin-top:4px}
+.legend{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:12.5px;color:var(--muted);margin-top:14px}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.legend i{width:10px;height:10px;border-radius:3px;background:var(--c)}
+.missions{margin-top:20px;display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.missions-title{grid-column:1/-1;font-weight:700;font-size:15px;display:flex;justify-content:space-between;align-items:baseline}
+.mission{display:flex;gap:10px;align-items:flex-start;padding:11px 14px;border:1px dashed var(--border);border-radius:12px;font-size:14px;line-height:1.6;transition:.35s}
+.mission .box{width:22px;height:22px;border-radius:7px;border:2px solid var(--border);flex:none;display:grid;place-items:center;color:#fff;font:700 13px var(--sans);transition:.3s;margin-top:1px}
+.mission.done{border-style:solid;border-color:var(--green);background:var(--green-soft)}
+.mission.done .box{background:var(--green);border-color:var(--green);animation:bump .5s}
+.mission.done .box::after{content:"✓"}
+.mission-banner{grid-column:1/-1;display:none;padding:14px 16px;border-radius:12px;background:linear-gradient(90deg,var(--green-soft),var(--blue-soft));font-weight:700;text-align:center}
+.mission-banner.show{display:block;animation:popIn .5s}
+
+/* ch4 scenarios */
+.tabs{display:inline-flex;flex-wrap:wrap;gap:4px;padding:4px;background:var(--surface-2);border-radius:14px;border:1px solid var(--border);margin-bottom:20px}
+.tab{border:0;background:transparent;color:var(--muted);font:600 14px var(--sans);padding:9px 16px;border-radius:10px;cursor:pointer;transition:.2s}
+.tab.on{background:var(--surface);color:var(--accent);box-shadow:var(--shadow)}
+.sc-wrap{display:grid;grid-template-columns:.8fr 1.2fr;gap:22px;align-items:start}
+.sc-code{background:var(--term-bg);color:var(--term-text);border-radius:12px;padding:14px 16px;font:14px/1.9 var(--mono);margin:0 0 14px}
+.sc-code .ps{color:#f2a581}
+.sc-side p{color:var(--muted);font-size:14.5px}
+.sc-score{font-weight:700;font-size:14px;margin:4px 0 14px}
+.sc-actions{display:flex;flex-wrap:wrap;gap:8px}
+.sc-rows{display:flex;flex-direction:column;gap:10px}
+.sc-row{display:grid;grid-template-columns:1fr auto;gap:6px 14px;align-items:center;padding:12px 14px;border:1px solid var(--border);border-radius:12px;background:var(--surface);animation:slideIn .45s cubic-bezier(.2,.7,.2,1) backwards;animation-delay:calc(var(--i) * 90ms);transition:border-color .3s}
+@keyframes slideIn{from{opacity:0;transform:translateX(18px)}}
+.sc-path{font:13.5px var(--mono);word-break:break-all}
+.sc-guess{display:flex;flex-wrap:wrap;gap:6px;align-items:center;justify-content:flex-end}
+.sc-ans{font:700 12px var(--sans);padding:3px 10px;border-radius:999px;animation:bump .45s}
+.sc-ans.yes{background:var(--green-soft);color:var(--green)}
+.sc-ans.no{background:var(--surface-2);color:var(--muted);border:1px solid var(--border)}
+.sc-fb{font:700 12px var(--sans)}
+.sc-fb.ok{color:var(--green)}.sc-fb.no{color:var(--red)}
+.sc-reason{grid-column:1/-1;font-size:14px;color:var(--muted);display:none}
+.sc-row.revealed .sc-reason{display:block;animation:popIn .3s}
+.sc-row.right{border-color:var(--green)}
+.sc-row.wrong{border-color:var(--red)}
+
+/* ch5 flips */
+.flips{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.flip{perspective:1000px;cursor:pointer;outline:none;border-radius:16px}
+.flip-inner{display:grid;transition:transform .7s cubic-bezier(.3,.7,.2,1);transform-style:preserve-3d;min-height:232px}
+.flip.flipped .flip-inner{transform:rotateY(180deg)}
+.face{grid-area:1/1;backface-visibility:hidden;-webkit-backface-visibility:hidden;border-radius:16px;padding:20px;border:1px solid var(--border);background:var(--surface);box-shadow:var(--shadow);display:flex;flex-direction:column;gap:10px}
+.face.back{transform:rotateY(180deg);background:var(--c-soft);border-color:var(--c);font-size:14.5px}
+.face .n{font:800 13px var(--mono);color:var(--c)}
+.face h3{font-size:18px}
+.face .tap{margin-top:auto;font-size:12.5px;color:var(--muted)}
+.fi{width:48px;height:48px;border-radius:13px;background:var(--c-soft);color:var(--c);display:grid;place-items:center}
+.fi svg{width:26px;height:26px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.flip:hover .fi svg{animation:var(--anim) 1s ease infinite}
+@keyframes up{50%{transform:translateY(-4px)}}
+@keyframes down{50%{transform:translateY(4px)}}
+@keyframes no{25%{transform:rotate(-10deg)}75%{transform:rotate(10deg)}}
+@keyframes spin{to{transform:rotate(360deg)}}
+.why{margin-top:56px}
+.why h3{font-size:22px;margin-bottom:18px}
+.why-svg{width:100%;height:auto;display:block}
+.why-svg .nd rect{stroke-width:1.5}
+.why-svg .nd.root rect{fill:var(--accent-soft);stroke:var(--accent)}
+.why-svg .nd.kid rect{fill:var(--surface);stroke:var(--border)}
+.why-svg text{font:600 13px var(--mono);fill:var(--text)}
+.why-svg text.s{font:12px var(--sans);fill:var(--muted)}
+.why-svg .ln{stroke:var(--border);stroke-width:2;fill:none}
+.why-svg .sep{stroke:var(--muted);stroke-width:1.5;stroke-dasharray:4 5;opacity:.5}
+.why-svg .dot{fill:var(--accent)}
+.why-list{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:14px}
+.why-list li{display:flex;gap:14px;padding:16px;border-radius:14px;background:var(--surface);border:1px solid var(--border)}
+.why-list .wi{width:34px;height:34px;border-radius:10px;background:var(--c-soft);color:var(--c);display:grid;place-items:center;font:800 14px var(--mono);flex:none}
+.why-list b{display:block;margin-bottom:2px}
+.why-list span{color:var(--muted);font-size:14.5px}
+
+/* ch6 game */
+.pool{display:flex;flex-wrap:wrap;gap:10px;min-height:66px;padding:14px;border:1.5px dashed var(--border);border-radius:16px;margin-bottom:8px;background:var(--surface-2)}
+.pool:empty::after{content:"卡片都分完了！";color:var(--muted);font-size:14px;margin:auto}
+.card-item{padding:9px 14px;border-radius:12px;background:var(--surface);border:1px solid var(--border);box-shadow:var(--shadow);cursor:grab;font-size:14.5px;user-select:none;transition:transform .15s,box-shadow .2s,border-color .2s}
+.card-item:hover{transform:translateY(-2px)}
+.card-item.sel{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft);transform:translateY(-3px)}
+.game-fb{min-height:1.7em;font-size:14.5px;margin:10px 2px 16px}
+.game-fb.ok{color:var(--green)}.game-fb.bad{color:var(--red)}
+.buckets{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.bucket{border:2px dashed var(--c);border-radius:16px;padding:14px;background:color-mix(in srgb,var(--c-soft) 45%,transparent);min-height:160px;cursor:pointer;transition:background .2s,transform .2s;display:flex;flex-direction:column;gap:8px}
+.bucket.over,.bucket.ready:hover{background:var(--c-soft);transform:translateY(-3px)}
+.bucket.ready{animation:readyPulse 1.6s ease infinite}
+@keyframes readyPulse{50%{box-shadow:0 0 0 4px var(--c-soft)}}
+.bucket h4{font:700 14px var(--mono);color:var(--c);word-break:break-all}
+.bucket p{margin:0;font-size:12.5px;color:var(--muted);line-height:1.5}
+.placed-list{display:flex;flex-direction:column;gap:6px}
+.placed{font-size:13px;line-height:1.5;padding:6px 10px;border-radius:9px;background:var(--surface);border:1px solid var(--c);animation:chipIn .4s cubic-bezier(.2,.8,.3,1.3)}
+.game-bar{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:12px;font-size:14px;color:var(--muted)}
+
+/* ch7 quiz */
+.quiz{max-width:780px;margin:0 auto;padding:26px}
+.q-anim{animation:slideIn .45s cubic-bezier(.2,.7,.2,1)}
+.q-top{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:14px;font-size:13.5px;color:var(--muted)}
+.q-dots{display:flex;gap:6px}
+.q-dots i{width:10px;height:10px;border-radius:50%;background:var(--border);transition:.3s}
+.q-dots i.ok{background:var(--green)}.q-dots i.no{background:var(--red)}
+.q-dots i.cur{outline:2px solid var(--accent);outline-offset:2px}
+.q-text{font-size:clamp(18px,2.2vw,21px);font-weight:700;margin:0 0 18px;line-height:1.55}
+.q-opts{display:flex;flex-direction:column;gap:10px}
+.q-opt{text-align:left;padding:12px 16px;border-radius:12px;border:1px solid var(--border);background:var(--bg);color:var(--text);font:15px/1.55 var(--sans);cursor:pointer;display:flex;gap:12px;align-items:center;transition:transform .2s,border-color .2s,background .2s}
+.q-opt .k{font:700 13px var(--mono);width:28px;height:28px;border-radius:8px;background:var(--surface-2);display:grid;place-items:center;flex:none;transition:.2s}
+.q-opt:hover:not(:disabled){border-color:var(--accent);transform:translateX(4px)}
+.q-opt.correct{border-color:var(--green);background:var(--green-soft)}
+.q-opt.correct .k{background:var(--green);color:#fff}
+.q-opt.wrong{border-color:var(--red);background:var(--red-soft);animation:shake .4s}
+.q-opt.wrong .k{background:var(--red);color:#fff}
+.q-opt:disabled{cursor:default}
+.q-exp{margin-top:14px;padding:12px 16px;border-radius:12px;background:var(--surface-2);font-size:14.5px;display:none}
+.q-exp.show{display:block;animation:popIn .35s}
+.q-next{margin-top:16px}
+.q-result{text-align:center;padding:10px 0}
+.ring{width:150px;height:150px;margin:0 auto 10px;position:relative}
+.ring svg{width:100%;height:100%;transform:rotate(-90deg)}
+.ring circle{fill:none;stroke-width:12}
+.ring .bg{stroke:var(--surface-2)}
+.ring .fg{stroke:var(--accent);stroke-linecap:round;transition:stroke-dashoffset 1.3s cubic-bezier(.2,.7,.2,1)}
+.ring .val{position:absolute;inset:0;display:grid;place-items:center;font:800 32px var(--sans)}
+.q-result h3{font-size:22px;margin:8px 0}
+.q-result p{color:var(--muted)}
+
+/* footer */
+footer{padding:56px 0 70px;border-top:1px solid var(--border);color:var(--muted);font-size:14.5px}
+footer h3{color:var(--text);font-size:17px;margin-bottom:10px}
+footer ul{padding-left:20px;margin:0 0 18px}
+footer li{margin:4px 0}
+
+.confetti{position:fixed;width:8px;height:12px;border-radius:2px;pointer-events:none;z-index:100}
+
+/* ---------- responsive ---------- */
+@media (max-width:960px){.flips{grid-template-columns:repeat(2,1fr)}.buckets{grid-template-columns:repeat(2,1fr)}}
+@media (max-width:900px){
+  .hero-grid,.grid-2,.demo-grid,.sim-grid,.sc-wrap{grid-template-columns:1fr}
+  .hero-grid{gap:36px}
+  .ctrl-actions{margin-left:0}
+}
+@media (max-width:600px){
+  .wrap{padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+  .chapter{padding:60px 0}
+  .hero{padding:44px 0 48px}
+  .sim,.quiz,.panel-card{padding:16px}
+  .panel{padding:10px}
+  .row{padding-left:calc(6px + var(--d,0) * 13px);font-size:12.5px;gap:6px}
+  .row .note{display:none}
+  .tree{padding-right:40px}
+  .tree::after{right:18px}
+  .tree .bot{right:4px}
+  .missions{grid-template-columns:1fr}
+  .flips,.buckets{grid-template-columns:1fr}
+  .ch-head{gap:12px}
+  .terminal{font-size:12.5px}
+  .demo-stage{padding-right:48px}
+  .d-row.ind{padding-left:22px}.d-row.ind2{padding-left:38px}
+}
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}
+}
+.crumb{flex:none;color:var(--accent);font-weight:700;font-size:14px;white-space:nowrap}
+.topbar-inner{gap:12px}
+.brand-mark{background:linear-gradient(135deg,var(--accent),var(--purple));font-size:11.5px}
+.mod-nav{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:40px}
+.mod-nav a{display:block;padding:18px 20px;border-radius:16px;border:1px solid var(--border);background:var(--surface);color:var(--text);text-decoration:none;transition:.2s}
+.mod-nav a:hover{border-color:var(--accent);transform:translateY(-2px);box-shadow:var(--shadow)}
+.mod-nav small{display:block;color:var(--muted);font-size:13px}
+.mod-nav b{font-size:17px}
+.mod-nav .next{text-align:right}
+@media (max-width:600px){.mod-nav{grid-template-columns:1fr}.crumb{font-size:13px}}
+</style>
+</head>
+<body>
+<div class="progress"><span id="progressBar"></span></div>
+
+<header class="topbar">
+  <div class="wrap topbar-inner">
+    <a class="brand" href="index.html" title="回到學院首頁"><span class="brand-mark">CC</span><span class="brand-text">互動學院</span></a><span class="crumb">› Memory</span>
+    <nav class="chapters" id="chapterNav" aria-label="章節">
+      <a href="#ch1">01 認識</a>
+      <a href="#ch2">02 載入機制</a>
+      <a href="#ch3">03 模擬器</a>
+      <a href="#ch4">04 情境</a>
+      <a href="#ch5">05 重點</a>
+      <a href="#ch6">06 實戰分類</a>
+      <a href="#ch7">07 測驗</a>
+    </nav>
+    <button class="icon-btn" id="themeBtn" aria-label="切換深色／淺色">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="8"/><path d="M12 4a8 8 0 0 0 0 16z" fill="currentColor"/></svg>
+    </button>
+  </div>
+</header>
+
+<main>
+<!-- ================= HERO ================= -->
+<section id="hero" class="hero">
+  <div class="wrap hero-grid">
+    <div>
+      <span class="eyebrow">模組 01 · Claude Memory</span>
+      <h1>CLAUDE.md<br><span class="grad">記憶是怎麼被載入的？</span></h1>
+      <p class="lead">透過 CLAUDE.md 檔案提供持久脈絡 —— 怎麼寫，以及在 monorepo 中怎麼載入。用動畫、模擬器、分類遊戲和小測驗，一次搞懂。</p>
+      <div class="hero-cta">
+        <a class="btn primary" href="#ch1">開始學習 ↓</a>
+        <a class="btn" href="#ch3">直接玩模擬器</a>
+      </div>
+      <ul class="hero-stats">
+        <li><b>2</b>種載入機制</li>
+        <li><b>4</b>個重點</li>
+        <li><b>1</b>個模擬器</li>
+        <li><b>8</b>題測驗</li>
+      </ul>
+      <p class="src-note">內容整理自 <a href="https://github.com/kevin801221/claude-code-zh-tw/blob/main/best-practice/claude-memory.md" target="_blank" rel="noopener">claude-code-zh-tw · best-practice/claude-memory.md</a></p>
+    </div>
+    <div class="terminal" aria-hidden="true">
+      <div class="term-bar"><i></i><i></i><i></i><span>zsh — mymonorepo</span></div>
+      <div class="term-body" id="heroTerm"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= CH1 ================= -->
+<section id="ch1" class="chapter">
+  <div class="wrap">
+    <header class="ch-head reveal">
+      <span class="ch-num">01</span>
+      <div><h2>CLAUDE.md 是什麼？</h2><p>一份寫給 Claude 的 Markdown 指令檔，讓專案慣例在每次 session 都「被記得」。</p></div>
+    </header>
+    <div class="grid-2">
+      <div class="reveal">
+        <p class="big-quote">結構良好的 CLAUDE.md，是改善 Claude Code 在你專案上表現<strong>最有效的單一手段</strong>。</p>
+        <p>Claude Code 會把 CLAUDE.md 讀進<b>脈絡（context）</b>，你的專案慣例、程式碼標準、注意事項就不用每次重講一遍 —— 這就是<b>持久脈絡</b>。</p>
+        <p>但當檔案一多（例如 monorepo），<b>哪些 CLAUDE.md 會在什麼時候被載入</b>，就決定了 Claude 看到什麼、脈絡有多擠。這正是接下來要學的重點。</p>
+        <a class="link-card" href="https://www.humanlayer.dev/blog/writing-a-good-claude-md" target="_blank" rel="noopener">
+          <span class="lk-ic"><svg class="ic" viewBox="0 0 24 24"><path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/></svg></span>
+          <span><b>延伸閱讀：Humanlayer — Writing a good Claude.md</b><small>該放什麼、怎麼組織，以及常見的陷阱</small></span>
+        </a>
+      </div>
+      <div class="reveal">
+        <div class="layers-title">記憶可以放在哪裡？（點擊看說明）</div>
+        <div class="layers reveal" id="layers">
+          <button class="layer c-purple" data-k="global" style="--i:0"><span class="bar"></span><span><span class="lt">~/.claude/CLAUDE.md</span><span class="tg">全域</span></span></button>
+          <button class="layer c-accent sel" data-k="root" style="--i:1"><span class="bar"></span><span><span class="lt">/mymonorepo/CLAUDE.md</span><span class="tg">根層級</span></span></button>
+          <button class="layer c-blue" data-k="comp" style="--i:2"><span class="bar"></span><span><span class="lt">frontend/ · backend/ · api/ 的 CLAUDE.md</span><span class="tg">元件層級</span></span></button>
+          <button class="layer c-green" data-k="local" style="--i:3"><span class="bar"></span><span><span class="lt">CLAUDE.local.md</span><span class="tg">個人・不入版控</span></span></button>
+        </div>
+        <div class="layer-detail c-accent" id="layerDetail"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= CH2 ================= -->
+<section id="ch2" class="chapter">
+  <div class="wrap">
+    <header class="ch-head reveal">
+      <span class="ch-num">02</span>
+      <div><h2>兩種載入機制</h2><p>Claude Code 用兩種不同機制載入 CLAUDE.md：一個<b>往上</b>走、一個<b>往下</b>等。看動畫理解差別。</p></div>
+    </header>
+    <div class="demo-grid">
+      <div class="panel-card demo reveal" id="demoUp">
+        <h3>祖先載入 <span class="pill c-green">往目錄樹「上」走</span></h3>
+        <p class="sub">啟動時，從當前工作目錄<b>往上</b>走到檔案系統根目錄，沿途找到的每一個 CLAUDE.md 都<b>立即載入</b>。</p>
+        <div class="demo-stage">
+          <div class="d-row"><span class="d-path">/</span><span class="d-file none"><span class="nm">（沒有 CLAUDE.md）</span><span class="st"></span></span></div>
+          <div class="d-row"><span class="d-path">/mymonorepo</span><span class="d-file"><span class="nm">CLAUDE.md</span><span class="st"></span></span></div>
+          <div class="d-row"><span class="d-path">/mymonorepo/frontend<em class="cwd">cwd</em></span><span class="d-file"><span class="nm">CLAUDE.md</span><span class="st"></span></span></div>
+          <div class="d-bot"><div class="botface"><i></i><i></i></div></div>
+        </div>
+        <p class="demo-cap"></p>
+        <button class="btn small" data-replay="up">↻ 重播動畫</button>
+      </div>
+      <div class="panel-card demo reveal" id="demoDown">
+        <h3>後代載入 <span class="pill c-blue">往目錄樹「下」等</span></h3>
+        <p class="sub">子目錄的 CLAUDE.md <b>不會在啟動時載入</b>，要等 Claude 在 session 中讀取那些子目錄的檔案時才納入 —— <b>延遲載入（lazy loading）</b>。</p>
+        <div class="demo-stage">
+          <div class="d-row"><span class="d-path">/mymonorepo<em class="cwd">cwd</em></span><span class="d-file"><span class="nm">CLAUDE.md</span><span class="st"></span></span></div>
+          <div class="d-row ind"><span class="d-path">frontend/</span><span class="d-file"><span class="nm">CLAUDE.md</span><span class="st"></span></span></div>
+          <div class="d-row ind2"><span class="d-path">src/App.tsx</span><span class="d-read"></span></div>
+          <div class="d-row ind"><span class="d-path">backend/</span><span class="d-file"><span class="nm">CLAUDE.md</span><span class="st"></span></span></div>
+          <div class="d-bot"><div class="botface"><i></i><i></i></div></div>
+        </div>
+        <p class="demo-cap"></p>
+        <button class="btn small" data-replay="down">↻ 重播動畫</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= CH3 ================= -->
+<section id="ch3" class="chapter">
+  <div class="wrap">
+    <header class="ch-head reveal">
+      <span class="ch-num">03</span>
+      <div><h2>Monorepo 載入實驗室</h2><p>選一個目錄啟動 Claude，看它往上掃描；再點「讀取」模擬 Claude 在 session 中讀檔，觀察哪些 CLAUDE.md 進入脈絡、哪些永遠不會。</p></div>
+    </header>
+    <div class="panel-card sim reveal">
+      <div class="sim-controls">
+        <div>
+          <span class="ctrl-label">① 在哪裡啟動 claude？</span>
+          <div class="seg" id="cwdSeg" role="radiogroup" aria-label="啟動目錄">
+            <button data-cwd="/mymonorepo" class="on" role="radio" aria-checked="true">/mymonorepo</button>
+            <button data-cwd="/mymonorepo/frontend" role="radio" aria-checked="false">frontend/</button>
+            <button data-cwd="/mymonorepo/backend" role="radio" aria-checked="false">backend/</button>
+            <button data-cwd="/mymonorepo/api" role="radio" aria-checked="false">api/</button>
+          </div>
+        </div>
+        <label class="switch"><input type="checkbox" id="globalToggle"><span class="slider"></span>② 家目錄有 <code>~/.claude/CLAUDE.md</code></label>
+        <div class="ctrl-actions">
+          <button class="btn primary" id="runBtn">▶ 執行 claude</button>
+          <button class="btn" id="resetBtn">↺ 重設</button>
+        </div>
+      </div>
+      <div class="sim-cmd" id="simCmd"></div>
+      <div class="sim-grid">
+        <div class="panel">
+          <div class="panel-title">檔案系統 <span class="hint">③ 啟動後，點檔案的「讀取」</span></div>
+          <div class="tree" id="tree"></div>
+        </div>
+        <div class="side">
+          <div class="panel">
+            <div class="panel-title">脈絡視窗 Context <span class="hint">大小僅為示意</span></div>
+            <div class="meter"><span id="meterFill"></span></div>
+            <div class="meter-text" id="meterText"></div>
+            <div class="ctx-list" id="ctxList"></div>
+          </div>
+          <div class="panel">
+            <div class="panel-title">事件紀錄</div>
+            <div class="log-body" id="logBody" aria-live="polite"></div>
+          </div>
+        </div>
+      </div>
+      <div class="legend">
+        <span class="c-green"><i></i>啟動時載入</span>
+        <span class="c-blue"><i></i>延遲載入</span>
+        <span class="c-purple"><i></i>全域</span>
+        <span class="c-red"><i></i>不載入（兄弟分支）</span>
+      </div>
+      <div class="missions" id="missions"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= CH4 ================= -->
+<section id="ch4" class="chapter">
+  <div class="wrap">
+    <header class="ch-head reveal">
+      <span class="ch-num">04</span>
+      <div><h2>情境題：先猜，再揭曉</h2><p>同一個 monorepo，從不同目錄啟動，啟動時載入的 CLAUDE.md 就不一樣。每一列先猜「會／不會」載入。</p></div>
+    </header>
+    <div class="reveal">
+      <div class="tabs" role="tablist">
+        <button class="tab on" data-s="1" role="tab" aria-selected="true">情境 1：從根目錄啟動</button>
+        <button class="tab" data-s="2" role="tab" aria-selected="false">情境 2：從 frontend/ 啟動</button>
+      </div>
+      <div class="sc-wrap">
+        <div class="sc-side">
+          <pre class="sc-code" id="scCode"></pre>
+          <p>判斷每個 CLAUDE.md 在<b>啟動當下</b>會不會被載入。</p>
+          <div class="sc-score" id="scScore"></div>
+          <div class="sc-actions">
+            <button class="btn small" id="scRevealAll">全部揭曉</button>
+            <button class="btn small primary" id="scTry">在模擬器中試試 →</button>
+          </div>
+        </div>
+        <div class="sc-rows" id="scRows"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= CH5 ================= -->
+<section id="ch5" class="chapter">
+  <div class="wrap">
+    <header class="ch-head reveal">
+      <span class="ch-num">05</span>
+      <div><h2>重點整理</h2><p>四張卡片，點一下翻面。</p></div>
+    </header>
+    <div class="flips reveal">
+      <div class="flip c-green" role="button" tabindex="0" aria-pressed="false">
+        <div class="flip-inner">
+          <div class="face"><span class="n">01</span><span class="fi" style="--anim:up"><svg viewBox="0 0 24 24"><path d="M12 19V5M6 11l6-6 6 6"/></svg></span><h3>祖先一律在啟動時載入</h3><span class="tap">點擊翻面 ↻</span></div>
+          <div class="face back"><span class="n">01 · 祖先載入</span><p>Claude 往目錄樹上走，載入找到的所有 CLAUDE.md。這確保你<b>永遠能取得根層級、整個 repo 適用的指令</b>。</p></div>
+        </div>
+      </div>
+      <div class="flip c-blue" role="button" tabindex="0" aria-pressed="false">
+        <div class="flip-inner">
+          <div class="face"><span class="n">02</span><span class="fi" style="--anim:down"><svg viewBox="0 0 24 24"><path d="M12 5v14M6 13l6 6 6-6"/></svg></span><h3>後代延遲載入</h3><span class="tap">點擊翻面 ↻</span></div>
+          <div class="face back"><span class="n">02 · 延遲載入</span><p>子目錄的 CLAUDE.md 只有在你<b>操作該子目錄的檔案</b>時才載入，避免不相關的脈絡把 session 撐爆。</p></div>
+        </div>
+      </div>
+      <div class="flip c-red" role="button" tabindex="0" aria-pressed="false">
+        <div class="flip-inner">
+          <div class="face"><span class="n">03</span><span class="fi" style="--anim:no"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><path d="M6.5 6.5l11 11"/></svg></span><h3>兄弟目錄永遠不載入</h3><span class="tap">點擊翻面 ↻</span></div>
+          <div class="face back"><span class="n">03 · 兄弟目錄</span><p>如果你在 <code>frontend/</code> 工作，<code>backend/CLAUDE.md</code> 或 <code>api/CLAUDE.md</code> <b>不會進入脈絡</b>。</p></div>
+        </div>
+      </div>
+      <div class="flip c-purple" role="button" tabindex="0" aria-pressed="false">
+        <div class="flip-inner">
+          <div class="face"><span class="n">04</span><span class="fi" style="--anim:spin"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><path d="M4 12h16M12 4c2.5 2.6 2.5 13.4 0 16M12 4c-2.5 2.6-2.5 13.4 0 16"/></svg></span><h3>全域 CLAUDE.md</h3><span class="tap">點擊翻面 ↻</span></div>
+          <div class="face back"><span class="n">04 · 全域</span><p>在家目錄放 <code>~/.claude/CLAUDE.md</code>，它會套用到<b>所有</b> Claude Code session，不分專案。</p></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="why">
+      <h3 class="reveal">這個設計為什麼適合 Monorepo？</h3>
+      <div class="grid-2">
+        <div class="panel-card reveal">
+          <svg class="why-svg" viewBox="0 0 360 230" role="img" aria-label="根層級 CLAUDE.md 向下傳播到三個元件，元件之間彼此隔離">
+            <path id="p1" class="ln" d="M180 64 C180 110 70 100 70 150"/>
+            <path id="p2" class="ln" d="M180 64 L180 150"/>
+            <path id="p3" class="ln" d="M180 64 C180 110 290 100 290 150"/>
+            <line class="sep" x1="125" y1="140" x2="125" y2="215"/>
+            <line class="sep" x1="235" y1="140" x2="235" y2="215"/>
+            <g class="nd root"><rect x="110" y="18" width="140" height="46" rx="10"/><text x="180" y="40" text-anchor="middle">CLAUDE.md</text><text class="s" x="180" y="56" text-anchor="middle">根層級・共用慣例</text></g>
+            <g class="nd kid"><rect x="20" y="150" width="100" height="56" rx="10"/><text x="70" y="174" text-anchor="middle">frontend/</text><text class="s" x="70" y="192" text-anchor="middle">前端專屬</text></g>
+            <g class="nd kid"><rect x="130" y="150" width="100" height="56" rx="10"/><text x="180" y="174" text-anchor="middle">backend/</text><text class="s" x="180" y="192" text-anchor="middle">後端專屬</text></g>
+            <g class="nd kid"><rect x="240" y="150" width="100" height="56" rx="10"/><text x="290" y="174" text-anchor="middle">api/</text><text class="s" x="290" y="192" text-anchor="middle">API 專屬</text></g>
+            <circle class="dot" r="5"><animateMotion dur="2.2s" repeatCount="indefinite"><mpath href="#p1"/></animateMotion></circle>
+            <circle class="dot" r="5"><animateMotion dur="2.2s" begin="-1.5s" repeatCount="indefinite"><mpath href="#p2"/></animateMotion></circle>
+            <circle class="dot" r="5"><animateMotion dur="2.2s" begin="-.75s" repeatCount="indefinite"><mpath href="#p3"/></animateMotion></circle>
+          </svg>
+        </div>
+        <ul class="why-list reveal">
+          <li class="c-accent"><span class="wi">↓</span><div><b>共用指令會向下傳播</b><span>根層級 CLAUDE.md 放整個 repo 適用的慣例、程式碼標準與共通模式。</span></div></li>
+          <li class="c-blue"><span class="wi">║</span><div><b>元件專屬指令保持隔離</b><span>前端開發者不需要後端專屬指令來塞爆脈絡，反之亦然。</span></div></li>
+          <li class="c-green"><span class="wi">KB</span><div><b>脈絡經過最佳化</b><span>延遲載入後代 CLAUDE.md，避免在啟動時載入可能高達數百 KB 的無關指令。</span></div></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= CH6 ================= -->
+<section id="ch6" class="chapter">
+  <div class="wrap">
+    <header class="ch-head reveal">
+      <span class="ch-num">06</span>
+      <div><h2>最佳實踐：這條指令該放哪？</h2><p>點一張卡片，再點它該去的檔案（桌機也可以直接拖曳）。分對了會告訴你原因。</p></div>
+    </header>
+    <div class="reveal">
+      <div class="game-bar"><span id="gameScore"></span><button class="btn small" id="gameReset">↺ 重新洗牌</button></div>
+      <div class="pool" id="pool" aria-label="待分類卡片"></div>
+      <div class="game-fb" id="gameFb" aria-live="polite"></div>
+      <div class="buckets" id="buckets">
+        <div class="bucket c-accent" data-b="root" role="button" tabindex="0"><h4>根層級 CLAUDE.md</h4><p>整個 repo 適用的準則</p><div class="placed-list"></div></div>
+        <div class="bucket c-blue" data-b="comp" role="button" tabindex="0"><h4>元件層級 CLAUDE.md</h4><p>只跟某個元件有關</p><div class="placed-list"></div></div>
+        <div class="bucket c-green" data-b="local" role="button" tabindex="0"><h4>CLAUDE.local.md</h4><p>個人偏好，加進 .gitignore</p><div class="placed-list"></div></div>
+        <div class="bucket c-purple" data-b="global" role="button" tabindex="0"><h4>~/.claude/CLAUDE.md</h4><p>套用到所有專案的 session</p><div class="placed-list"></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= CH7 ================= -->
+<section id="ch7" class="chapter">
+  <div class="wrap">
+    <header class="ch-head reveal">
+      <span class="ch-num">07</span>
+      <div><h2>小測驗</h2><p>8 題，每題作答後立即看解析。</p></div>
+    </header>
+    <div class="panel-card quiz reveal" id="quizBox"></div>
+    <div class="mod-nav reveal">
+      <a href="index.html"><small>← 回到</small><b>學院首頁</b></a>
+      <a class="next" href="agent-teams.html"><small>下一個模組 →</small><b>Agent Teams 實作</b></a>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <h3>資料來源</h3>
+    <ul>
+      <li><a href="index.html">← 回到 Claude Code 互動學院首頁</a></li>
+      <li><a href="https://github.com/kevin801221/claude-code-zh-tw/blob/main/best-practice/claude-memory.md" target="_blank" rel="noopener">claude-code-zh-tw — best-practice/claude-memory.md（本頁內容來源）</a></li>
+      <li><a href="https://code.claude.com/docs/en/memory#how-claude-looks-up-memories" target="_blank" rel="noopener">Claude Code Documentation — How Claude Looks Up Memories</a></li>
+      <li><a href="https://x.com/bcherny/status/2016339448863355206" target="_blank" rel="noopener">Boris Cherny on X — Clarification on CLAUDE.md Loading</a></li>
+      <li><a href="https://www.humanlayer.dev/blog/writing-a-good-claude-md" target="_blank" rel="noopener">Humanlayer — Writing a good Claude.md</a></li>
+    </ul>
+    <p>模擬器中的檔案大小（KB）僅為示意，用來比較「延遲載入」節省的脈絡空間。</p>
+  </div>
+</footer>
+
+<script>
+(() => {
+'use strict';
+const $ = (s, r = document) => r.querySelector(s);
+const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
+const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+const sleep = ms => new Promise(r => setTimeout(r, reduced ? Math.min(ms, 40) : ms));
+const restart = (el, cls) => { el.classList.remove(cls); void el.offsetWidth; el.classList.add(cls); };
+
+/* ---------- theme ---------- */
+const root = document.documentElement;
+$('#themeBtn').addEventListener('click', () => {
+  const cur = root.dataset.theme || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+  const next = cur === 'dark' ? 'light' : 'dark';
+  root.dataset.theme = next;
+  try { localStorage.setItem('cm-theme', next); } catch (e) {}
+});
+
+/* ---------- progress + nav ---------- */
+const bar = $('#progressBar');
+const onScroll = () => {
+  const h = document.documentElement;
+  const p = h.scrollTop / Math.max(1, h.scrollHeight - h.clientHeight);
+  bar.style.width = (p * 100).toFixed(2) + '%';
+};
+addEventListener('scroll', onScroll, { passive: true }); onScroll();
+
+const nav = $('#chapterNav');
+const navLinks = $$('a', nav);
+const secObs = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (!e.isIntersecting) return;
+    navLinks.forEach(a => {
+      const on = a.getAttribute('href') === '#' + e.target.id;
+      a.classList.toggle('on', on);
+      if (on) nav.scrollTo({ left: a.offsetLeft - nav.clientWidth / 2 + a.clientWidth / 2, behavior: reduced ? 'auto' : 'smooth' });
+    });
+  });
+}, { rootMargin: '-45% 0px -50% 0px' });
+$$('section').forEach(s => secObs.observe(s));
+
+/* ---------- reveal ---------- */
+const revObs = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (!e.isIntersecting) return;
+    e.target.classList.add('in');
+    revObs.unobserve(e.target);
+    e.target.dispatchEvent(new CustomEvent('revealed'));
+  });
+}, { threshold: 0.12 });
+$$('.reveal').forEach(el => revObs.observe(el));
+
+/* ---------- confetti ---------- */
+function confetti(el) {
+  if (reduced || !el) return;
+  const r = el.getBoundingClientRect();
+  const x = r.left + r.width / 2, y = r.top + r.height / 2;
+  const colors = ['var(--accent)', 'var(--green)', 'var(--blue)', 'var(--purple)', '#f2c14e'];
+  for (let i = 0; i < 40; i++) {
+    const p = document.createElement('i');
+    p.className = 'confetti';
+    p.style.left = x + 'px'; p.style.top = y + 'px';
+    p.style.background = colors[i % colors.length];
+    document.body.appendChild(p);
+    const ang = Math.random() * Math.PI * 2, dist = 70 + Math.random() * 150;
+    const dx = Math.cos(ang) * dist, dy = Math.sin(ang) * dist - 70;
+    p.animate([
+      { transform: 'translate(0,0) rotate(0deg)', opacity: 1 },
+      { transform: 'translate(' + dx + 'px,' + (dy + 140) + 'px) rotate(' + (Math.random() * 720) + 'deg)', opacity: 0 }
+    ], { duration: 1100 + Math.random() * 600, easing: 'cubic-bezier(.2,.6,.4,1)' }).finished.then(() => p.remove());
+  }
+}
+
+/* ================= HERO TERMINAL ================= */
+const heroTerm = $('#heroTerm');
+const heroLines = [
+  { t: 'cmd', s: 'cd /mymonorepo/frontend' },
+  { t: 'cmd', s: 'claude' },
+  { s: '↑ 從 cwd 往上走到檔案系統根目錄…', c: 'muted' },
+  { s: '✓ 載入 /mymonorepo/frontend/CLAUDE.md', c: 'ok' },
+  { s: '✓ 載入 /mymonorepo/CLAUDE.md', c: 'ok' },
+  { s: '✓ 載入 ~/.claude/CLAUDE.md（全域）', c: 'ok' },
+  { s: '· backend/、api/ 的 CLAUDE.md → 不載入（兄弟分支）', c: 'warn' },
+  { s: '· frontend/ 底下子目錄的 CLAUDE.md → 讀到檔案時才載入', c: 'lazy' }
+];
+async function heroLoop() {
+  if (reduced) {
+    heroTerm.innerHTML = heroLines.map(L => L.t === 'cmd'
+      ? '<div class="tl"><span class="ps">$</span> ' + L.s + '</div>'
+      : '<div class="tl ' + L.c + '">' + L.s + '</div>').join('');
+    return;
+  }
+  for (;;) {
+    heroTerm.innerHTML = '';
+    for (const L of heroLines) {
+      const line = document.createElement('div');
+      line.className = 'tl ' + (L.c || '');
+      heroTerm.appendChild(line);
+      if (L.t === 'cmd') {
+        line.innerHTML = '<span class="ps">$</span> <span class="typed"></span><span class="caret"></span>';
+        const tEl = $('.typed', line);
+        for (const ch of L.s) { tEl.textContent += ch; await sleep(55); }
+        await sleep(380);
+        $('.caret', line).remove();
+      } else {
+        line.textContent = L.s; line.classList.add('pop');
+        await sleep(560);
+      }
+    }
+    await sleep(3600);
+  }
+}
+heroLoop();
+
+/* ================= CH1 LAYERS ================= */
+const LAYERS = {
+  global: { c: 'c-purple', t: '~/.claude/CLAUDE.md · 全域', b: '放在家目錄，套用到<b>所有</b> Claude Code session，不分專案。' },
+  root: { c: 'c-accent', t: '/mymonorepo/CLAUDE.md · 根層級', b: '整個 repo 適用：程式碼標準、commit 訊息格式、PR 範本與共通模式。不論從哪個子目錄啟動，它都是祖先 —— <b>一律在啟動時載入</b>。' },
+  comp: { c: 'c-blue', t: '元件層級 CLAUDE.md', b: '框架專屬模式、元件架構、該元件獨有的測試慣例。只有在操作該元件的檔案時才載入（或從該元件目錄啟動時），彼此隔離。' },
+  local: { c: 'c-green', t: 'CLAUDE.local.md · 個人', b: '放那些<b>不該分享給團隊</b>的個人偏好指令，記得把它加進 <code>.gitignore</code>。' }
+};
+const layerDetail = $('#layerDetail');
+function showLayer(k) {
+  const L = LAYERS[k];
+  $$('.layer').forEach(b => b.classList.toggle('sel', b.dataset.k === k));
+  layerDetail.className = 'layer-detail ' + L.c;
+  layerDetail.innerHTML = '<h4>' + L.t + '</h4><p>' + L.b + '</p>';
+  restart(layerDetail, 'fade');
+}
+$$('.layer').forEach(b => b.addEventListener('click', () => showLayer(b.dataset.k)));
+showLayer('root');
+
+/* ================= CH2 DEMOS ================= */
+function setCap(cap, html) { cap.innerHTML = html; restart(cap, 'fade'); }
+function placeBot(bot, row) {
+  bot.style.opacity = 1;
+  bot.style.transform = 'translateY(' + (row.offsetTop + row.offsetHeight / 2 - 14) + 'px)';
+}
+const demos = {
+  up: {
+    el: $('#demoUp'), id: 0,
+    async play() {
+      const my = ++this.id, el = this.el, alive = () => my === this.id;
+      const rows = $$('.d-row', el), cap = $('.demo-cap', el), bot = $('.d-bot', el);
+      rows.forEach(r => { r.classList.remove('scan'); const f = $('.d-file', r); f.classList.remove('loaded'); $('.st', f).textContent = ''; });
+      bot.style.opacity = 0;
+      setCap(cap, '在 <code>/mymonorepo/frontend</code> 執行 <code>claude</code>…');
+      await sleep(1000); if (!alive()) return;
+      const seq = [
+        [2, '當前工作目錄有 CLAUDE.md → <b>立即載入</b>'],
+        [1, '往上一層：祖先目錄的 CLAUDE.md → <b>也立即載入</b>'],
+        [0, '走到檔案系統根目錄 <code>/</code>，沒有 CLAUDE.md，停止。']
+      ];
+      for (const [i, text] of seq) {
+        rows.forEach(r => r.classList.remove('scan'));
+        placeBot(bot, rows[i]); rows[i].classList.add('scan');
+        await sleep(700); if (!alive()) return;
+        const f = $('.d-file', rows[i]);
+        if (!f.classList.contains('none')) { f.classList.add('loaded'); $('.st', f).textContent = '✓ 已載入'; }
+        setCap(cap, text);
+        await sleep(1500); if (!alive()) return;
+      }
+      rows.forEach(r => r.classList.remove('scan'));
+      setCap(cap, '結論：<b>祖先載入</b>全部發生在<b>啟動當下</b>，cwd 本身與所有祖先的 CLAUDE.md 都會進入脈絡。');
+    }
+  },
+  down: {
+    el: $('#demoDown'), id: 0,
+    async play() {
+      const my = ++this.id, el = this.el, alive = () => my === this.id;
+      const rows = $$('.d-row', el), cap = $('.demo-cap', el), bot = $('.d-bot', el);
+      const f0 = $('.d-file', rows[0]), f1 = $('.d-file', rows[1]), f3 = $('.d-file', rows[3]), rd = $('.d-read', rows[2]);
+      [f0, f1, f3].forEach(f => { f.classList.remove('loaded', 'lazy', 'wait'); $('.st', f).textContent = ''; });
+      rows.forEach(r => r.classList.remove('scan', 'reading'));
+      rd.textContent = '';
+      bot.style.opacity = 0;
+      setCap(cap, '在 <code>/mymonorepo</code> 執行 <code>claude</code>…');
+      await sleep(900); if (!alive()) return;
+      placeBot(bot, rows[0]); rows[0].classList.add('scan');
+      await sleep(600); if (!alive()) return;
+      f0.classList.add('loaded'); $('.st', f0).textContent = '✓ 已載入';
+      [f1, f3].forEach(f => { f.classList.add('wait'); $('.st', f).textContent = '· 待命'; });
+      setCap(cap, '啟動時：只有 cwd（與祖先）的 CLAUDE.md 載入；子目錄的<b>先不載入</b>。');
+      await sleep(2000); if (!alive()) return;
+      rows[0].classList.remove('scan');
+      placeBot(bot, rows[2]); rows[2].classList.add('reading'); rd.textContent = '← Claude 讀取中';
+      setCap(cap, 'session 進行中，Claude 讀取 <code>frontend/src/App.tsx</code>…');
+      await sleep(1700); if (!alive()) return;
+      rows[2].classList.remove('reading'); rd.textContent = '';
+      placeBot(bot, rows[1]);
+      await sleep(550); if (!alive()) return;
+      f1.classList.remove('wait'); f1.classList.add('lazy'); $('.st', f1).textContent = '⤵ 延遲載入';
+      setCap(cap, '這時 <code>frontend/CLAUDE.md</code> 才被載入 —— 這就是<b>延遲載入</b>。');
+      await sleep(2000); if (!alive()) return;
+      placeBot(bot, rows[3]);
+      setCap(cap, '<code>backend/</code> 沒被碰到，它的 CLAUDE.md 就<b>一直不佔脈絡</b>。');
+    }
+  }
+};
+Object.entries(demos).forEach(([k, d]) => {
+  d.el.addEventListener('revealed', () => setTimeout(() => d.play(), 350));
+  $('[data-replay]', d.el).addEventListener('click', () => d.play());
+});
+
+/* ================= CH3 SIMULATOR ================= */
+const ICONS = {
+  dir: '<svg class="ic" viewBox="0 0 24 24"><path d="M3 7.5A1.5 1.5 0 0 1 4.5 6h4.2l2 2h8.8A1.5 1.5 0 0 1 21 9.5v8A1.5 1.5 0 0 1 19.5 19h-15A1.5 1.5 0 0 1 3 17.5z"/></svg>',
+  md: '<svg class="ic" viewBox="0 0 24 24"><path d="M6 3h8l5 5v12a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1z"/><path d="M14 3v5h5M8.5 13h7M8.5 16.5h5"/></svg>',
+  file: '<svg class="ic" viewBox="0 0 24 24"><path d="M9 8l-4 4 4 4M15 8l4 4-4 4"/></svg>',
+  home: '<svg class="ic" viewBox="0 0 24 24"><path d="M4 11l8-7 8 7v8a1 1 0 0 1-1 1h-4v-6h-6v6H5a1 1 0 0 1-1-1z"/></svg>'
+};
+const DIRS = {
+  '/': { parent: null, claude: false },
+  '/mymonorepo': { parent: '/', claude: true, size: 6 },
+  '/mymonorepo/frontend': { parent: '/mymonorepo', claude: true, size: 12 },
+  '/mymonorepo/frontend/src': { parent: '/mymonorepo/frontend', claude: false },
+  '/mymonorepo/backend': { parent: '/mymonorepo', claude: true, size: 15 },
+  '/mymonorepo/api': { parent: '/mymonorepo', claude: true, size: 9 }
+};
+const GLOBAL_SIZE = 2;
+const PROJECT_TOTAL = Object.values(DIRS).reduce((s, d) => s + (d.size || 0), 0);
+const ROWS = [
+  { k: 'dir', id: '/', d: 0, name: '/', note: '檔案系統根目錄' },
+  { k: 'dir', id: '/mymonorepo', d: 1, name: 'mymonorepo/' },
+  { k: 'md', dir: '/mymonorepo', d: 2 },
+  { k: 'file', path: '/mymonorepo/package.json', dir: '/mymonorepo', d: 2, name: 'package.json' },
+  { k: 'dir', id: '/mymonorepo/frontend', d: 2, name: 'frontend/' },
+  { k: 'md', dir: '/mymonorepo/frontend', d: 3 },
+  { k: 'dir', id: '/mymonorepo/frontend/src', d: 3, name: 'src/' },
+  { k: 'file', path: '/mymonorepo/frontend/src/App.tsx', dir: '/mymonorepo/frontend/src', d: 4, name: 'App.tsx' },
+  { k: 'dir', id: '/mymonorepo/backend', d: 2, name: 'backend/' },
+  { k: 'md', dir: '/mymonorepo/backend', d: 3 },
+  { k: 'file', path: '/mymonorepo/backend/server.ts', dir: '/mymonorepo/backend', d: 3, name: 'server.ts' },
+  { k: 'dir', id: '/mymonorepo/api', d: 2, name: 'api/' },
+  { k: 'md', dir: '/mymonorepo/api', d: 3 },
+  { k: 'file', path: '/mymonorepo/api/routes.ts', dir: '/mymonorepo/api', d: 3, name: 'routes.ts' }
+];
+const tree = $('#tree'), ctxList = $('#ctxList'), logBody = $('#logBody');
+const runBtn = $('#runBtn'), resetBtn = $('#resetBtn'), globalToggle = $('#globalToggle');
+const meterFill = $('#meterFill'), meterText = $('#meterText'), simCmd = $('#simCmd');
+
+let html = '<div class="row global off" id="globalRow" style="--d:0">' + ICONS.home + '<span class="nm">~/.claude/CLAUDE.md</span><span class="note">家目錄・全域</span><span class="st">未啟用</span></div><div class="tree-sep"></div>';
+ROWS.forEach(r => {
+  if (r.k === 'dir') html += '<div class="row dir" data-dir="' + r.id + '" style="--d:' + r.d + '">' + ICONS.dir + '<span class="nm">' + r.name + '</span>' + (r.note ? '<span class="note">' + r.note + '</span>' : '') + '<span class="cwd-badge">CWD</span></div>';
+  else if (r.k === 'md') html += '<div class="row md" data-md="' + r.dir + '" style="--d:' + r.d + '">' + ICONS.md + '<span class="nm">CLAUDE.md</span><span class="st">未載入</span></div>';
+  else html += '<div class="row file" data-file="' + r.path + '" style="--d:' + r.d + '">' + ICONS.file + '<span class="nm">' + r.name + '</span><button class="read-btn" data-path="' + r.path + '" disabled>讀取</button></div>';
+});
+html += '<div class="bot" id="bot" aria-hidden="true"><div class="botface"><i></i><i></i></div></div>';
+tree.innerHTML = html;
+const bot = $('#bot'), globalRow = $('#globalRow');
+
+const mdRow = d => tree.querySelector('.row.md[data-md="' + d + '"]');
+const dirRow = d => tree.querySelector('.row.dir[data-dir="' + d + '"]');
+const fileRow = p => tree.querySelector('.row.file[data-file="' + p + '"]');
+const inSubtree = (d, base) => d === base || d.startsWith(base + '/');
+const isAncestor = (a, b) => a !== b && (a === '/' || b.startsWith(a + '/'));
+const label = d => d + '/CLAUDE.md';
+const HOW = { start: ['啟動', 'c-green'], lazy: ['延遲', 'c-blue'], global: ['全域', 'c-purple'] };
+
+let cwd = '/mymonorepo', globalOn = false, started = false, running = false, runId = 0;
+const loaded = new Map();
+
+function log(text, cls) {
+  const l = document.createElement('div');
+  l.className = 'log-line ' + (cls || '');
+  l.textContent = text;
+  logBody.appendChild(l);
+  logBody.scrollTop = logBody.scrollHeight;
+}
+function setState(row, state, text) {
+  row.classList.remove('s-start', 's-lazy', 's-wait', 's-out', 's-block', 's-global');
+  if (state) row.classList.add('s-' + state);
+  $('.st', row).textContent = text;
+}
+function updateMeter() {
+  let kb = 0; loaded.forEach(v => { kb += v.size; });
+  const total = PROJECT_TOTAL + (globalOn ? GLOBAL_SIZE : 0);
+  meterFill.style.width = (kb / total * 100) + '%';
+  meterText.innerHTML = '已載入 <b>' + kb + ' KB</b>　／　若全部在啟動時就載入：' + total + ' KB';
+}
+function setControls(dis) {
+  $$('#cwdSeg button').forEach(b => { b.disabled = dis; });
+  globalToggle.disabled = dis;
+  runBtn.disabled = dis;
+}
+function setReadButtons(on) { $$('.read-btn', tree).forEach(b => { b.disabled = !on; }); }
+function moveBot(row) {
+  bot.classList.add('show');
+  bot.style.transform = 'translateY(' + (row.offsetTop + row.offsetHeight / 2 - 14) + 'px)';
+  return sleep(480);
+}
+function fly(fromEl, how, text) {
+  if (reduced) return Promise.resolve();
+  const a = fromEl.getBoundingClientRect();
+  const last = ctxList.lastElementChild;
+  const lr = ctxList.getBoundingClientRect();
+  const tx = lr.left, ty = last ? last.getBoundingClientRect().bottom + 6 : lr.top;
+  const g = document.createElement('div');
+  g.className = 'ghost ' + HOW[how][1];
+  g.textContent = text;
+  g.style.left = (a.left + 20) + 'px'; g.style.top = a.top + 'px';
+  document.body.appendChild(g);
+  const dx = tx - a.left - 20, dy = ty - a.top;
+  return g.animate([
+    { transform: 'translate(0,0) scale(1)', opacity: 1 },
+    { transform: 'translate(' + dx * 0.5 + 'px,' + (dy * 0.5 - 50) + 'px) scale(1.08)', opacity: 1, offset: 0.5 },
+    { transform: 'translate(' + dx + 'px,' + dy + 'px) scale(.92)', opacity: 0.25 }
+  ], { duration: 720, easing: 'cubic-bezier(.5,0,.3,1)' }).finished.then(() => g.remove());
+}
+async function addCtx(key, text, how, size, fromEl) {
+  const empty = $('.empty', ctxList); if (empty) empty.remove();
+  await fly(fromEl, how, text);
+  const chip = document.createElement('div');
+  chip.className = 'chip ' + HOW[how][1];
+  chip.innerHTML = '<span class="chip-tag">' + HOW[how][0] + '</span><span class="chip-name">' + text + '</span><span class="chip-size">' + size + ' KB</span>';
+  ctxList.appendChild(chip);
+  loaded.set(key, { how, size });
+  updateMeter();
+}
+
+function resetSim() {
+  runId++; running = false; started = false; loaded.clear();
+  $$('.row', tree).forEach(r => r.classList.remove('scan', 'reading', 'flash', 'shake', 'is-cwd', 's-start', 's-lazy', 's-wait', 's-out', 's-block', 's-global'));
+  $$('.row.md', tree).forEach(r => { $('.st', r).textContent = '未載入'; });
+  globalRow.classList.toggle('off', !globalOn);
+  $('.st', globalRow).textContent = globalOn ? '未載入' : '未啟用';
+  dirRow(cwd).classList.add('is-cwd');
+  setReadButtons(false);
+  bot.classList.remove('show');
+  bot.style.transform = 'translateY(' + (dirRow(cwd).offsetTop + 4) + 'px)';
+  ctxList.innerHTML = '<div class="empty">尚未啟動 —— 脈絡是空的</div>';
+  updateMeter();
+  logBody.innerHTML = '';
+  log('準備就緒：選好啟動目錄，按「▶ 執行 claude」。', 'muted');
+  simCmd.innerHTML = '<span class="ps">$</span> cd ' + cwd + ' &amp;&amp; claude';
+  setControls(false);
+  runBtn.textContent = '▶ 執行 claude';
+}
+
+async function startSim() {
+  if (running) return;
+  resetSim();
+  const my = runId, alive = () => my === runId;
+  running = true; setControls(true);
+  log('$ cd ' + cwd, 'cmd'); log('$ claude', 'cmd');
+  await sleep(350); if (!alive()) return;
+  log('① 祖先載入：從當前工作目錄往上走到檔案系統根目錄', 'title');
+  let d = cwd;
+  while (d) {
+    const dr = dirRow(d);
+    await moveBot(dr); if (!alive()) return;
+    dr.classList.add('scan');
+    if (DIRS[d].claude) {
+      const mr = mdRow(d);
+      await moveBot(mr); if (!alive()) return;
+      setState(mr, 'start', '啟動時載入'); restart(mr, 'flash');
+      await addCtx(d, label(d), 'start', DIRS[d].size, mr); if (!alive()) return;
+      log('✓ 載入 ' + label(d) + ' —— ' + (d === cwd ? '它就是當前工作目錄' : '它是祖先目錄'), 'ok');
+    } else {
+      await sleep(250); if (!alive()) return;
+      log('· ' + (d === '/' ? '/（檔案系統根目錄）' : d) + ' 沒有 CLAUDE.md', 'muted');
+    }
+    dr.classList.remove('scan');
+    d = DIRS[d].parent;
+  }
+  log('已抵達檔案系統根目錄，停止往上。', 'muted');
+  if (globalOn) {
+    await moveBot(globalRow); if (!alive()) return;
+    setState(globalRow, 'global', '全域載入'); restart(globalRow, 'flash');
+    await addCtx('global', '~/.claude/CLAUDE.md', 'global', GLOBAL_SIZE, globalRow); if (!alive()) return;
+    log('✓ 載入 ~/.claude/CLAUDE.md —— 全域，套用到所有 session', 'ok');
+  }
+  Object.keys(DIRS).forEach(x => {
+    if (!DIRS[x].claude || loaded.has(x)) return;
+    if (inSubtree(x, cwd)) setState(mdRow(x), 'wait', '待命（延遲）');
+    else setState(mdRow(x), 'out', '不在範圍');
+  });
+  await moveBot(dirRow(cwd)); if (!alive()) return;
+  log('② 後代 CLAUDE.md 不會在啟動時載入。點檔案旁的「讀取」看看會發生什麼。', 'title');
+  started = true; running = false;
+  setControls(false); setReadButtons(true);
+  runBtn.textContent = '▶ 重新執行';
+  checkMissions('start');
+}
+
+async function readFile(path) {
+  if (!started || running) return;
+  const f = ROWS.find(r => r.k === 'file' && r.path === path);
+  const my = runId, alive = () => my === runId;
+  running = true; setReadButtons(false); setControls(true);
+  const fr = fileRow(path);
+  log('▸ Claude 讀取 ' + path, 'cmd');
+  await moveBot(fr); if (!alive()) return;
+  fr.classList.add('reading');
+  await sleep(600); if (!alive()) return;
+  fr.classList.remove('reading');
+  let ev = null;
+  if (inSubtree(f.dir, cwd)) {
+    const chain = [];
+    for (let d = f.dir; d !== cwd; d = DIRS[d].parent) chain.unshift(d);
+    const fresh = chain.filter(x => DIRS[x].claude && !loaded.has(x));
+    if (!fresh.length) {
+      log(chain.some(x => DIRS[x].claude)
+        ? '· 相關的 CLAUDE.md 已在脈絡中，不會重複載入'
+        : '· 這個檔案就在 cwd 裡，cwd 的 CLAUDE.md 啟動時已載入，沒有新的要載', 'muted');
+    }
+    for (const x of fresh) {
+      const mr = mdRow(x);
+      await moveBot(mr); if (!alive()) return;
+      setState(mr, 'lazy', '延遲載入'); restart(mr, 'flash');
+      await addCtx(x, label(x), 'lazy', DIRS[x].size, mr); if (!alive()) return;
+      log('⤵ 延遲載入 ' + label(x) + ' —— 因為 Claude 讀了這個子目錄的檔案', 'lazy');
+      ev = 'lazy';
+    }
+  } else if (isAncestor(f.dir, cwd)) {
+    log('· ' + f.dir + ' 是祖先目錄，它的 CLAUDE.md 啟動時就已載入', 'muted');
+  } else {
+    const blocked = [];
+    for (let d = f.dir; d && !isAncestor(d, cwd); d = DIRS[d].parent) if (DIRS[d].claude) blocked.push(d);
+    for (const x of blocked) {
+      const mr = mdRow(x);
+      await moveBot(mr); if (!alive()) return;
+      setState(mr, 'block', '✕ 不載入'); restart(mr, 'shake');
+      log('✕ ' + label(x) + ' 不會載入 —— 位於目錄樹的另一個分支（兄弟目錄）', 'bad');
+      ev = 'block';
+    }
+  }
+  running = false; setReadButtons(true); setControls(false);
+  if (ev) checkMissions(ev);
+}
+
+$$('#cwdSeg button').forEach(b => b.addEventListener('click', () => setCwd(b.dataset.cwd)));
+function setCwd(c) {
+  if (running) return;
+  cwd = c;
+  $$('#cwdSeg button').forEach(b => { const on = b.dataset.cwd === c; b.classList.toggle('on', on); b.setAttribute('aria-checked', on); });
+  resetSim();
+}
+globalToggle.addEventListener('change', () => { globalOn = globalToggle.checked; resetSim(); });
+runBtn.addEventListener('click', startSim);
+resetBtn.addEventListener('click', resetSim);
+tree.addEventListener('click', e => { const b = e.target.closest('.read-btn'); if (b && !b.disabled) readFile(b.dataset.path); });
+
+/* missions */
+const MISSIONS = [
+  { text: '從 <code>/mymonorepo</code> 啟動，確認只有根層級 CLAUDE.md 在啟動時載入', test: ev => ev === 'start' && cwd === '/mymonorepo' },
+  { text: '觸發一次<b>延遲載入</b>：讀取 cwd 底下子目錄的檔案', test: ev => ev === 'lazy' },
+  { text: '從 <code>frontend/</code> 啟動，讀取 <code>backend/</code> 的檔案，看兄弟目錄不載入', test: ev => ev === 'block' && cwd === '/mymonorepo/frontend' },
+  { text: '打開全域 <code>~/.claude/CLAUDE.md</code> 開關，再啟動一次', test: ev => ev === 'start' && globalOn }
+];
+const missionsEl = $('#missions');
+missionsEl.innerHTML = '<div class="missions-title">實驗任務 <span class="hint" id="mCount"></span></div>' +
+  MISSIONS.map((m, i) => '<div class="mission" data-m="' + i + '"><span class="box"></span><span>' + m.text + '</span></div>').join('') +
+  '<div class="mission-banner" id="mBanner">全部任務完成！你已經掌握祖先載入、延遲載入、兄弟目錄與全域 CLAUDE.md 的行為。</div>';
+const mDone = new Set();
+function updateMCount() { $('#mCount').textContent = mDone.size + ' / ' + MISSIONS.length + ' 完成'; }
+function checkMissions(ev) {
+  MISSIONS.forEach((m, i) => {
+    if (mDone.has(i) || !m.test(ev)) return;
+    mDone.add(i);
+    $('.mission[data-m="' + i + '"]', missionsEl).classList.add('done');
+  });
+  updateMCount();
+  if (mDone.size === MISSIONS.length && !$('#mBanner').classList.contains('show')) {
+    $('#mBanner').classList.add('show');
+    confetti($('#mBanner'));
+  }
+}
+updateMCount();
+resetSim();
+
+/* ================= CH4 SCENARIOS ================= */
+const SC = {
+  1: { cmd: ['cd /mymonorepo', 'claude'], cwd: '/mymonorepo', rows: [
+    ['/mymonorepo/CLAUDE.md', true, '它就是你的當前工作目錄。'],
+    ['/mymonorepo/frontend/CLAUDE.md', false, '只有在你讀／編輯 <code>frontend/</code> 裡的檔案時才載入。'],
+    ['/mymonorepo/backend/CLAUDE.md', false, '只有在你讀／編輯 <code>backend/</code> 裡的檔案時才載入。'],
+    ['/mymonorepo/api/CLAUDE.md', false, '只有在你讀／編輯 <code>api/</code> 裡的檔案時才載入。']
+  ] },
+  2: { cmd: ['cd /mymonorepo/frontend', 'claude'], cwd: '/mymonorepo/frontend', rows: [
+    ['/mymonorepo/CLAUDE.md', true, '它是祖先目錄。'],
+    ['/mymonorepo/frontend/CLAUDE.md', true, '它就是你的當前工作目錄。'],
+    ['/mymonorepo/backend/CLAUDE.md', false, '位於目錄樹的另一個分支。'],
+    ['/mymonorepo/api/CLAUDE.md', false, '位於目錄樹的另一個分支。']
+  ] }
+};
+let sc = { s: 1, right: 0, guessed: 0, done: 0 };
+const scRows = $('#scRows');
+function renderScenario(s) {
+  sc = { s, right: 0, guessed: 0, done: 0 };
+  $$('.tab').forEach(t => { const on = +t.dataset.s === s; t.classList.toggle('on', on); t.setAttribute('aria-selected', on); });
+  $('#scCode').innerHTML = SC[s].cmd.map(c => '<div><span class="ps">$</span> ' + c + '</div>').join('');
+  scRows.innerHTML = SC[s].rows.map((r, i) =>
+    '<div class="sc-row" style="--i:' + i + '" data-i="' + i + '"><div class="sc-path">' + r[0] + '</div>' +
+    '<div class="sc-guess"><button class="btn small" data-g="1">會載入</button><button class="btn small" data-g="0">不會</button></div>' +
+    '<div class="sc-reason"></div></div>').join('');
+  updateScScore();
+}
+function revealRow(row, guess) {
+  if (row.classList.contains('revealed')) return;
+  const r = SC[sc.s].rows[+row.dataset.i];
+  row.classList.add('revealed');
+  let fb = '';
+  if (guess !== undefined) {
+    const ok = (guess === 1) === r[1];
+    row.classList.add(ok ? 'right' : 'wrong');
+    fb = '<span class="sc-fb ' + (ok ? 'ok' : 'no') + '">' + (ok ? '✓ 猜對了' : '✕ 猜錯囉') + '</span>';
+    sc.guessed++; if (ok) sc.right++;
+  }
+  $('.sc-guess', row).innerHTML = fb + '<span class="sc-ans ' + (r[1] ? 'yes' : 'no') + '">' + (r[1] ? '是・啟動時載入' : '否・啟動時不載入') + '</span>';
+  $('.sc-reason', row).innerHTML = '原因：' + r[2];
+  sc.done++;
+  updateScScore();
+}
+function updateScScore() {
+  const el = $('#scScore');
+  el.textContent = '已揭曉 ' + sc.done + ' / 4　·　猜對 ' + sc.right + ' / ' + sc.guessed;
+  if (sc.done === 4 && sc.guessed === 4 && sc.right === 4) { el.textContent += '　全對！'; confetti(el); }
+}
+scRows.addEventListener('click', e => { const b = e.target.closest('[data-g]'); if (b) revealRow(b.closest('.sc-row'), +b.dataset.g); });
+$$('.tab').forEach(t => t.addEventListener('click', () => renderScenario(+t.dataset.s)));
+$('#scRevealAll').addEventListener('click', () => $$('.sc-row', scRows).forEach(r => revealRow(r)));
+$('#scTry').addEventListener('click', () => {
+  if (running) resetSim();
+  setCwd(SC[sc.s].cwd);
+  $('#ch3').scrollIntoView({ behavior: reduced ? 'auto' : 'smooth', block: 'start' });
+  setTimeout(startSim, reduced ? 50 : 800);
+});
+renderScenario(1);
+
+/* ================= CH5 FLIPS ================= */
+$$('.flip').forEach(f => {
+  const toggle = () => { f.classList.toggle('flipped'); f.setAttribute('aria-pressed', f.classList.contains('flipped')); };
+  f.addEventListener('click', toggle);
+  f.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggle(); } });
+});
+
+/* ================= CH6 SORT GAME ================= */
+const ITEMS = [
+  { t: '整個 repo 適用的程式碼標準', a: 'root' },
+  { t: 'commit 訊息格式', a: 'root' },
+  { t: 'PR 範本', a: 'root' },
+  { t: '前端框架專屬的寫法模式', a: 'comp' },
+  { t: '後端服務的元件架構說明', a: 'comp' },
+  { t: '只屬於 api/ 的測試慣例', a: 'comp' },
+  { t: '我自己的偏好，不想分享給團隊', a: 'local' },
+  { t: '希望在「所有專案」都套用的個人指令', a: 'global' }
+];
+const BUCKET = {
+  root: ['根層級 CLAUDE.md', '整個 repo 適用的準則，會向下傳播給所有元件'],
+  comp: ['元件層級 CLAUDE.md', '框架專屬模式、元件架構、該元件獨有的測試慣例'],
+  local: ['CLAUDE.local.md', '不該分享給團隊的個人偏好（記得加進 .gitignore）'],
+  global: ['~/.claude/CLAUDE.md', '套用到所有 Claude Code session、不分專案的指令']
+};
+const pool = $('#pool'), gameFb = $('#gameFb'), buckets = $$('.bucket');
+const game = { sel: null, first: 0, placed: 0, missed: new Set() };
+function setFb(text, cls) { gameFb.textContent = text; gameFb.className = 'game-fb ' + (cls || ''); }
+function updateGameScore() { $('#gameScore').textContent = '已歸位 ' + game.placed + ' / ' + ITEMS.length + '　·　一次答對 ' + game.first; }
+function selectCard(c) {
+  if (game.sel) game.sel.classList.remove('sel');
+  game.sel = (c && game.sel !== c) ? c : null;
+  if (game.sel) game.sel.classList.add('sel');
+  buckets.forEach(b => b.classList.toggle('ready', !!game.sel));
+}
+function initGame() {
+  pool.innerHTML = '';
+  $$('.placed-list').forEach(l => { l.innerHTML = ''; });
+  game.sel = null; game.first = 0; game.placed = 0; game.missed = new Set();
+  const arr = ITEMS.map((it, i) => Object.assign({ i }, it));
+  for (let i = arr.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [arr[i], arr[j]] = [arr[j], arr[i]]; }
+  arr.forEach(it => {
+    const c = document.createElement('div');
+    c.className = 'card-item'; c.textContent = it.t;
+    c.dataset.i = it.i; c.dataset.a = it.a;
+    c.draggable = true; c.tabIndex = 0; c.setAttribute('role', 'button');
+    pool.appendChild(c);
+  });
+  buckets.forEach(b => b.classList.remove('ready', 'over'));
+  setFb('點一張卡片，再點它該去的檔案。');
+  updateGameScore();
+}
+function place(card, b) {
+  if (!card) return;
+  const bucketEl = buckets.find(x => x.dataset.b === b);
+  if (card.dataset.a === b) {
+    if (!game.missed.has(card.dataset.i)) game.first++;
+    const p = document.createElement('div');
+    p.className = 'placed'; p.textContent = card.textContent;
+    $('.placed-list', bucketEl).appendChild(p);
+    card.remove(); game.placed++;
+    selectCard(null);
+    if (game.placed === ITEMS.length) {
+      setFb('全部歸位！一次就答對 ' + game.first + ' / ' + ITEMS.length + ' 張。', 'ok');
+      confetti($('#buckets'));
+    } else setFb('✓ 正確！' + BUCKET[b][0] + '：' + BUCKET[b][1] + '。', 'ok');
+  } else {
+    game.missed.add(card.dataset.i);
+    restart(card, 'shake');
+    setFb('✕ 不太對。「' + BUCKET[b][0] + '」放的是：' + BUCKET[b][1] + '。再想想？', 'bad');
+  }
+  updateGameScore();
+}
+pool.addEventListener('click', e => { const c = e.target.closest('.card-item'); if (c) selectCard(c); });
+pool.addEventListener('keydown', e => { const c = e.target.closest('.card-item'); if (c && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); selectCard(c); } });
+pool.addEventListener('dragstart', e => {
+  const c = e.target.closest('.card-item'); if (!c) return;
+  e.dataTransfer.setData('text/plain', c.dataset.i);
+  e.dataTransfer.effectAllowed = 'move';
+  selectCard(c);
+});
+buckets.forEach(b => {
+  b.addEventListener('click', () => { if (game.sel) place(game.sel, b.dataset.b); else setFb('先點一張上面的卡片喔。'); });
+  b.addEventListener('keydown', e => { if ((e.key === 'Enter' || e.key === ' ') && game.sel) { e.preventDefault(); place(game.sel, b.dataset.b); } });
+  b.addEventListener('dragover', e => { e.preventDefault(); b.classList.add('over'); });
+  b.addEventListener('dragleave', () => b.classList.remove('over'));
+  b.addEventListener('drop', e => {
+    e.preventDefault(); b.classList.remove('over');
+    const id = e.dataTransfer.getData('text/plain');
+    place(pool.querySelector('.card-item[data-i="' + id + '"]'), b.dataset.b);
+  });
+});
+$('#gameReset').addEventListener('click', initGame);
+initGame();
+
+/* ================= CH7 QUIZ ================= */
+const QUIZ = [
+  { q: '你在 /mymonorepo/frontend 執行 claude。啟動當下會載入哪些 CLAUDE.md？', o: ['只有 /mymonorepo/frontend/CLAUDE.md', '/mymonorepo/CLAUDE.md 和 /mymonorepo/frontend/CLAUDE.md', 'monorepo 裡全部四個 CLAUDE.md', '只有 /mymonorepo/CLAUDE.md'], a: 1, e: '祖先載入：從 cwd 往上走，cwd 本身與祖先目錄的 CLAUDE.md 都在啟動時載入。' },
+  { q: 'Claude 啟動時往上找 CLAUDE.md，會一路走到哪裡為止？', o: ['git repo 的根目錄', '家目錄 ~', '檔案系統根目錄', '不往上，只看當前目錄'], a: 2, e: '它會從當前工作目錄往上走到檔案系統根目錄，載入沿途找到的每一個 CLAUDE.md。' },
+  { q: '從 /mymonorepo 啟動後，/mymonorepo/backend/CLAUDE.md 什麼時候會進入脈絡？', o: ['啟動時立即載入', 'Claude 讀取或編輯 backend/ 裡的檔案時', '永遠不會', '只有重新開一個 session 時'], a: 1, e: '後代 CLAUDE.md 採延遲載入（lazy loading）：在 session 中操作到該子目錄的檔案時才會被納入。' },
+  { q: '你在 frontend/ 工作，api/CLAUDE.md 會怎樣？', o: ['啟動時載入', '讀 frontend 檔案時順便載入', '不會進入脈絡 —— 它在目錄樹的另一個分支', '會以全域身分載入'], a: 2, e: '兄弟目錄永遠不載入：api/ 不是 frontend/ 的祖先，也不在它底下。' },
+  { q: '想讓某些指令套用到「所有專案」的每個 Claude Code session，應該放在？', o: ['/mymonorepo/CLAUDE.md', '~/.claude/CLAUDE.md', 'CLAUDE.local.md', '每個元件的 CLAUDE.md'], a: 1, e: '全域 CLAUDE.md 放在家目錄的 ~/.claude/CLAUDE.md，套用到所有 session，不分專案。' },
+  { q: 'commit 訊息格式和 PR 範本，最適合寫在哪？', o: ['根層級 CLAUDE.md', 'frontend/CLAUDE.md', 'CLAUDE.local.md', '不需要寫下來'], a: 0, e: '整個 repo 適用的準則放根層級 CLAUDE.md，它是所有元件的祖先，會向下傳播。' },
+  { q: '不想分享給團隊的個人指令，該怎麼處理？', o: ['寫進根層級 CLAUDE.md', '寫在 CLAUDE.local.md，並加進 .gitignore', '寫在 backend/CLAUDE.md', '寫在 README.md'], a: 1, e: '個人偏好用 CLAUDE.local.md，並把它加進 .gitignore，就不會被提交給團隊。' },
+  { q: '後代 CLAUDE.md 採延遲載入，主要好處是？', o: ['讓 Claude 啟動更慢、更謹慎', '避免啟動時塞進可能高達數百 KB 的無關指令，讓脈絡保持精簡', '讓兄弟目錄也能被載入', '讓 CLAUDE.md 不用提交到 git'], a: 1, e: '延遲載入讓脈絡經過最佳化：用不到的元件指令不會佔用 session 的脈絡。' }
+];
+const quizBox = $('#quizBox');
+let qi = 0, qScore = 0, qRes = [];
+function renderQ() {
+  if (qi >= QUIZ.length) return renderResult();
+  const Q = QUIZ[qi];
+  quizBox.innerHTML = '<div class="q-anim"><div class="q-top"><span>第 ' + (qi + 1) + ' / ' + QUIZ.length + ' 題</span><div class="q-dots">' +
+    QUIZ.map((_, i) => '<i class="' + (qRes[i] === true ? 'ok' : qRes[i] === false ? 'no' : '') + (i === qi ? ' cur' : '') + '"></i>').join('') + '</div></div>' +
+    '<p class="q-text">' + Q.q + '</p><div class="q-opts">' +
+    Q.o.map((o, i) => '<button class="q-opt" data-i="' + i + '"><span class="k">' + 'ABCD'[i] + '</span><span>' + o + '</span></button>').join('') +
+    '</div><div class="q-exp"></div><button class="btn primary q-next" hidden>' + (qi === QUIZ.length - 1 ? '看結果' : '下一題') + ' →</button></div>';
+}
+function answer(i) {
+  const Q = QUIZ[qi], ok = i === Q.a;
+  const opts = $$('.q-opt', quizBox);
+  opts.forEach(o => { o.disabled = true; });
+  opts[Q.a].classList.add('correct');
+  if (!ok) opts[i].classList.add('wrong');
+  qRes[qi] = ok; if (ok) qScore++;
+  const dot = $$('.q-dots i', quizBox)[qi]; dot.classList.add(ok ? 'ok' : 'no');
+  const exp = $('.q-exp', quizBox);
+  exp.innerHTML = (ok ? '<b style="color:var(--green)">✓ 答對了！</b> ' : '<b style="color:var(--red)">✕ 差一點。</b> ') + Q.e;
+  exp.classList.add('show');
+  const nx = $('.q-next', quizBox); nx.hidden = false; nx.focus({ preventScroll: true });
+}
+function renderResult() {
+  const pct = qScore / QUIZ.length, C = 2 * Math.PI * 60;
+  try { const p = JSON.parse(localStorage.getItem('cca-progress') || '{}') || {}; if (!p.memory || qScore >= p.memory.score) p.memory = { score: qScore, total: QUIZ.length }; localStorage.setItem('cca-progress', JSON.stringify(p)); } catch (e) {}
+  const msg = qScore === QUIZ.length ? '滿分！CLAUDE.md 的載入機制你已經完全掌握。'
+    : qScore >= 6 ? '很棒！回頭看看答錯的題目，就更完整了。'
+    : '建議再玩一次模擬器（第 03 章），加深印象後再挑戰。';
+  quizBox.innerHTML = '<div class="q-anim q-result"><div class="ring"><svg viewBox="0 0 140 140"><circle class="bg" cx="70" cy="70" r="60"/><circle class="fg" cx="70" cy="70" r="60" stroke-dasharray="' + C + '" stroke-dashoffset="' + C + '"/></svg><div class="val">' + qScore + '/' + QUIZ.length + '</div></div>' +
+    '<h3>' + (qScore === QUIZ.length ? '完美通關' : '測驗完成') + '</h3><p>' + msg + '</p><button class="btn primary q-retry">↻ 再測一次</button></div>';
+  requestAnimationFrame(() => requestAnimationFrame(() => { $('.ring .fg', quizBox).style.strokeDashoffset = C * (1 - pct); }));
+  if (pct >= 0.75) setTimeout(() => confetti($('.ring', quizBox)), 700);
+}
+quizBox.addEventListener('click', e => {
+  const o = e.target.closest('.q-opt');
+  if (o && !o.disabled) return answer(+o.dataset.i);
+  if (e.target.closest('.q-next')) { qi++; renderQ(); return; }
+  if (e.target.closest('.q-retry')) { qi = 0; qScore = 0; qRes = []; renderQ(); }
+});
+renderQ();
+})();
+</script>
+</body>
+</html>

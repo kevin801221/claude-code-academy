@@ -1,0 +1,1183 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Agent Teams 實作</title>
+<script>document.documentElement.classList.add('js');try{var t=localStorage.getItem('cm-theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
+<style>
+:root{
+  --sans:-apple-system,BlinkMacSystemFont,"PingFang TC","Noto Sans TC","Microsoft JhengHei","Segoe UI",sans-serif;
+  --mono:"SF Mono",ui-monospace,Menlo,Consolas,"Liberation Mono",monospace;
+  --bg:#faf7f2; --surface:#ffffff; --surface-2:#f3eee6; --text:#1d1915; --muted:#6b635a; --border:#e6ded2;
+  --accent:#c65f3c; --accent-2:#e8916a; --accent-soft:#fbe8de;
+  --green:#1f8456; --green-soft:#dbf1e5;
+  --blue:#2c6bc4; --blue-soft:#e0eafa;
+  --purple:#7646d6; --purple-soft:#ece4fc;
+  --red:#c2364a; --red-soft:#fbe0e4;
+  --yellow:#c9922a;
+  --term-bg:#1b1815; --term-text:#efe9e0; --term-muted:#9a9187;
+  --shadow:0 1px 2px rgba(40,30,20,.05),0 8px 24px rgba(40,30,20,.07);
+  --mod:var(--accent); --mod-soft:var(--accent-soft); --mod-2:var(--purple);
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#13110f; --surface:#1c1916; --surface-2:#262220; --text:#efe9e0; --muted:#a59c91; --border:#37302a;
+    --accent:#e8845c; --accent-2:#f2a581; --accent-soft:#3a251b;
+    --green:#4cc38a; --green-soft:#16302a; --blue:#6ea4f0; --blue-soft:#182a44;
+    --purple:#ab8cf6; --purple-soft:#2a2142; --red:#f06b7d; --red-soft:#3d1c22; --yellow:#e0b252;
+    --term-bg:#0c0b0a; --shadow:0 1px 2px rgba(0,0,0,.3),0 10px 30px rgba(0,0,0,.35);
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#13110f; --surface:#1c1916; --surface-2:#262220; --text:#efe9e0; --muted:#a59c91; --border:#37302a;
+  --accent:#e8845c; --accent-2:#f2a581; --accent-soft:#3a251b;
+  --green:#4cc38a; --green-soft:#16302a; --blue:#6ea4f0; --blue-soft:#182a44;
+  --purple:#ab8cf6; --purple-soft:#2a2142; --red:#f06b7d; --red-soft:#3d1c22; --yellow:#e0b252;
+  --term-bg:#0c0b0a; --shadow:0 1px 2px rgba(0,0,0,.3),0 10px 30px rgba(0,0,0,.35);
+  color-scheme:dark;
+}
+body.m-teams{--mod:var(--blue);--mod-soft:var(--blue-soft);--mod-2:var(--purple)}
+body.m-goal{--mod:var(--green);--mod-soft:var(--green-soft);--mod-2:var(--blue)}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:70px}
+body{margin:0;background:var(--bg);color:var(--text);font:16px/1.75 var(--sans);-webkit-font-smoothing:antialiased;transition:background .3s,color .3s}
+main{overflow-x:clip}
+.wrap{max-width:1100px;margin:0 auto;padding-left:max(20px,env(safe-area-inset-left,0px));padding-right:max(20px,env(safe-area-inset-right,0px))}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:55;background:var(--bg)}
+h1,h2,h3,h4{line-height:1.3;margin:0}
+p{margin:0 0 1em}
+a{color:var(--mod)}
+code{font-family:var(--mono);font-size:.86em;background:var(--surface-2);border:1px solid var(--border);padding:.05em .4em;border-radius:6px;word-break:break-word}
+.c-accent{--c:var(--accent);--c-soft:var(--accent-soft)}
+.c-green{--c:var(--green);--c-soft:var(--green-soft)}
+.c-blue{--c:var(--blue);--c-soft:var(--blue-soft)}
+.c-purple{--c:var(--purple);--c-soft:var(--purple-soft)}
+.c-red{--c:var(--red);--c-soft:var(--red-soft)}
+.hint{font-weight:400;font-size:12.5px;color:var(--muted)}
+.ic{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex:none}
+
+/* top bar */
+.progress{position:fixed;top:env(safe-area-inset-top,0px);left:0;right:0;height:3px;z-index:60;pointer-events:none}
+.progress span{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--mod),var(--mod-2))}
+.topbar{position:sticky;top:env(safe-area-inset-top,0px);z-index:50;background:color-mix(in srgb,var(--bg) 86%,transparent);backdrop-filter:saturate(1.4) blur(10px);-webkit-backdrop-filter:saturate(1.4) blur(10px);border-bottom:1px solid var(--border)}
+.topbar-inner{display:flex;align-items:center;gap:12px;height:58px}
+.brand{display:flex;align-items:center;gap:10px;font-weight:700;color:var(--text);text-decoration:none;white-space:nowrap;flex:none}
+.brand-mark{width:30px;height:30px;border-radius:9px;background:linear-gradient(135deg,var(--accent),var(--purple));color:#fff;display:grid;place-items:center;font:800 11.5px var(--mono)}
+.crumb{flex:none;color:var(--mod);font-weight:700;font-size:14px;white-space:nowrap}
+.chapters{display:flex;gap:2px;overflow-x:auto;scrollbar-width:none;flex:1;min-width:0}
+.chapters::-webkit-scrollbar{display:none}
+.chapters a{flex:none;padding:5px 11px;border-radius:999px;color:var(--muted);text-decoration:none;font-size:13.5px;white-space:nowrap;transition:color .2s,background .2s}
+.chapters a:hover{color:var(--text);background:var(--surface-2)}
+.chapters a.on{color:var(--mod);background:var(--mod-soft);font-weight:600}
+.icon-btn{flex:none;width:36px;height:36px;border-radius:10px;border:1px solid var(--border);background:var(--surface);color:var(--text);cursor:pointer;display:grid;place-items:center}
+.icon-btn svg{width:18px;height:18px}
+@media (max-width:760px){.brand-text{display:none}}
+
+/* buttons */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:10px 18px;border-radius:999px;border:1px solid var(--border);background:var(--surface);color:var(--text);font:600 15px/1.2 var(--sans);cursor:pointer;text-decoration:none;transition:transform .15s,background .2s,box-shadow .2s,border-color .2s}
+.btn:hover:not(:disabled){transform:translateY(-1px);box-shadow:var(--shadow)}
+.btn.primary{background:var(--mod);border-color:var(--mod);color:#fff}
+.btn.small{padding:6px 13px;font-size:13px}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+button:focus-visible,.btn:focus-visible,[role="button"]:focus-visible,a:focus-visible,input:focus-visible{outline:2px solid var(--mod);outline-offset:2px}
+
+/* hero */
+.hero{padding:68px 0 64px;position:relative}
+.hero::before{content:"";position:absolute;inset:0;background-image:radial-gradient(var(--border) 1.2px,transparent 1.2px);background-size:22px 22px;-webkit-mask-image:radial-gradient(ellipse at 72% 40%,#000 15%,transparent 68%);mask-image:radial-gradient(ellipse at 72% 40%,#000 15%,transparent 68%);animation:drift 40s linear infinite;pointer-events:none}
+@keyframes drift{to{background-position:220px 110px}}
+.hero-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:48px;align-items:center;position:relative}
+.eyebrow{display:inline-block;font:700 12.5px var(--sans);letter-spacing:.06em;color:var(--mod);background:var(--mod-soft);padding:4px 12px;border-radius:999px;margin-bottom:18px}
+.hero h1{font-size:clamp(34px,5.6vw,60px);letter-spacing:-.02em;margin-bottom:18px}
+.grad{background:linear-gradient(90deg,var(--mod),var(--mod-2));-webkit-background-clip:text;background-clip:text;color:transparent}
+.lead{font-size:18px;color:var(--muted);max-width:32em}
+.hero-cta{display:flex;flex-wrap:wrap;gap:10px;margin:26px 0 22px}
+.meta{display:flex;flex-wrap:wrap;gap:8px 18px;font-size:13px;color:var(--muted)}
+.meta span{display:inline-flex;align-items:center;gap:6px}
+
+/* chapters */
+.chapter{padding:84px 0;border-top:1px solid var(--border)}
+.ch-head{display:flex;gap:18px;align-items:flex-start;margin-bottom:34px}
+.ch-num{font:800 14px var(--mono);color:var(--mod);background:var(--mod-soft);padding:6px 10px;border-radius:10px;flex:none;margin-top:5px}
+.ch-head h2{font-size:clamp(25px,3.4vw,36px);letter-spacing:-.01em}
+.ch-head p{margin:.45em 0 0;color:var(--muted);max-width:46em}
+.js .reveal{transition:transform .7s cubic-bezier(.2,.7,.2,1)}.js .reveal:not(.in){transform:translateY(14px)}
+
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:32px;align-items:start}
+.panel-card{background:var(--surface);border:1px solid var(--border);border-radius:18px;padding:22px;box-shadow:var(--shadow)}
+.panel-title{display:flex;justify-content:space-between;align-items:baseline;gap:4px 10px;flex-wrap:wrap;font-weight:700;font-size:14px;margin-bottom:10px}
+.sub-h{font-size:20px;margin:0 0 12px}
+.callout{display:flex;gap:12px;align-items:flex-start;padding:14px 18px;border-radius:14px;background:var(--c-soft,var(--mod-soft));border:1px solid var(--c,var(--mod));font-size:15px;margin-top:18px}
+.callout b{color:var(--c,var(--mod))}
+.callout a{color:var(--c,var(--mod));font-weight:700}
+.seg{display:inline-flex;flex-wrap:wrap;gap:4px;padding:4px;background:var(--surface-2);border-radius:12px;border:1px solid var(--border)}
+.seg button{border:0;background:transparent;color:var(--muted);font:600 14px var(--sans);padding:8px 14px;border-radius:9px;cursor:pointer;transition:.2s}
+.seg button.on{background:var(--surface);color:var(--mod);box-shadow:var(--shadow)}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip-btn{border:1px solid var(--border);background:var(--surface);color:var(--muted);font:600 13px var(--sans);padding:5px 12px;border-radius:999px;cursor:pointer;transition:.2s}
+.chip-btn.on{border-color:var(--c,var(--mod));color:var(--c,var(--mod));background:var(--c-soft,var(--mod-soft))}
+.empty{color:var(--muted);font-size:13px;border:1px dashed var(--border);border-radius:10px;padding:22px 12px;text-align:center}
+
+/* terminal */
+.term{background:var(--term-bg);border-radius:14px;overflow:hidden;font:13px/1.75 var(--mono);color:var(--term-text);min-width:0}
+.term-bar{display:flex;align-items:center;gap:7px;padding:10px 14px;background:rgba(255,255,255,.05)}
+.term-bar i{width:11px;height:11px;border-radius:50%;background:#ff5f57}
+.term-bar i:nth-child(2){background:#febc2e}.term-bar i:nth-child(3){background:#28c840}
+.term-bar span{margin-left:8px;color:var(--term-muted);font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.term-body{padding:14px 16px 16px}
+.tl{white-space:pre-wrap;word-break:break-word}
+.tl .ps{color:#f2a581}
+.tl.ok{color:#7ee2a8}.tl.warn{color:#f5c26b}.tl.muted{color:var(--term-muted)}.tl.info{color:#8ab8ff}.tl.bad{color:#ff8a98}.tl.hl{color:#d3b8ff}
+.caret{display:inline-block;width:8px;height:1.05em;background:var(--term-text);vertical-align:-2px;margin-left:1px;animation:blink 1s steps(1) infinite}
+.hero .term{box-shadow:0 24px 60px rgba(20,10,0,.28);transform:rotate(-.6deg);animation:float 7s ease-in-out infinite}
+.hero .term .term-body{min-height:260px;font-size:13.5px}
+
+/* code block */
+.code{border-radius:12px;overflow:hidden;background:var(--term-bg);color:var(--term-text);margin:12px 0}
+.code-bar{display:flex;justify-content:space-between;align-items:center;padding:6px 8px 6px 14px;background:rgba(255,255,255,.06);font:12px var(--mono);color:var(--term-muted)}
+.copy{border:1px solid rgba(255,255,255,.18);background:transparent;color:var(--term-text);font:600 12px var(--sans);padding:3px 10px;border-radius:7px;cursor:pointer}
+.copy:hover{background:rgba(255,255,255,.1)}
+.code pre{margin:0;padding:12px 16px 14px;font:13.5px/1.8 var(--mono);white-space:pre-wrap;word-break:break-word}
+.code .cm{color:var(--term-muted)}
+.code .ps{color:#f2a581}
+
+/* quiz */
+.quiz{max-width:780px;margin:0 auto;padding:26px}
+.q-anim{animation:slideIn .45s cubic-bezier(.2,.7,.2,1)}
+.q-top{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:14px;font-size:13.5px;color:var(--muted)}
+.q-dots{display:flex;gap:6px}
+.q-dots i{width:10px;height:10px;border-radius:50%;background:var(--border);transition:.3s}
+.q-dots i.ok{background:var(--green)}.q-dots i.no{background:var(--red)}
+.q-dots i.cur{outline:2px solid var(--mod);outline-offset:2px}
+.q-text{font-size:clamp(18px,2.2vw,21px);font-weight:700;margin:0 0 18px;line-height:1.55}
+.q-opts{display:flex;flex-direction:column;gap:10px}
+.q-opt{text-align:left;padding:12px 16px;border-radius:12px;border:1px solid var(--border);background:var(--bg);color:var(--text);font:15px/1.55 var(--sans);cursor:pointer;display:flex;gap:12px;align-items:center;transition:transform .2s,border-color .2s,background .2s}
+.q-opt .k{font:700 13px var(--mono);width:28px;height:28px;border-radius:8px;background:var(--surface-2);display:grid;place-items:center;flex:none;transition:.2s}
+.q-opt:hover:not(:disabled){border-color:var(--mod);transform:translateX(4px)}
+.q-opt.correct{border-color:var(--green);background:var(--green-soft)}
+.q-opt.correct .k{background:var(--green);color:#fff}
+.q-opt.wrong{border-color:var(--red);background:var(--red-soft);animation:shake .4s}
+.q-opt.wrong .k{background:var(--red);color:#fff}
+.q-opt:disabled{cursor:default}
+.q-exp{margin-top:14px;padding:12px 16px;border-radius:12px;background:var(--surface-2);font-size:14.5px;display:none}
+.q-exp.show{display:block;animation:popIn .35s}
+.q-next{margin-top:16px}
+.q-result{text-align:center;padding:10px 0}
+.ring{width:150px;height:150px;margin:0 auto 10px;position:relative}
+.ring svg{width:100%;height:100%;transform:rotate(-90deg)}
+.ring circle{fill:none;stroke-width:12}
+.ring .bg{stroke:var(--surface-2)}
+.ring .fg{stroke:var(--mod);stroke-linecap:round;transition:stroke-dashoffset 1.3s cubic-bezier(.2,.7,.2,1)}
+.ring .val{position:absolute;inset:0;display:grid;place-items:center;font:800 32px var(--sans)}
+.q-result h3{font-size:22px;margin:8px 0}
+.q-result p{color:var(--muted)}
+.q-result .row-btns{display:flex;flex-wrap:wrap;gap:10px;justify-content:center}
+
+/* module nav */
+.mod-nav{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:8px}
+.mod-nav a{display:block;padding:18px 20px;border-radius:16px;border:1px solid var(--border);background:var(--surface);color:var(--text);text-decoration:none;transition:.2s}
+.mod-nav a:hover{border-color:var(--mod);transform:translateY(-2px);box-shadow:var(--shadow)}
+.mod-nav small{display:block;color:var(--muted);font-size:13px}
+.mod-nav b{font-size:17px}
+.mod-nav .next{text-align:right}
+
+footer{padding:56px 0 70px;border-top:1px solid var(--border);color:var(--muted);font-size:14.5px}
+footer h3{color:var(--text);font-size:17px;margin:0 0 10px}
+footer ul{padding-left:20px;margin:0 0 18px}
+footer li{margin:4px 0}
+.confetti{position:fixed;width:8px;height:12px;border-radius:2px;pointer-events:none;z-index:100}
+
+@keyframes popIn{from{opacity:0;transform:translateY(5px)}}
+@keyframes blink{50%{opacity:0}}
+@keyframes bump{40%{transform:scale(1.13)}}
+@keyframes shake{20%{transform:translateX(-6px)}40%{transform:translateX(6px)}60%{transform:translateX(-4px)}80%{transform:translateX(3px)}}
+@keyframes chipIn{from{opacity:0;transform:scale(.85)}}
+@keyframes slideIn{from{opacity:0;transform:translateX(18px)}}
+@keyframes float{50%{transform:rotate(-.6deg) translateY(-8px)}}
+@keyframes pulse{50%{box-shadow:0 0 0 6px var(--c-soft,var(--mod-soft))}}
+
+@media (max-width:900px){
+  .hero-grid,.grid-2{grid-template-columns:1fr}
+  .hero-grid{gap:36px}
+}
+@media (max-width:600px){
+  .wrap{padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+  .chapter{padding:60px 0}
+  .hero{padding:44px 0 48px}
+  .panel-card,.quiz{padding:16px}
+  .ch-head{gap:12px}
+  .mod-nav{grid-template-columns:1fr}
+  .crumb{font-size:13px}
+}
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}
+}
+
+
+/* hero team illustration */
+.team-hero{position:relative;height:340px}
+.mw{position:absolute;width:60%;background:var(--term-bg);border-radius:12px;box-shadow:0 18px 40px rgba(0,0,0,.28);overflow:hidden;animation:float 7s ease-in-out infinite}
+.mw .term-bar{padding:7px 10px}.mw .term-bar i{width:8px;height:8px}
+.mw .term-bar span{color:var(--c);font-weight:700}
+.mw .lines{padding:12px;display:flex;flex-direction:column;gap:8px}
+.mw .ln{height:7px;border-radius:4px;background:var(--c);opacity:.65;width:0;animation:grow 6s ease infinite;animation-delay:var(--dl)}
+@keyframes grow{0%{width:0}35%,88%{width:var(--w)}100%{width:var(--w);opacity:0}}
+.mw:nth-child(1){left:0;top:0}
+.mw:nth-child(2){right:0;top:56px;animation-delay:-2s}
+.mw:nth-child(3){left:8%;top:136px;animation-delay:-4s}
+.mini-tasks{position:absolute;right:0;bottom:0;width:56%;background:var(--surface);border:2px solid var(--green);border-radius:12px;padding:12px 14px;box-shadow:var(--shadow);z-index:2}
+.mini-tasks b{display:block;font-size:13px;color:var(--green);margin-bottom:4px}
+.mt{display:flex;gap:8px;align-items:center;font-size:12.5px;color:var(--muted);line-height:1.9}
+.mt i{width:13px;height:13px;border-radius:4px;border:2px solid var(--border);flex:none;animation:tick 6s ease infinite;animation-delay:var(--dl)}
+@keyframes tick{0%,30%{background:transparent;border-color:var(--border)}38%,90%{background:var(--green);border-color:var(--green)}100%{background:transparent;border-color:var(--border)}}
+
+/* compare */
+.cmp-stage{margin:20px 0 6px;min-height:280px}
+.cmp-view{display:none}
+.cmp-view.on{display:block}
+.cmp-view.on .anim{animation:popUp .55s cubic-bezier(.2,.8,.3,1.2) backwards;animation-delay:calc(var(--i,0) * 130ms)}
+@keyframes popUp{from{opacity:0;transform:translateY(16px) scale(.96)}}
+.sess{border:2px solid var(--c);border-radius:16px;padding:14px;background:var(--surface);min-width:0}
+.sess-h{font:700 13px var(--mono);color:var(--c);margin-bottom:10px;display:flex;align-items:center;gap:8px}
+.sess-h .ic{width:15px;height:15px}
+.big-sess{background:var(--accent-soft);padding:18px}
+.ctx-main{padding:12px;border-radius:10px;background:var(--surface);border:1px solid var(--border);font-weight:700;text-align:center}
+.branches{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:24px}
+.branch{padding:10px 8px;border-radius:10px;border:1.5px dashed var(--accent);background:var(--surface);text-align:center;font-weight:700;font-size:14px;position:relative}
+.branch::before{content:"";position:absolute;left:50%;top:-24px;height:24px;border-left:2px dashed var(--accent)}
+.branch small{display:block;font-weight:400;color:var(--muted);font-size:12px}
+.team-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.ctxbar{height:10px;border-radius:99px;background:var(--surface-2);overflow:hidden;margin:6px 0 2px}
+.ctxbar span{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--blue),var(--purple));border-radius:99px}
+.cmp-view.on .ctxbar span{animation:fillbar 1.4s .5s cubic-bezier(.2,.7,.2,1) forwards}
+@keyframes fillbar{to{width:100%}}
+.sess small.lbl{font-size:12px;color:var(--muted)}
+.badges{display:flex;flex-wrap:wrap;gap:5px;margin-top:8px}
+.badges span{font:600 11.5px var(--mono);padding:2px 8px;border-radius:6px;background:var(--blue-soft);color:var(--blue)}
+.shared{margin-top:28px;position:relative;padding:12px 16px;border-radius:12px;border:2px solid var(--green);background:var(--green-soft);font-weight:700;display:flex;align-items:center;gap:10px 14px;flex-wrap:wrap;color:var(--green)}
+.shared::before{content:"";position:absolute;left:16.6%;right:16.6%;top:-28px;height:28px;border-left:2px dashed var(--green);border-right:2px dashed var(--green)}
+.shared::after{content:"";position:absolute;left:50%;top:-28px;height:28px;border-left:2px dashed var(--green)}
+.shared .box{font-weight:500;font-size:13px;color:var(--text);display:inline-flex;align-items:center;gap:6px}
+.shared .box i{width:12px;height:12px;border:2px solid var(--green);border-radius:3px}
+.cmp-facts{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:10px;margin-top:18px}
+.fact{padding:12px 14px;border-radius:12px;background:var(--surface-2);font-size:14.5px;animation:popIn .4s backwards;animation-delay:calc(var(--i) * 90ms)}
+
+/* pipeline */
+.pipe{position:relative;display:grid;grid-template-columns:1fr 34px 1fr 34px 1fr 34px 1fr;align-items:center;margin:6px 0 18px}
+.pnode{padding:14px;border-radius:14px;border:2px solid var(--border);background:var(--surface);transition:border-color .3s,box-shadow .3s,transform .3s;min-width:0}
+.pnode.active{border-color:var(--c);box-shadow:0 0 0 5px var(--c-soft);transform:translateY(-3px)}
+.pnode.done{border-color:var(--c)}
+.ptag{display:inline-block;font:700 11px var(--sans);letter-spacing:.06em;padding:1px 8px;border-radius:6px;background:var(--c-soft);color:var(--c);margin-bottom:6px}
+.pnode b{display:block;font:700 14px var(--mono);word-break:break-all}
+.pnode small{display:block;color:var(--muted);font-size:12px;word-break:break-all;line-height:1.5;margin-top:3px}
+.pline{height:2px;background:repeating-linear-gradient(90deg,var(--muted) 0 5px,transparent 5px 10px);opacity:.5}
+.packet{position:absolute;left:0;top:0;width:16px;height:16px;border-radius:50%;background:var(--mod);box-shadow:0 0 0 5px rgba(255,255,255,.35),0 4px 12px rgba(0,0,0,.25);opacity:0;pointer-events:none;z-index:3;transition:opacity .3s}
+.pipe-actions{display:flex;flex-wrap:wrap;gap:10px 16px;align-items:center;margin-bottom:16px}
+.pipe-grid{display:grid;grid-template-columns:1.1fr .9fr;gap:16px}
+.pipe-grid .term-body{height:270px;overflow-y:auto;font-size:12.5px}
+.pipe-side{display:flex;flex-direction:column;gap:14px;min-width:0}
+.contract{border:1px solid var(--border);border-radius:14px;padding:12px 14px;background:var(--bg)}
+.contract pre{margin:0;font:12.5px/1.7 var(--mono);white-space:pre-wrap;word-break:break-all;color:var(--muted)}
+.contract pre.filled{color:var(--text);animation:popIn .4s}
+.contract .k{color:var(--blue)}.contract .s{color:var(--green)}
+.card-out{min-height:160px;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.card-out svg{width:100%;max-width:380px;height:auto;border-radius:16px;box-shadow:var(--shadow);animation:cardIn .7s cubic-bezier(.2,.8,.3,1.2)}
+@keyframes cardIn{from{opacity:0;transform:scale(.88) rotate(-2deg)}}
+.out-path{font:12px var(--mono);color:var(--muted);text-align:center;margin-top:8px}
+.card-out .empty{width:100%}
+
+/* stepper */
+.steps-nav{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:18px}
+.sn{display:flex;align-items:center;gap:10px;text-align:left;padding:12px 14px;border-radius:12px;border:1px solid var(--border);background:var(--surface);color:var(--muted);font:600 14px/1.4 var(--sans);cursor:pointer;transition:.2s}
+.sn span{width:28px;height:28px;border-radius:50%;display:grid;place-items:center;background:var(--surface-2);font:800 13px var(--mono);flex:none;transition:.2s}
+.sn.on{border-color:var(--mod);color:var(--text);box-shadow:0 0 0 3px var(--mod-soft)}
+.sn.on span,.sn.seen span{background:var(--mod);color:#fff}
+.step-pane{display:none}
+.step-pane.on{display:block;animation:slideIn .45s cubic-bezier(.2,.7,.2,1)}
+.step-pane h3{font-size:20px;margin-bottom:8px}
+.step-pane p{color:var(--muted)}
+.step-ctrl{display:flex;justify-content:space-between;gap:10px;margin-top:18px}
+.explain{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:10px;margin:12px 0}
+.ex{padding:12px 14px;border-radius:12px;background:var(--bg);border:1px solid var(--border);font-size:14px}
+.ex code{font-size:12.5px}
+.ex p{margin:6px 0 0;color:var(--muted)}
+.tmux{display:grid;grid-template-columns:1.1fr .9fr;gap:3px;background:#3a3530;border-radius:12px;overflow:hidden;font:12px/1.65 var(--mono);margin-top:14px}
+.tmux .tp{background:var(--term-bg);color:var(--term-text);padding:10px 12px;min-height:84px;word-break:break-word}
+.tmux .tp.lead{grid-row:span 2}
+.tmux .tp .ok{color:#7ee2a8}.tmux .tp .mu{color:var(--term-muted)}
+.tmux .tstat{grid-column:1/-1;background:#2f7a4a;color:#fff;padding:2px 10px;font-size:11.5px}
+.breakdown{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:10px;margin:14px 0}
+.bd{padding:14px;border-radius:12px;border:1px solid var(--border);background:var(--bg)}
+.bd b{display:block;color:var(--c,var(--mod));margin-bottom:4px}
+.bd p{margin:0;font-size:14px;color:var(--muted)}
+details.raw{margin-top:12px;border:1px solid var(--border);border-radius:12px;background:var(--bg)}
+details.raw summary{cursor:pointer;padding:12px 14px;font-weight:700}
+details.raw .code{margin:0 12px 12px}
+details.raw pre{max-height:360px;overflow-y:auto}
+
+/* coordination */
+.coord-top{display:flex;flex-wrap:wrap;gap:10px 16px;align-items:center;margin-bottom:20px}
+.lead-box{display:flex;gap:12px;align-items:center;justify-content:center;flex-wrap:wrap}
+.avatar{width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--purple));color:#fff;display:grid;place-items:center;font-weight:800;flex:none}
+.lead-box .who{font-weight:800;font-size:14px}
+.bubble{padding:10px 14px;border-radius:14px;border-top-left-radius:4px;background:var(--surface-2);border:1px solid var(--border);font-size:15px;min-height:46px;width:min(420px,72vw)}
+.spawn{text-align:center;color:var(--muted);font-size:13.5px;font-weight:700;margin:14px 0;opacity:.35;transition:opacity .4s,color .4s}
+.spawn.on{opacity:1;color:var(--mod)}
+.mates{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.mate{border:2px solid var(--border);border-radius:14px;padding:12px;background:var(--surface);cursor:pointer;transition:border-color .3s,transform .25s,opacity .4s,box-shadow .3s;min-width:0;opacity:.5}
+.mate.live{opacity:1;border-color:var(--c);animation:popUp .5s cubic-bezier(.2,.8,.3,1.2)}
+.mate.sel{box-shadow:0 0 0 4px var(--c-soft);opacity:1}
+.mate:hover{transform:translateY(-2px)}
+.mate-h{display:flex;align-items:center;gap:8px;font-size:14.5px;font-weight:800}
+.mate-h .dot{width:10px;height:10px;border-radius:50%;background:var(--c)}
+.mate small{display:block;font:11.5px var(--mono);color:var(--muted);word-break:break-all;margin:2px 0 8px}
+.pane{background:var(--term-bg);color:var(--term-text);border-radius:9px;padding:8px 10px;font:11.5px/1.65 var(--mono);height:156px;overflow:hidden;display:flex;flex-direction:column;justify-content:flex-end}
+.pane .pl{animation:popIn .3s both;word-break:break-word}
+.pane .pl.ok{color:#7ee2a8}.pane .pl.hl{color:#f5c26b}.pane .pl.mu{color:var(--term-muted)}
+.tasks{margin-top:16px;border:2px solid var(--green);border-radius:14px;padding:12px 14px;background:color-mix(in srgb,var(--green-soft) 60%,transparent)}
+.tasks-h{font-weight:800;color:var(--green);margin-bottom:6px;display:flex;justify-content:space-between;gap:10px}
+.task{display:flex;align-items:center;gap:10px;padding:5px 4px;font-size:14px;border-radius:8px}
+.task .tb{width:18px;height:18px;border-radius:5px;border:2px solid var(--muted);flex:none;display:grid;place-items:center;color:#fff;font-size:12px;transition:.3s}
+.task.done .tb{background:var(--green);border-color:var(--green);animation:bump .45s}
+.task.done .tb::after{content:"✓"}
+.task.done .tt{color:var(--muted)}
+.task .who{margin-left:auto;font:700 11px var(--sans);padding:1px 8px;border-radius:6px;background:var(--c-soft);color:var(--c);opacity:0;transition:.3s;white-space:nowrap}
+.task.done .who{opacity:1}
+.final{margin-top:16px;padding:14px;border-radius:14px;border:2px dashed var(--border);text-align:center;font-size:14px;transition:.4s;display:flex;flex-wrap:wrap;gap:6px 8px;justify-content:center;align-items:center}
+.final.on{border-style:solid;border-color:var(--mod);background:var(--mod-soft);animation:pulse 1.6s ease 2}
+.final .ar{color:var(--muted)}
+.mate-detail{margin-top:16px;padding:16px 18px;border-radius:14px;border:1px solid var(--c);background:var(--c-soft);display:none}
+.mate-detail.show{display:block;animation:popIn .35s}
+.mate-detail h4{color:var(--c);margin-bottom:6px;font-size:16px}
+.mate-detail ul{margin:0;padding-left:20px;font-size:14.5px}
+.par{margin-top:22px}
+.par h4{font-size:16px;margin-bottom:4px}
+.par p{color:var(--muted);font-size:14.5px;margin-bottom:10px}
+.par-row{display:grid;grid-template-columns:64px 1fr;gap:10px;align-items:center;margin:8px 0;font-size:13px;font-weight:700}
+.par-track{display:flex;flex-direction:column;gap:3px}
+.par-seg{height:9px;border-radius:5px;background:var(--c);width:0;transition:width 1s cubic-bezier(.2,.7,.2,1),margin-left 1s cubic-bezier(.2,.7,.2,1)}
+
+/* file tree */
+.ft-wrap{display:grid;grid-template-columns:1.1fr .9fr;gap:18px;align-items:start}
+.ftree{font:13.5px var(--mono);border:1px solid var(--border);border-radius:14px;padding:8px;background:var(--bg)}
+.frow{display:flex;align-items:center;gap:8px;padding:6px 10px 6px calc(10px + var(--d) * 18px);border-radius:9px;transition:background .25s,opacity .25s;min-height:34px}
+.frow.file{cursor:pointer}
+.frow.file:hover{background:var(--surface-2)}
+.frow .own{margin-left:auto;font:700 11px var(--sans);padding:1px 8px;border-radius:6px;background:var(--c-soft);color:var(--c);white-space:nowrap}
+.frow.dim{opacity:.28}
+.frow.sel{background:var(--c-soft)}
+.frow .ic{color:var(--muted)}.frow.dir .ic{color:var(--yellow)}
+.frow.dir{font-weight:700}
+.fdetail{border:1px solid var(--c,var(--border));background:var(--c-soft,var(--surface));border-radius:14px;padding:16px 18px;min-height:150px}
+.fdetail.fade{animation:popIn .35s}
+.fdetail h4{font:700 14px var(--mono);color:var(--c);word-break:break-all;margin-bottom:4px}
+.fdetail .ow{font-size:13px;color:var(--muted);margin-bottom:8px}
+.fdetail ul{margin:0;padding-left:20px;font-size:14.5px}
+
+@media (max-width:900px){
+  .pipe{grid-template-columns:1fr 1fr;gap:10px}
+  .pline{display:none}
+  .pnode{padding:10px 12px}
+  .pnode b{font-size:13px}
+  .pipe-grid .term-body{height:200px}
+  .pipe-grid,.ft-wrap{grid-template-columns:1fr}
+}
+@media (max-width:700px){
+  .team-grid,.mates,.steps-nav{grid-template-columns:1fr}
+  .pane{height:110px}
+  .team-hero{height:300px}
+  .mw{width:72%}
+  .mini-tasks{width:72%}
+  .tmux{grid-template-columns:1fr}
+  .tmux .tp.lead{grid-row:auto}
+  .frow{padding-left:calc(6px + var(--d) * 13px);font-size:12.5px}
+  .frow .own{font-size:0;width:10px;height:10px;padding:0;border-radius:50%;background:var(--c)}
+}
+</style>
+</head>
+<body class="m-teams">
+<div class="progress"><span id="progressBar"></span></div>
+<header class="topbar">
+  <div class="wrap topbar-inner">
+    <a class="brand" href="index.html" title="回到學院首頁"><span class="brand-mark">CC</span><span class="brand-text">互動學院</span></a>
+    <span class="crumb">› Agent Teams</span>
+    <nav class="chapters" id="chapterNav" aria-label="章節">
+      <a href="#t1">01 認識</a>
+      <a href="#t2">02 成品</a>
+      <a href="#t3">03 實作步驟</a>
+      <a href="#t4">04 團隊協調</a>
+      <a href="#t5">05 檔案結構</a>
+      <a href="#t6">06 測驗</a>
+    </nav>
+    <button class="icon-btn" id="themeBtn" aria-label="切換深色／淺色"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="8"/><path d="M12 4a8 8 0 0 0 0 16z" fill="currentColor"/></svg></button>
+  </div>
+</header>
+
+<main>
+<section id="hero" class="hero">
+  <div class="wrap hero-grid">
+    <div>
+      <span class="eyebrow">模組 02 · Agent Teams 實作</span>
+      <h1>Agent Teams<br><span class="grad">讓多個 Claude 組隊開工</span></h1>
+      <p class="lead">Agent Teams 會生成<b>多個獨立的 Claude Code session</b>，透過<b>共享任務清單</b>協調。每個隊友都有自己完整的脈絡視窗，並自動載入 CLAUDE.md、MCP server 與 skills。</p>
+      <div class="hero-cta">
+        <a class="btn primary" href="#t1">開始學習 ↓</a>
+        <a class="btn" href="#t4">看團隊協作動畫</a>
+      </div>
+      <div class="meta"><span>狀態：已實作</span><span>原文最後更新：2026-03-12</span><span><a href="https://github.com/kevin801221/claude-code-zh-tw/blob/main/implementation/claude-agent-teams-implementation.md" target="_blank" rel="noopener">原文</a></span></div>
+    </div>
+    <div class="team-hero" aria-hidden="true">
+      <div class="mw c-accent"><div class="term-bar"><i></i><i></i><i></i><span>Command Architect</span></div><div class="lines"><div class="ln" style="--w:80%;--dl:0s"></div><div class="ln" style="--w:55%;--dl:.3s"></div><div class="ln" style="--w:68%;--dl:.6s"></div></div></div>
+      <div class="mw c-blue"><div class="term-bar"><i></i><i></i><i></i><span>Agent Engineer</span></div><div class="lines"><div class="ln" style="--w:70%;--dl:.2s"></div><div class="ln" style="--w:85%;--dl:.5s"></div><div class="ln" style="--w:50%;--dl:.8s"></div></div></div>
+      <div class="mw c-purple"><div class="term-bar"><i></i><i></i><i></i><span>Skill Designer</span></div><div class="lines"><div class="ln" style="--w:62%;--dl:.1s"></div><div class="ln" style="--w:78%;--dl:.4s"></div><div class="ln" style="--w:45%;--dl:.7s"></div></div></div>
+      <div class="mini-tasks"><b>共享任務清單</b>
+        <div class="mt"><i style="--dl:0s"></i>議定資料契約</div>
+        <div class="mt"><i style="--dl:.5s"></i>Command 用 Agent 工具</div>
+        <div class="mt"><i style="--dl:1s"></i>Agent 預載 skill</div>
+        <div class="mt"><i style="--dl:1.5s"></i>Skill 不重抓時間</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- T1 -->
+<section id="t1" class="chapter">
+  <div class="wrap">
+    <header class="ch-head reveal"><span class="ch-num">01</span><div><h2>Agent Teams vs 子代理</h2><p>兩者都能「分工」，但結構完全不同。切換看看差在哪。</p></div></header>
+    <div class="panel-card reveal">
+      <div class="seg" id="cmpSeg" role="tablist">
+        <button data-m="sub" role="tab">子代理 Subagents</button>
+        <button data-m="team" class="on" role="tab">Agent Teams</button>
+      </div>
+      <div class="cmp-stage">
+        <div class="cmp-view" id="view-sub">
+          <div class="sess big-sess c-accent anim" style="--i:0">
+            <div class="sess-h"><svg class="ic" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M7 9l3 3-3 3M12 15h5"/></svg>單一 Claude Code session</div>
+            <div class="ctx-main anim" style="--i:1">主脈絡</div>
+            <div class="branches">
+              <div class="branch anim" style="--i:2">子代理 A<small>隔離的脈絡分支</small></div>
+              <div class="branch anim" style="--i:3">子代理 B<small>隔離的脈絡分支</small></div>
+              <div class="branch anim" style="--i:4">子代理 C<small>隔離的脈絡分支</small></div>
+            </div>
+          </div>
+        </div>
+        <div class="cmp-view on" id="view-team">
+          <div class="team-grid">
+            <div class="sess c-blue anim" style="--i:0"><div class="sess-h"><svg class="ic" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M7 9l3 3-3 3M12 15h5"/></svg>隊友 1・獨立 session</div><small class="lbl">完整脈絡視窗</small><div class="ctxbar"><span></span></div><div class="badges"><span>CLAUDE.md</span><span>MCP</span><span>Skills</span></div></div>
+            <div class="sess c-blue anim" style="--i:1"><div class="sess-h"><svg class="ic" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M7 9l3 3-3 3M12 15h5"/></svg>隊友 2・獨立 session</div><small class="lbl">完整脈絡視窗</small><div class="ctxbar"><span></span></div><div class="badges"><span>CLAUDE.md</span><span>MCP</span><span>Skills</span></div></div>
+            <div class="sess c-blue anim" style="--i:2"><div class="sess-h"><svg class="ic" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M7 9l3 3-3 3M12 15h5"/></svg>隊友 3・獨立 session</div><small class="lbl">完整脈絡視窗</small><div class="ctxbar"><span></span></div><div class="badges"><span>CLAUDE.md</span><span>MCP</span><span>Skills</span></div></div>
+          </div>
+          <div class="shared anim" style="--i:3">共享任務清單 <span class="box"><i></i>任務 A</span><span class="box"><i></i>任務 B</span><span class="box"><i></i>任務 C</span></div>
+        </div>
+      </div>
+      <div class="cmp-facts" id="cmpFacts"></div>
+    </div>
+    <div class="callout c-accent reveal"><span>每個隊友都會<b>自動載入 CLAUDE.md</b> —— 它們從哪裡、在什麼時候被載入？<a href="memory.html">複習 Memory 模組 →</a></span></div>
+    <div class="callout c-blue reveal"><span>想看單一 session 裡的子代理怎麼運作？<a href="demos.html#subagents">功能演示館：Subagents →</a></span></div>
+  </div>
+</section>
+
+<!-- T2 -->
+<section id="t2" class="chapter">
+  <div class="wrap">
+    <header class="ch-head reveal"><span class="ch-num">02</span><div><h2>成品怎麼跑：Command → Agent → Skill</h2><p>這個時間編排工作流<b>完全由一個 agent team 建造</b>。執行後，代理抓取杜拜當前時間，skill 把 SVG 時間卡片輸出到 <code>agent-teams/output/dubai-time.svg</code>。</p></div></header>
+    <div class="code reveal"><div class="code-bar"><span>bash</span><button class="copy" data-copy>複製</button></div><pre>cd agent-teams
+claude
+/time-orchestrator</pre></div>
+    <div class="panel-card reveal" style="margin-top:20px">
+      <div class="pipe" id="pipe">
+        <div class="pnode c-accent" data-n="cmd"><span class="ptag">COMMAND</span><b>/time-orchestrator</b><small>.claude/commands/</small></div>
+        <div class="pline"></div>
+        <div class="pnode c-blue" data-n="agent"><span class="ptag">AGENT</span><b>time-agent</b><small>預載 skill：time-fetcher</small></div>
+        <div class="pline"></div>
+        <div class="pnode c-purple" data-n="skill"><span class="ptag">SKILL</span><b>time-svg-creator</b><small>.claude/skills/</small></div>
+        <div class="pline"></div>
+        <div class="pnode c-green" data-n="out"><span class="ptag">OUTPUT</span><b>dubai-time.svg</b><small>agent-teams/output/</small></div>
+        <div class="packet" id="packet"></div>
+      </div>
+      <div class="pipe-actions"><button class="btn primary" id="pipeRun">▶ 執行 /time-orchestrator</button><span class="hint">用你電腦現在的時間換算杜拜時間（UTC+4），完整模擬管線流程</span></div>
+      <div class="pipe-grid">
+        <div class="term"><div class="term-bar"><i></i><i></i><i></i><span>agent-teams — claude</span></div><div class="term-body" id="pipeLog"><div class="tl muted">按下「執行」開始…</div></div></div>
+        <div class="pipe-side">
+          <div class="contract"><div class="panel-title">資料契約 <span class="hint">agent 回傳、command 傳遞、skill 使用</span></div><pre id="contract">{ time, timezone, formatted }</pre></div>
+          <div class="card-out" id="cardOut"><div class="empty">SVG 時間卡片會出現在這裡</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- T3 -->
+<section id="t3" class="chapter">
+  <div class="wrap">
+    <header class="ch-head reveal"><span class="ch-num">03</span><div><h2>實作步驟：自己用 agent team 建一次</h2><p>三個步驟，就能用 agent teams 重現這個時間編排工作流。</p></div></header>
+    <div class="panel-card reveal" id="stepper">
+      <div class="steps-nav">
+        <button class="sn on" data-s="0"><span>1</span>安裝 iTerm2 與 tmux</button>
+        <button class="sn" data-s="1"><span>2</span>啟動 iTerm2 → tmux → Claude</button>
+        <button class="sn" data-s="2"><span>3</span>用團隊結構下 prompt</button>
+      </div>
+      <div class="step-pane on" data-s="0">
+        <h3>安裝 <a href="https://iterm2.com/" target="_blank" rel="noopener">iTerm2</a> 與 tmux</h3>
+        <p>用 Homebrew 安裝終端機 iTerm2 和終端多工器 tmux。</p>
+        <div class="code"><div class="code-bar"><span>bash</span><button class="copy" data-copy>複製</button></div><pre>brew install --cask iterm2
+brew install tmux</pre></div>
+      </div>
+      <div class="step-pane" data-s="1">
+        <h3>啟動 iTerm2 → tmux → Claude</h3>
+        <p>在 iTerm2 裡開一個 tmux session，再帶著環境變數啟動 Claude。</p>
+        <div class="code"><div class="code-bar"><span>bash</span><button class="copy" data-copy>複製</button></div><pre>tmux new -s dev
+CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1 claude</pre></div>
+        <div class="explain">
+          <div class="ex"><code>tmux new -s dev</code><p>建立一個名為 <code>dev</code> 的 tmux session。</p></div>
+          <div class="ex"><code>CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1</code><p>開啟實驗性的 Agent Teams 功能，再啟動 <code>claude</code>。</p></div>
+        </div>
+        <div class="tmux" id="tmux" aria-label="tmux 分割窗格示意">
+          <div class="tp lead" id="tpLead"></div>
+          <div class="tp" id="tp1"><span class="mu">（隊友窗格）</span></div>
+          <div class="tp" id="tp2"><span class="mu">（隊友窗格）</span></div>
+          <div class="tstat">[dev] 0:claude*　·　搭配 tmux 的分割窗格模式（示意）</div>
+        </div>
+      </div>
+      <div class="step-pane" data-s="2">
+        <h3>用團隊結構下 prompt</h3>
+        <p>把主 prompt 貼進 Claude，用 agent teams 啟動完整的時間編排工作流。重點拆解如下：</p>
+        <div class="breakdown">
+          <div class="bd c-accent"><b>目標</b><p>建立 agent team，打造顯示杜拜當前時間 SVG 卡片的時間編排工作流，遵循 Command → Agent → Skill 架構。</p></div>
+          <div class="bd c-red"><b>重要限制</b><p>所有檔案建在 <code>agent-teams/.claude/</code>，不是 repo 根目錄的 <code>.claude/</code>；從零開始，不參考或複製現有的 weather 工作流。</p></div>
+          <div class="bd c-blue"><b>三位隊友</b><p>Command Architect、Agent Engineer、Skill Designer，各自負責一個元件（見第 04 章）。</p></div>
+          <div class="bd c-green"><b>協調方式</b><p>在共享任務清單議定資料契約 <code>{time, timezone, formatted}</code>，三人全部平行開工。</p></div>
+        </div>
+        <details class="raw">
+          <summary>查看完整 prompt（英文原文）</summary>
+          <div class="code"><div class="code-bar"><span>agent-teams-prompt.md</span><button class="copy" data-copy="rawPrompt">複製</button></div><pre id="rawPrompt">Create an agent team to build a time orchestration workflow that displays
+the current Dubai time as a visual SVG card. The workflow follows the
+Command → Agent → Skill architecture pattern:
+
+- A command orchestrates the flow and handles user interaction
+- An agent fetches the live current time for Dubai using a preloaded skill
+- A skill creates a visual SVG time card from the fetched data
+
+**Important**: All files must be created inside `agent-teams/.claude/` —
+NOT in the repo root's `.claude/` directory. This keeps the agent team's
+output self-contained and runnable via `cd agent-teams &amp;&amp; claude`.
+Do NOT reference or copy the existing weather workflow — build everything from scratch.
+
+Assign these teammates:
+
+1. **Command Architect** — Design and implement the `/time-orchestrator`
+   command in `agent-teams/.claude/commands/time-orchestrator.md`. The command should:
+   - Invoke the time-agent via the Agent tool (NOT bash) to fetch the
+     current time for Dubai, UAE (Asia/Dubai timezone, UTC+4)
+   - Invoke the time-svg-creator skill via the Skill tool to render the
+     SVG card from the fetched time data
+   - Use model: haiku in the frontmatter
+   - Include critical requirements: sequential flow, correct tool usage
+     (Agent tool for agents, Skill tool for skills), and an output summary
+   Coordinate with the other teammates via the shared task list to agree
+   on the data contract ({time, timezone, formatted}) passed between components.
+
+2. **Agent Engineer** — Design and implement the `time-agent` in
+   `agent-teams/.claude/agents/time-agent.md` and its preloaded `time-fetcher`
+   skill in `agent-teams/.claude/skills/time-fetcher/SKILL.md`. The agent should:
+   - Fetch the current time for Dubai (Asia/Dubai, UTC+4) using Bash
+     with `TZ='Asia/Dubai' date '+%Y-%m-%d %H:%M:%S %Z'`
+   - Return the time value, timezone name, and formatted string to the command
+   - Use frontmatter: tools (Bash), model: haiku, color: blue, maxTurns: 3
+   - Preload the time-fetcher skill via the `skills:` field
+   The time-fetcher skill (`agent-teams/.claude/skills/time-fetcher/SKILL.md`)
+   should contain the bash command for Dubai time, the expected output format,
+   and set user-invocable: false since it is agent-only domain knowledge.
+   Post the agreed data contract to the shared task list so the Command
+   Architect and Skill Designer can align on the interface.
+
+3. **Skill Designer** — Design and implement the `time-svg-creator`
+   skill in `agent-teams/.claude/skills/time-svg-creator/SKILL.md` with supporting
+   files `reference.md` (SVG template + output template) and `examples.md`
+   (example input/output pairs). The skill should:
+   - Receive a time value, timezone, and formatted string from the calling context
+   - Create a self-contained SVG time card for Dubai showing the current time
+   - Write the SVG to `agent-teams/output/dubai-time.svg`
+   - Write a markdown summary to `agent-teams/output/output.md`
+   - Use the exact time provided — never re-fetch
+   - Keep templates in reference.md (SVG markup with placeholders, markdown
+     output template) and example pairs in examples.md
+   Also create the `agent-teams/output/` directory for the output files.
+
+All three teammates should create tasks in the shared task list to
+coordinate the data contract: the agent returns {time, timezone, formatted},
+the command passes it through context, and the skill consumes it.
+Start all three in parallel since the components are independent —
+they only need to agree on the data interface, not wait on each other's
+implementation.</pre></div>
+          <p class="hint" style="padding:0 14px 12px;margin:0">來源：<a href="https://github.com/kevin801221/claude-code-best-practice/blob/main/agent-teams/agent-teams-prompt.md" target="_blank" rel="noopener">agent-teams-prompt.md</a></p>
+        </details>
+      </div>
+      <div class="step-ctrl"><button class="btn small" id="stepPrev" disabled>← 上一步</button><button class="btn small primary" id="stepNext">下一步 →</button></div>
+    </div>
+  </div>
+</section>
+
+<!-- T4 -->
+<section id="t4" class="chapter">
+  <div class="wrap">
+    <header class="ch-head reveal"><span class="ch-num">04</span><div><h2>團隊協調流程</h2><p>領隊下一句 prompt，三位隊友同時開工，在共享任務清單上對齊資料契約。按播放看整個過程，點隊友卡片看職責。</p></div></header>
+    <div class="panel-card reveal" id="coord">
+      <div class="coord-top"><button class="btn primary" id="coordPlay">▶ 播放團隊協作</button><span class="hint">動畫為示意，呈現各隊友依 prompt 分工的順序</span></div>
+      <div class="lead-box"><span class="avatar">你</span><div><div class="who">領隊（你）</div><div class="bubble" id="leadBubble"><span class="hint">按下播放…</span></div></div></div>
+      <div class="spawn" id="spawn">↓　生成團隊（全部平行）　↓</div>
+      <div class="mates" id="mates"></div>
+      <div class="tasks" id="tasks"><div class="tasks-h"><span>共享任務清單</span><span class="hint" id="taskCount"></span></div></div>
+      <div class="final" id="finalBox"><code>cd agent-teams &amp;&amp; claude</code><span class="ar">→</span><code>/time-orchestrator</code><span class="ar">→</span><b>Command → Agent → Skill</b></div>
+      <div class="mate-detail" id="mateDetail"></div>
+      <div class="par reveal" id="par">
+        <h4>為什麼三位隊友可以全部平行開工？</h4>
+        <p>因為元件彼此獨立 —— 他們只需要<b>先議定資料介面</b>，不必等彼此的實作完成。（長度為示意）</p>
+        <div class="par-row"><span>平行</span><div class="par-track"><div class="par-seg c-accent" data-w="30" data-ml="0"></div><div class="par-seg c-blue" data-w="34" data-ml="0"></div><div class="par-seg c-purple" data-w="28" data-ml="0"></div></div></div>
+        <div class="par-row"><span>依序</span><div class="par-track"><div class="par-seg c-accent" data-w="30" data-ml="0"></div><div class="par-seg c-blue" data-w="34" data-ml="30"></div><div class="par-seg c-purple" data-w="28" data-ml="64"></div></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- T5 -->
+<section id="t5" class="chapter">
+  <div class="wrap">
+    <header class="ch-head reveal"><span class="ch-num">05</span><div><h2>檔案結構：誰負責哪個檔案？</h2><p>所有檔案都在 <code>agent-teams/.claude/</code> 內，成品可以用 <code>cd agent-teams &amp;&amp; claude</code> 獨立執行。點檔案看重點，或依隊友篩選。</p></div></header>
+    <div class="reveal">
+      <div class="chips" id="ftFilter" style="margin-bottom:14px"></div>
+      <div class="ft-wrap">
+        <div class="ftree" id="ftree"></div>
+        <div class="fdetail" id="fdetail"><p class="hint" style="margin:0">← 點選左邊任一個檔案</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- T6 -->
+<section id="t6" class="chapter">
+  <div class="wrap">
+    <header class="ch-head reveal"><span class="ch-num">06</span><div><h2>小測驗</h2><p>7 題，作答後立即看解析。成績會記錄在學院首頁。</p></div></header>
+    <div class="panel-card quiz reveal" id="quizBox"></div>
+    <div class="mod-nav reveal" style="margin-top:40px">
+      <a href="memory.html"><small>← 上一個模組</small><b>Claude Memory</b></a>
+      <a class="next" href="goal.html"><small>下一個模組 →</small><b>/goal 實作</b></a>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <h3>資料來源</h3>
+    <ul>
+      <li><a href="https://github.com/kevin801221/claude-code-zh-tw/blob/main/implementation/claude-agent-teams-implementation.md" target="_blank" rel="noopener">claude-code-zh-tw — implementation/claude-agent-teams-implementation.md（本頁內容來源）</a></li>
+      <li><a href="https://github.com/kevin801221/claude-code-best-practice/blob/main/agent-teams/agent-teams-prompt.md" target="_blank" rel="noopener">agent-teams-prompt.md（主 prompt）</a></li>
+      <li><a href="https://iterm2.com/" target="_blank" rel="noopener">iTerm2</a></li>
+    </ul>
+    <p>管線模擬、團隊協作動畫與 SVG 卡片樣式皆為示意，用來呈現原文描述的流程。</p>
+  </div>
+</footer>
+
+<script>
+(() => {
+'use strict';
+const $ = (s, r = document) => r.querySelector(s);
+const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
+const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+const sleep = ms => new Promise(r => setTimeout(r, reduced ? Math.min(ms, 40) : ms));
+const restart = (el, cls) => { el.classList.remove(cls); void el.offsetWidth; el.classList.add(cls); };
+const root = document.documentElement;
+
+/* theme */
+const tb = $('#themeBtn');
+if (tb) tb.addEventListener('click', () => {
+  const cur = root.dataset.theme || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+  const next = cur === 'dark' ? 'light' : 'dark';
+  root.dataset.theme = next;
+  try { localStorage.setItem('cm-theme', next); } catch (e) {}
+});
+
+/* scroll progress */
+const bar = $('#progressBar');
+const onScroll = () => {
+  if (!bar) return;
+  const h = document.documentElement;
+  bar.style.width = (h.scrollTop / Math.max(1, h.scrollHeight - h.clientHeight) * 100).toFixed(2) + '%';
+};
+addEventListener('scroll', onScroll, { passive: true }); onScroll();
+
+/* chapter nav highlight */
+const nav = $('#chapterNav');
+if (nav) {
+  const links = $$('a', nav);
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (!e.isIntersecting) return;
+      links.forEach(a => {
+        const on = a.getAttribute('href') === '#' + e.target.id;
+        a.classList.toggle('on', on);
+        if (on && nav.scrollTo) nav.scrollTo({ left: a.offsetLeft - nav.clientWidth / 2 + a.clientWidth / 2, behavior: reduced ? 'auto' : 'smooth' });
+      });
+    });
+  }, { rootMargin: '-45% 0px -50% 0px' });
+  $$('section[id]').forEach(s => obs.observe(s));
+}
+
+/* reveal */
+const revObs = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (!e.isIntersecting) return;
+    e.target.classList.add('in');
+    revObs.unobserve(e.target);
+    e.target.dispatchEvent(new CustomEvent('revealed'));
+  });
+}, { threshold: 0.12 });
+$$('.reveal').forEach(el => revObs.observe(el));
+
+/* confetti */
+function confetti(el) {
+  if (reduced || !el) return;
+  const r = el.getBoundingClientRect();
+  const x = r.left + r.width / 2, y = r.top + r.height / 2;
+  const colors = ['var(--accent)', 'var(--green)', 'var(--blue)', 'var(--purple)', '#f2c14e'];
+  for (let i = 0; i < 40; i++) {
+    const p = document.createElement('i');
+    p.className = 'confetti';
+    p.style.left = x + 'px'; p.style.top = y + 'px';
+    p.style.background = colors[i % colors.length];
+    document.body.appendChild(p);
+    const ang = Math.random() * Math.PI * 2, dist = 70 + Math.random() * 150;
+    const dx = Math.cos(ang) * dist, dy = Math.sin(ang) * dist - 70;
+    p.animate([
+      { transform: 'translate(0,0) rotate(0deg)', opacity: 1 },
+      { transform: 'translate(' + dx + 'px,' + (dy + 140) + 'px) rotate(' + (Math.random() * 720) + 'deg)', opacity: 0 }
+    ], { duration: 1100 + Math.random() * 600, easing: 'cubic-bezier(.2,.6,.4,1)' }).finished.then(() => p.remove());
+  }
+}
+
+/* copy buttons */
+function copyText(text) {
+  if (navigator.clipboard && window.isSecureContext !== false) {
+    return navigator.clipboard.writeText(text).catch(() => fallbackCopy(text));
+  }
+  return fallbackCopy(text);
+}
+function fallbackCopy(text) {
+  return new Promise(res => {
+    const ta = document.createElement('textarea');
+    ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
+    document.body.appendChild(ta); ta.select();
+    try { document.execCommand('copy'); } catch (e) {}
+    ta.remove(); res();
+  });
+}
+document.addEventListener('click', e => {
+  const b = e.target.closest('[data-copy]');
+  if (!b) return;
+  const src = b.dataset.copy ? document.getElementById(b.dataset.copy) : b.closest('.code').querySelector('pre');
+  if (!src) return;
+  copyText(src.innerText.trim()).then(() => {
+    const old = b.dataset.label || b.textContent;
+    b.dataset.label = old;
+    b.textContent = '已複製 ✓';
+    setTimeout(() => { b.textContent = old; }, 1500);
+  });
+});
+
+/* progress storage (shared across pages) */
+function getProgress() {
+  try { return JSON.parse(localStorage.getItem('cca-progress') || '{}') || {}; } catch (e) { return {}; }
+}
+function saveProgress(key, score, total) {
+  try {
+    const p = getProgress();
+    if (!p[key] || score >= p[key].score) p[key] = { score, total };
+    localStorage.setItem('cca-progress', JSON.stringify(p));
+  } catch (e) {}
+}
+
+/* quiz engine */
+function quiz(box, QUIZ, key, nextLink) {
+  let qi = 0, qScore = 0, qRes = [];
+  function render() {
+    if (qi >= QUIZ.length) return result();
+    const Q = QUIZ[qi];
+    box.innerHTML = '<div class="q-anim"><div class="q-top"><span>第 ' + (qi + 1) + ' / ' + QUIZ.length + ' 題</span><div class="q-dots">' +
+      QUIZ.map((_, i) => '<i class="' + (qRes[i] === true ? 'ok' : qRes[i] === false ? 'no' : '') + (i === qi ? ' cur' : '') + '"></i>').join('') + '</div></div>' +
+      '<p class="q-text">' + Q.q + '</p><div class="q-opts">' +
+      Q.o.map((o, i) => '<button class="q-opt" data-i="' + i + '"><span class="k">' + 'ABCD'[i] + '</span><span>' + o + '</span></button>').join('') +
+      '</div><div class="q-exp"></div><button class="btn primary q-next" hidden>' + (qi === QUIZ.length - 1 ? '看結果' : '下一題') + ' →</button></div>';
+  }
+  function answer(i) {
+    const Q = QUIZ[qi], ok = i === Q.a;
+    const opts = $$('.q-opt', box);
+    opts.forEach(o => { o.disabled = true; });
+    opts[Q.a].classList.add('correct');
+    if (!ok) opts[i].classList.add('wrong');
+    qRes[qi] = ok; if (ok) qScore++;
+    $$('.q-dots i', box)[qi].classList.add(ok ? 'ok' : 'no');
+    const exp = $('.q-exp', box);
+    exp.innerHTML = (ok ? '<b style="color:var(--green)">✓ 答對了！</b> ' : '<b style="color:var(--red)">✕ 差一點。</b> ') + Q.e;
+    exp.classList.add('show');
+    const nx = $('.q-next', box); nx.hidden = false; nx.focus({ preventScroll: true });
+  }
+  function result() {
+    const pct = qScore / QUIZ.length, C = 2 * Math.PI * 60;
+    saveProgress(key, qScore, QUIZ.length);
+    const msg = qScore === QUIZ.length ? '滿分！這個模組你已經完全掌握。'
+      : pct >= 0.7 ? '很棒！回頭看看答錯的題目，就更完整了。'
+      : '建議再玩一次上面的互動區，加深印象後再挑戰。';
+    box.innerHTML = '<div class="q-anim q-result"><div class="ring"><svg viewBox="0 0 140 140"><circle class="bg" cx="70" cy="70" r="60"/><circle class="fg" cx="70" cy="70" r="60" stroke-dasharray="' + C + '" stroke-dashoffset="' + C + '"/></svg><div class="val">' + qScore + '/' + QUIZ.length + '</div></div>' +
+      '<h3>' + (qScore === QUIZ.length ? '完美通關' : '測驗完成') + '</h3><p>' + msg + '</p><div class="row-btns"><button class="btn q-retry">↻ 再測一次</button>' +
+      (nextLink ? '<a class="btn primary" href="' + nextLink[0] + '">' + nextLink[1] + ' →</a>' : '') + '</div></div>';
+    requestAnimationFrame(() => requestAnimationFrame(() => { $('.ring .fg', box).style.strokeDashoffset = C * (1 - pct); }));
+    if (pct >= 0.7) setTimeout(() => confetti($('.ring', box)), 700);
+  }
+  box.addEventListener('click', e => {
+    const o = e.target.closest('.q-opt');
+    if (o && !o.disabled) return answer(+o.dataset.i);
+    if (e.target.closest('.q-next')) { qi++; render(); return; }
+    if (e.target.closest('.q-retry')) { qi = 0; qScore = 0; qRes = []; render(); }
+  });
+  render();
+}
+
+/* typing helper for terminals */
+async function typeInto(el, text, speed) {
+  for (const ch of text) { el.textContent += ch; await sleep(speed || 45); }
+}
+
+window.CC = { $, $$, reduced, sleep, restart, confetti, quiz, getProgress, saveProgress, typeInto, copyText };
+})();
+
+</script>
+<script>
+(() => {
+'use strict';
+const { $, $$, sleep, restart, confetti, quiz, typeInto, reduced } = CC;
+
+/* ---------- 01 compare ---------- */
+const FACTS = {
+  sub: ['在<b>單一 session</b> 內運作', '每個子代理是一條<b>隔離的脈絡分支</b>'],
+  team: ['生成<b>多個獨立的 Claude Code session</b>', '每個隊友都有<b>自己完整的脈絡視窗</b>', '自動載入 <b>CLAUDE.md、MCP server 與 skills</b>', '透過<b>共享任務清單</b>協調']
+};
+function showCmp(m) {
+  $$('#cmpSeg button').forEach(b => { const on = b.dataset.m === m; b.classList.toggle('on', on); b.setAttribute('aria-selected', on); });
+  $$('.cmp-view').forEach(v => v.classList.toggle('on', v.id === 'view-' + m));
+  $('#cmpFacts').innerHTML = FACTS[m].map((f, i) => '<div class="fact" style="--i:' + i + '">' + f + '</div>').join('');
+}
+$$('#cmpSeg button').forEach(b => b.addEventListener('click', () => showCmp(b.dataset.m)));
+showCmp('team');
+
+/* ---------- 02 pipeline ---------- */
+const pipe = $('#pipe'), packet = $('#packet'), plog = $('#pipeLog'), contract = $('#contract'), cardOut = $('#cardOut'), runBtn = $('#pipeRun');
+const node = n => $('.pnode[data-n="' + n + '"]', pipe);
+function center(el) {
+  const pr = pipe.getBoundingClientRect(), r = el.getBoundingClientRect();
+  return [r.left - pr.left + r.width / 2 - 8, r.top - pr.top + r.height / 2 - 8];
+}
+function movePacket(a, b, color) {
+  const p1 = center(a), p2 = center(b);
+  packet.style.background = color;
+  packet.style.opacity = 1;
+  if (reduced) { packet.style.transform = 'translate(' + p2[0] + 'px,' + p2[1] + 'px)'; return Promise.resolve(); }
+  return packet.animate([
+    { transform: 'translate(' + p1[0] + 'px,' + p1[1] + 'px) scale(.6)' },
+    { transform: 'translate(' + ((p1[0] + p2[0]) / 2) + 'px,' + ((p1[1] + p2[1]) / 2) + 'px) scale(1.2)' },
+    { transform: 'translate(' + p2[0] + 'px,' + p2[1] + 'px) scale(.8)' }
+  ], { duration: 850, easing: 'cubic-bezier(.5,0,.3,1)', fill: 'forwards' }).finished;
+}
+function pl(text, cls) {
+  const l = document.createElement('div');
+  l.className = 'tl pop ' + (cls || '');
+  l.textContent = text;
+  plog.appendChild(l);
+  plog.scrollTop = plog.scrollHeight;
+  return l;
+}
+function dubaiNow() {
+  const d = new Date(Date.now() + 4 * 3600 * 1000);
+  const p = n => String(n).padStart(2, '0');
+  return {
+    date: d.getUTCFullYear() + '-' + p(d.getUTCMonth() + 1) + '-' + p(d.getUTCDate()),
+    time: p(d.getUTCHours()) + ':' + p(d.getUTCMinutes()) + ':' + p(d.getUTCSeconds()),
+    hm: p(d.getUTCHours()) + ':' + p(d.getUTCMinutes()), ss: p(d.getUTCSeconds()),
+    h: d.getUTCHours(), m: d.getUTCMinutes(), s: d.getUTCSeconds()
+  };
+}
+function svgCard(t) {
+  const hA = (t.h % 12) * 30 + t.m * 0.5, mA = t.m * 6 + t.s * 0.1, sA = t.s * 6;
+  let ticks = '';
+  for (let i = 0; i < 12; i++) ticks += '<line x1="292" y1="58" x2="292" y2="' + (i % 3 ? 63 : 67) + '" stroke="#fff" stroke-opacity="' + (i % 3 ? .35 : .8) + '" stroke-width="2" transform="rotate(' + i * 30 + ' 292 100)"/>';
+  return '<svg viewBox="0 0 360 200" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="杜拜時間 ' + t.time + '">' +
+    '<defs><linearGradient id="dg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#1d2b52"/><stop offset="1" stop-color="#5a3690"/></linearGradient></defs>' +
+    '<rect width="360" height="200" rx="18" fill="url(#dg)"/>' +
+    '<circle cx="330" cy="10" r="80" fill="#fff" opacity=".05"/>' +
+    '<text x="24" y="40" fill="#f5c26b" font-family="system-ui,sans-serif" font-size="12" font-weight="700" letter-spacing="2.5">DUBAI · UAE</text>' +
+    '<text x="22" y="108" fill="#fff" font-family="ui-monospace,Menlo,monospace" font-size="52" font-weight="700">' + t.hm + '</text>' +
+    '<text x="186" y="108" fill="#fff" fill-opacity=".6" font-family="ui-monospace,Menlo,monospace" font-size="20">:' + t.ss + '</text>' +
+    '<text x="24" y="140" fill="#fff" fill-opacity=".85" font-family="system-ui,sans-serif" font-size="14">' + t.date + '</text>' +
+    '<text x="24" y="170" fill="#fff" fill-opacity=".55" font-family="ui-monospace,Menlo,monospace" font-size="11.5">Asia/Dubai · UTC+4</text>' +
+    '<circle cx="292" cy="100" r="44" fill="none" stroke="#fff" stroke-opacity=".25" stroke-width="2"/>' + ticks +
+    '<line x1="292" y1="100" x2="292" y2="76" stroke="#fff" stroke-width="4" stroke-linecap="round" transform="rotate(' + hA + ' 292 100)"/>' +
+    '<line x1="292" y1="100" x2="292" y2="66" stroke="#fff" stroke-width="2.5" stroke-linecap="round" transform="rotate(' + mA + ' 292 100)"/>' +
+    '<line x1="292" y1="106" x2="292" y2="62" stroke="#f5c26b" stroke-width="1.5" stroke-linecap="round" transform="rotate(' + sA + ' 292 100)"/>' +
+    '<circle cx="292" cy="100" r="3.5" fill="#f5c26b"/></svg>';
+}
+function esc(s) { return s.replace(/&/g, '&amp;').replace(/</g, '&lt;'); }
+async function runPipe() {
+  runBtn.disabled = true;
+  $$('.pnode', pipe).forEach(n => n.classList.remove('active', 'done'));
+  plog.innerHTML = '';
+  contract.classList.remove('filled'); contract.textContent = '{ time, timezone, formatted }';
+  cardOut.innerHTML = '<div class="empty">SVG 時間卡片會出現在這裡</div>';
+  packet.style.opacity = 0;
+  const c = node('cmd'), a = node('agent'), s = node('skill'), o = node('out');
+  const l1 = pl('', ''); l1.innerHTML = '<span class="ps">$</span> '; await typeInto(l1, 'cd agent-teams && claude', 35);
+  const l2 = pl('', 'hl'); l2.textContent = '> '; await typeInto(l2, '/time-orchestrator', 45);
+  await sleep(300);
+  c.classList.add('active');
+  pl('[Command] /time-orchestrator 啟動循序流程（model: haiku）', 'info'); await sleep(700);
+  pl('[Command] 用 Agent 工具（不是 bash）呼叫 time-agent', 'info');
+  await movePacket(c, a, 'var(--blue)');
+  c.classList.replace('active', 'done'); a.classList.add('active');
+  pl('[Agent] time-agent 已預載 skill：time-fetcher', 'muted'); await sleep(650);
+  pl("$ TZ='Asia/Dubai' date '+%Y-%m-%d %H:%M:%S %Z'", ''); await sleep(700);
+  const t = dubaiNow();
+  pl(t.date + ' ' + t.time + ' +04', 'ok');
+  contract.innerHTML = '{\n  <span class="k">"time"</span>: <span class="s">"' + t.time + '"</span>,\n  <span class="k">"timezone"</span>: <span class="s">"Asia/Dubai"</span>,\n  <span class="k">"formatted"</span>: <span class="s">"' + t.date + ' ' + t.time + ' +04"</span>\n}';
+  contract.classList.add('filled');
+  await sleep(500);
+  pl('[Agent] 回傳 {time, timezone, formatted} 給 Command', 'info');
+  await movePacket(a, c, 'var(--blue)');
+  a.classList.replace('active', 'done'); c.classList.replace('done', 'active');
+  pl('[Command] 用 Skill 工具呼叫 time-svg-creator，資料經由脈絡傳遞', 'info');
+  await movePacket(c, s, 'var(--purple)');
+  c.classList.replace('active', 'done'); s.classList.add('active');
+  pl('[Skill] 使用收到的確切時間 —— 絕不重抓', 'muted'); await sleep(650);
+  pl('[Skill] 套用 reference.md 的 SVG 模板', 'muted'); await sleep(650);
+  await movePacket(s, o, 'var(--green)');
+  s.classList.replace('active', 'done'); o.classList.add('active');
+  pl('✓ 寫入 agent-teams/output/dubai-time.svg', 'ok');
+  pl('✓ 寫入 agent-teams/output/output.md', 'ok');
+  cardOut.innerHTML = svgCard(t) + '<div class="out-path">agent-teams/output/dubai-time.svg（示意）</div>';
+  await sleep(500);
+  pl('[Command] 輸出摘要：杜拜現在 ' + t.time + '（Asia/Dubai, UTC+4）', 'info');
+  packet.style.opacity = 0;
+  o.classList.replace('active', 'done');
+  runBtn.disabled = false; runBtn.textContent = '↻ 再執行一次';
+}
+runBtn.addEventListener('click', runPipe);
+
+/* ---------- 03 stepper ---------- */
+let step = 0, tmuxRun = 0;
+function showStep(i) {
+  step = i;
+  $$('.sn').forEach((b, k) => { b.classList.toggle('on', k === i); if (k < i) b.classList.add('seen'); });
+  $$('.step-pane').forEach((p, k) => p.classList.toggle('on', k === i));
+  $('#stepPrev').disabled = i === 0;
+  const nx = $('#stepNext');
+  nx.textContent = i === 2 ? '去看團隊協調 →' : '下一步 →';
+  if (i === 1) playTmux();
+}
+async function playTmux() {
+  const my = ++tmuxRun, alive = () => my === tmuxRun;
+  const lead = $('#tpLead'), t1 = $('#tp1'), t2 = $('#tp2');
+  lead.innerHTML = ''; t1.innerHTML = '<span class="mu">（隊友窗格）</span>'; t2.innerHTML = '<span class="mu">（隊友窗格）</span>';
+  const a = document.createElement('div'); lead.appendChild(a);
+  a.innerHTML = '<span style="color:#f2a581">$</span> '; await typeInto(a, 'tmux new -s dev', 40); if (!alive()) return;
+  const b = document.createElement('div'); lead.appendChild(b);
+  b.innerHTML = '<span style="color:#f2a581">$</span> '; await typeInto(b, 'CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1 claude', 28); if (!alive()) return;
+  await sleep(400); if (!alive()) return;
+  lead.insertAdjacentHTML('beforeend', '<div class="ok">● 領隊 session 已啟動</div><div class="mu">> 建立一個 agent team…</div>');
+  await sleep(700); if (!alive()) return;
+  t1.innerHTML = '<div class="ok">● 隊友加入</div><div class="mu">獨立 session・完整脈絡</div>';
+  await sleep(350); if (!alive()) return;
+  t2.innerHTML = '<div class="ok">● 隊友加入</div><div class="mu">獨立 session・完整脈絡</div>';
+}
+$$('.sn').forEach((b, k) => b.addEventListener('click', () => showStep(k)));
+$('#stepPrev').addEventListener('click', () => { if (step > 0) showStep(step - 1); });
+$('#stepNext').addEventListener('click', () => {
+  if (step < 2) showStep(step + 1);
+  else document.getElementById('t4').scrollIntoView({ behavior: reduced ? 'auto' : 'smooth' });
+});
+
+/* ---------- 04 coordination ---------- */
+const MATES = [
+  { name: 'Command Architect', c: 'c-accent', file: 'commands/time-orchestrator.md', detail: [
+    '實作 <code>/time-orchestrator</code> 指令：<code>agent-teams/.claude/commands/time-orchestrator.md</code>',
+    '用 <b>Agent 工具（不是 bash）</b>呼叫 time-agent，抓取杜拜時間（Asia/Dubai, UTC+4）',
+    '用 <b>Skill 工具</b>呼叫 time-svg-creator，從抓到的時間資料產生 SVG 卡片',
+    'frontmatter 使用 <code>model: haiku</code>',
+    '寫入關鍵要求：循序流程、正確工具用法（代理用 Agent 工具、skill 用 Skill 工具）、輸出摘要',
+    '透過共享任務清單與其他隊友議定資料契約 <code>{time, timezone, formatted}</code>'] },
+  { name: 'Agent Engineer', c: 'c-blue', file: 'agents/time-agent.md · skills/time-fetcher/', detail: [
+    '實作 <code>time-agent</code>（<code>agents/time-agent.md</code>）與預載的 <code>time-fetcher</code> skill',
+    '用 Bash 執行 <code>TZ=\'Asia/Dubai\' date \'+%Y-%m-%d %H:%M:%S %Z\'</code> 取得杜拜時間',
+    '回傳時間值、時區名稱與格式化字串給 command',
+    'frontmatter：<code>tools (Bash)</code>、<code>model: haiku</code>、<code>color: blue</code>、<code>maxTurns: 3</code>',
+    '透過 <code>skills:</code> 欄位預載 time-fetcher；該 skill 設 <code>user-invocable: false</code>（僅供代理使用的領域知識）',
+    '把議定的資料契約貼到共享任務清單，讓另外兩位對齊介面'] },
+  { name: 'Skill Designer', c: 'c-purple', file: 'skills/time-svg-creator/', detail: [
+    '實作 <code>time-svg-creator</code> skill，附 <code>reference.md</code>（SVG 模板＋輸出模板）與 <code>examples.md</code>（輸入／輸出範例）',
+    '從呼叫脈絡接收時間值、時區與格式化字串',
+    '產生自含的杜拜時間 SVG 卡片，寫到 <code>agent-teams/output/dubai-time.svg</code>',
+    '把 markdown 摘要寫到 <code>agent-teams/output/output.md</code>',
+    '<b>使用給定的確切時間 —— 絕不重抓</b>',
+    '建立 <code>agent-teams/output/</code> 目錄'] }
+];
+const TASKS = [
+  { t: '議定資料契約：<code>{time, tz, formatted}</code>', by: 1 },
+  { t: 'Command 使用 Agent 工具（不是 bash）', by: 0 },
+  { t: 'Agent 預載 time-fetcher skill', by: 1 },
+  { t: 'Skill 從脈絡讀時間（不重抓）', by: 2 },
+  { t: '所有檔案都在 <code>agent-teams/.claude/</code> 內', by: -1 }
+];
+const EVENTS = [
+  [0, 'L', 0, '建立 commands/time-orchestrator.md'],
+  [150, 'L', 1, '建立 agents/time-agent.md'],
+  [300, 'L', 2, '建立 skills/time-svg-creator/SKILL.md'],
+  [900, 'L', 1, 'frontmatter：tools Bash · model haiku'],
+  [1050, 'L', 0, 'frontmatter：model: haiku'],
+  [1200, 'L', 2, '＋ reference.md（SVG 模板）'],
+  [1600, 'L', 1, '→ 公布資料契約 {time, timezone, formatted}', 'hl'],
+  [1900, 'T', 0],
+  [2200, 'L', 0, '讀任務清單：對齊資料契約', 'mu'],
+  [2300, 'L', 2, '讀任務清單：對齊資料契約', 'mu'],
+  [2700, 'L', 0, '用 Agent 工具呼叫 time-agent'],
+  [2900, 'L', 1, 'skills: 預載 time-fetcher'],
+  [3050, 'L', 2, '＋ examples.md（範例配對）'],
+  [3300, 'T', 1],
+  [3500, 'L', 1, '建立 skills/time-fetcher/SKILL.md'],
+  [3700, 'L', 2, '從脈絡讀時間，絕不重抓'],
+  [3900, 'T', 2],
+  [4100, 'L', 0, '用 Skill 工具呼叫 time-svg-creator'],
+  [4300, 'T', 3],
+  [4500, 'L', 1, 'user-invocable: false'],
+  [4700, 'L', 2, '輸出 → output/dubai-time.svg、output.md'],
+  [5000, 'L', 0, '✓ 完成', 'ok'],
+  [5200, 'L', 1, '✓ 完成', 'ok'],
+  [5400, 'L', 2, '✓ 完成', 'ok'],
+  [5700, 'T', 4],
+  [6100, 'F']
+];
+const matesEl = $('#mates'), tasksEl = $('#tasks'), detailEl = $('#mateDetail');
+matesEl.innerHTML = MATES.map((m, i) => '<div class="mate ' + m.c + '" data-i="' + i + '" role="button" tabindex="0"><div class="mate-h"><span class="dot"></span>' + m.name + '</div><small>' + m.file + '</small><div class="pane" id="pane' + i + '"></div></div>').join('');
+tasksEl.insertAdjacentHTML('beforeend', TASKS.map((t, i) => {
+  const who = t.by < 0 ? ['全員', 'c-green'] : [MATES[t.by].name, MATES[t.by].c];
+  return '<div class="task" data-t="' + i + '"><span class="tb"></span><span class="tt">' + t.t + '</span><span class="who ' + who[1] + '">' + who[0] + '</span></div>';
+}).join(''));
+function taskCount() { $('#taskCount').textContent = $$('.task.done', tasksEl).length + ' / ' + TASKS.length; }
+taskCount();
+function showMate(i) {
+  const m = MATES[i];
+  $$('.mate', matesEl).forEach((el, k) => el.classList.toggle('sel', k === i));
+  detailEl.className = 'mate-detail show ' + m.c;
+  detailEl.innerHTML = '<h4>' + m.name + '</h4><ul>' + m.detail.map(d => '<li>' + d + '</li>').join('') + '</ul>';
+  restart(detailEl, 'show');
+}
+matesEl.addEventListener('click', e => { const m = e.target.closest('.mate'); if (m) showMate(+m.dataset.i); });
+matesEl.addEventListener('keydown', e => { const m = e.target.closest('.mate'); if (m && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); showMate(+m.dataset.i); } });
+let coordRun = 0;
+async function playCoord() {
+  const my = ++coordRun, alive = () => my === coordRun;
+  const btn = $('#coordPlay'); btn.disabled = true;
+  const bubble = $('#leadBubble');
+  bubble.textContent = '';
+  $('#spawn').classList.remove('on');
+  $$('.mate', matesEl).forEach(m => m.classList.remove('live'));
+  $$('.pane', matesEl).forEach(p => { p.innerHTML = ''; });
+  $$('.task', tasksEl).forEach(t => t.classList.remove('done')); taskCount();
+  $('#finalBox').classList.remove('on');
+  await typeInto(bubble, '「建立一個 agent team 來打造時間編排工作流」', 55); if (!alive()) return;
+  await sleep(400); if (!alive()) return;
+  $('#spawn').classList.add('on');
+  await sleep(500); if (!alive()) return;
+  $$('.mate', matesEl).forEach(m => m.classList.add('live'));
+  await sleep(600); if (!alive()) return;
+  let prev = 0;
+  for (const ev of EVENTS) {
+    await sleep((ev[0] - prev) * 1.25); if (!alive()) return;
+    prev = ev[0];
+    if (ev[1] === 'L') {
+      const pane = $('#pane' + ev[2]);
+      const l = document.createElement('div');
+      l.className = 'pl ' + (ev[4] || '');
+      l.textContent = ev[3];
+      pane.appendChild(l);
+      while (pane.children.length > 8) pane.firstChild.remove();
+    } else if (ev[1] === 'T') {
+      $('.task[data-t="' + ev[2] + '"]', tasksEl).classList.add('done'); taskCount();
+    } else if (ev[1] === 'F') {
+      $('#finalBox').classList.add('on');
+      confetti($('#finalBox'));
+    }
+  }
+  btn.disabled = false; btn.textContent = '↻ 重播';
+}
+$('#coordPlay').addEventListener('click', playCoord);
+$('#par').addEventListener('revealed', () => {
+  $$('#par .par-seg').forEach(s => { s.style.width = s.dataset.w + '%'; s.style.marginLeft = s.dataset.ml + '%'; });
+});
+
+/* ---------- 05 file tree ---------- */
+const OWN = [['Command Architect', 'c-accent'], ['Agent Engineer', 'c-blue'], ['Skill Designer', 'c-purple'], ['執行時產生', 'c-green']];
+const FILES = [
+  { d: 0, n: 'agent-teams/' },
+  { d: 1, n: '.claude/' },
+  { d: 2, n: 'commands/' },
+  { d: 3, n: 'time-orchestrator.md', o: 0, p: 'agent-teams/.claude/commands/time-orchestrator.md', info: ['<code>/time-orchestrator</code> 指令本體，負責編排整個流程', 'frontmatter 使用 <code>model: haiku</code>', '用 Agent 工具（不是 bash）呼叫 time-agent', '用 Skill 工具呼叫 time-svg-creator', '關鍵要求：循序流程、正確工具用法、輸出摘要'] },
+  { d: 2, n: 'agents/' },
+  { d: 3, n: 'time-agent.md', o: 1, p: 'agent-teams/.claude/agents/time-agent.md', info: ['用 Bash 抓杜拜時間（Asia/Dubai, UTC+4）', 'frontmatter：<code>tools (Bash)</code>、<code>model: haiku</code>、<code>color: blue</code>、<code>maxTurns: 3</code>', '透過 <code>skills:</code> 欄位預載 time-fetcher', '回傳時間值、時區名稱、格式化字串'] },
+  { d: 2, n: 'skills/' },
+  { d: 3, n: 'time-fetcher/' },
+  { d: 4, n: 'SKILL.md', o: 1, p: 'agent-teams/.claude/skills/time-fetcher/SKILL.md', info: ['包含抓杜拜時間的 bash 指令與預期輸出格式', '<code>user-invocable: false</code> —— 僅供代理使用的領域知識', '由 time-agent 預載'] },
+  { d: 3, n: 'time-svg-creator/' },
+  { d: 4, n: 'SKILL.md', o: 2, p: 'agent-teams/.claude/skills/time-svg-creator/SKILL.md', info: ['從呼叫脈絡接收時間值、時區、格式化字串', '產生自含的杜拜時間 SVG 卡片', '使用給定的確切時間，絕不重抓'] },
+  { d: 4, n: 'reference.md', o: 2, p: 'agent-teams/.claude/skills/time-svg-creator/reference.md', info: ['SVG 標記模板（含佔位符）', 'markdown 輸出模板'] },
+  { d: 4, n: 'examples.md', o: 2, p: 'agent-teams/.claude/skills/time-svg-creator/examples.md', info: ['輸入／輸出範例配對'] },
+  { d: 1, n: 'output/' },
+  { d: 2, n: 'dubai-time.svg', o: 3, p: 'agent-teams/output/dubai-time.svg', info: ['執行 <code>/time-orchestrator</code> 時，由 time-svg-creator 寫入', '杜拜當前時間的 SVG 卡片（第 02 章可預覽示意）'] },
+  { d: 2, n: 'output.md', o: 3, p: 'agent-teams/output/output.md', info: ['執行時由 time-svg-creator 寫入的 markdown 摘要'] }
+];
+const IC_DIR = '<svg class="ic" viewBox="0 0 24 24"><path d="M3 7.5A1.5 1.5 0 0 1 4.5 6h4.2l2 2h8.8A1.5 1.5 0 0 1 21 9.5v8A1.5 1.5 0 0 1 19.5 19h-15A1.5 1.5 0 0 1 3 17.5z"/></svg>';
+const IC_FILE = '<svg class="ic" viewBox="0 0 24 24"><path d="M6 3h8l5 5v12a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1z"/><path d="M14 3v5h5"/></svg>';
+const ftree = $('#ftree'), fdetail = $('#fdetail');
+ftree.innerHTML = FILES.map((f, i) => f.o === undefined
+  ? '<div class="frow dir" style="--d:' + f.d + '">' + IC_DIR + '<span>' + f.n + '</span></div>'
+  : '<div class="frow file ' + OWN[f.o][1] + '" data-i="' + i + '" data-o="' + f.o + '" style="--d:' + f.d + '" role="button" tabindex="0">' + IC_FILE + '<span>' + f.n + '</span><span class="own">' + OWN[f.o][0] + '</span></div>').join('');
+function showFile(i) {
+  const f = FILES[i];
+  $$('.frow.file', ftree).forEach(r => r.classList.toggle('sel', +r.dataset.i === i));
+  fdetail.className = 'fdetail ' + OWN[f.o][1];
+  fdetail.innerHTML = '<h4>' + f.p + '</h4><div class="ow">負責：' + OWN[f.o][0] + '</div><ul>' + f.info.map(x => '<li>' + x + '</li>').join('') + '</ul>';
+  restart(fdetail, 'fade');
+}
+ftree.addEventListener('click', e => { const r = e.target.closest('.frow.file'); if (r) showFile(+r.dataset.i); });
+ftree.addEventListener('keydown', e => { const r = e.target.closest('.frow.file'); if (r && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); showFile(+r.dataset.i); } });
+const filt = $('#ftFilter');
+filt.innerHTML = '<button class="chip-btn on" data-o="all">全部</button>' + OWN.map((o, i) => '<button class="chip-btn ' + o[1] + '" data-o="' + i + '">' + o[0] + '</button>').join('');
+filt.addEventListener('click', e => {
+  const b = e.target.closest('.chip-btn'); if (!b) return;
+  $$('.chip-btn', filt).forEach(x => x.classList.toggle('on', x === b));
+  const o = b.dataset.o;
+  $$('.frow.file', ftree).forEach(r => r.classList.toggle('dim', o !== 'all' && r.dataset.o !== o));
+});
+
+/* ---------- 06 quiz ---------- */
+quiz($('#quizBox'), [
+  { q: 'Agent Teams 和子代理最大的差別是？', o: ['隊友們共用同一個脈絡視窗', '每個隊友是獨立的 Claude Code session，有自己完整的脈絡視窗', '子代理會自動載入 MCP，隊友不會', '兩者只是名稱不同'], a: 1, e: '子代理是單一 session 內的隔離脈絡分支；Agent Teams 則生成多個獨立 session，每個隊友都有完整的脈絡視窗。' },
+  { q: '隊友之間透過什麼協調？', o: ['互相讀取對方的脈絡', '共享任務清單', '每完成一步就 git commit', '由子代理幫忙轉傳'], a: 1, e: 'Agent Teams 透過共享任務清單協調，例如在上面議定資料契約。' },
+  { q: '啟動時要加哪個環境變數來開啟 Agent Teams？', o: ['CLAUDE_TEAMS=on', 'AGENT_MODE=team', 'CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1', '不需要任何設定'], a: 2, e: '原文的啟動指令是 CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1 claude（在 tmux session 中執行）。' },
+  { q: '/time-orchestrator 應該怎麼呼叫 time-agent？', o: ['用 Agent 工具（不是 bash）', '用 bash 直接執行', '用 Skill 工具', '把 agent 的內容複製進 command'], a: 0, e: '共享任務清單明確要求：Command 使用 Agent 工具（不是 bash）。skill 則用 Skill 工具呼叫。' },
+  { q: 'time-svg-creator 應該如何取得時間？', o: ['自己再執行一次 date 指令', '從脈絡讀取收到的時間 —— 絕不重抓', '呼叫外部時間 API', '請使用者輸入'], a: 1, e: 'Skill 使用 command 透過脈絡傳來的確切時間，絕不重新抓取，確保整條管線用同一份資料。' },
+  { q: '為什麼三位隊友可以全部平行開工？', o: ['因為他們共用同一個脈絡', '因為元件彼此獨立，只需要先議定資料介面', '因為領隊會幫他們寫程式', '因為這個工作流不需要測試'], a: 1, e: '元件彼此獨立，只需在共享任務清單議定 {time, timezone, formatted} 介面，不必等彼此的實作完成。' },
+  { q: '這個 agent team 的所有檔案應該建在哪裡？', o: ['repo 根目錄的 .claude/', '~/.claude/', 'agent-teams/.claude/', 'agent-teams/output/'], a: 2, e: '所有檔案都在 agent-teams/.claude/ 內，讓成品自成一體，可用 cd agent-teams && claude 執行。' }
+], 'teams', ['goal.html', '下一個模組：/goal']);
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,962 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>/goal 實作</title>
+<script>document.documentElement.classList.add('js');try{var t=localStorage.getItem('cm-theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
+<style>
+:root{
+  --sans:-apple-system,BlinkMacSystemFont,"PingFang TC","Noto Sans TC","Microsoft JhengHei","Segoe UI",sans-serif;
+  --mono:"SF Mono",ui-monospace,Menlo,Consolas,"Liberation Mono",monospace;
+  --bg:#faf7f2; --surface:#ffffff; --surface-2:#f3eee6; --text:#1d1915; --muted:#6b635a; --border:#e6ded2;
+  --accent:#c65f3c; --accent-2:#e8916a; --accent-soft:#fbe8de;
+  --green:#1f8456; --green-soft:#dbf1e5;
+  --blue:#2c6bc4; --blue-soft:#e0eafa;
+  --purple:#7646d6; --purple-soft:#ece4fc;
+  --red:#c2364a; --red-soft:#fbe0e4;
+  --yellow:#c9922a;
+  --term-bg:#1b1815; --term-text:#efe9e0; --term-muted:#9a9187;
+  --shadow:0 1px 2px rgba(40,30,20,.05),0 8px 24px rgba(40,30,20,.07);
+  --mod:var(--accent); --mod-soft:var(--accent-soft); --mod-2:var(--purple);
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#13110f; --surface:#1c1916; --surface-2:#262220; --text:#efe9e0; --muted:#a59c91; --border:#37302a;
+    --accent:#e8845c; --accent-2:#f2a581; --accent-soft:#3a251b;
+    --green:#4cc38a; --green-soft:#16302a; --blue:#6ea4f0; --blue-soft:#182a44;
+    --purple:#ab8cf6; --purple-soft:#2a2142; --red:#f06b7d; --red-soft:#3d1c22; --yellow:#e0b252;
+    --term-bg:#0c0b0a; --shadow:0 1px 2px rgba(0,0,0,.3),0 10px 30px rgba(0,0,0,.35);
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#13110f; --surface:#1c1916; --surface-2:#262220; --text:#efe9e0; --muted:#a59c91; --border:#37302a;
+  --accent:#e8845c; --accent-2:#f2a581; --accent-soft:#3a251b;
+  --green:#4cc38a; --green-soft:#16302a; --blue:#6ea4f0; --blue-soft:#182a44;
+  --purple:#ab8cf6; --purple-soft:#2a2142; --red:#f06b7d; --red-soft:#3d1c22; --yellow:#e0b252;
+  --term-bg:#0c0b0a; --shadow:0 1px 2px rgba(0,0,0,.3),0 10px 30px rgba(0,0,0,.35);
+  color-scheme:dark;
+}
+body.m-teams{--mod:var(--blue);--mod-soft:var(--blue-soft);--mod-2:var(--purple)}
+body.m-goal{--mod:var(--green);--mod-soft:var(--green-soft);--mod-2:var(--blue)}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:70px}
+body{margin:0;background:var(--bg);color:var(--text);font:16px/1.75 var(--sans);-webkit-font-smoothing:antialiased;transition:background .3s,color .3s}
+main{overflow-x:clip}
+.wrap{max-width:1100px;margin:0 auto;padding-left:max(20px,env(safe-area-inset-left,0px));padding-right:max(20px,env(safe-area-inset-right,0px))}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:55;background:var(--bg)}
+h1,h2,h3,h4{line-height:1.3;margin:0}
+p{margin:0 0 1em}
+a{color:var(--mod)}
+code{font-family:var(--mono);font-size:.86em;background:var(--surface-2);border:1px solid var(--border);padding:.05em .4em;border-radius:6px;word-break:break-word}
+.c-accent{--c:var(--accent);--c-soft:var(--accent-soft)}
+.c-green{--c:var(--green);--c-soft:var(--green-soft)}
+.c-blue{--c:var(--blue);--c-soft:var(--blue-soft)}
+.c-purple{--c:var(--purple);--c-soft:var(--purple-soft)}
+.c-red{--c:var(--red);--c-soft:var(--red-soft)}
+.hint{font-weight:400;font-size:12.5px;color:var(--muted)}
+.ic{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex:none}
+
+/* top bar */
+.progress{position:fixed;top:env(safe-area-inset-top,0px);left:0;right:0;height:3px;z-index:60;pointer-events:none}
+.progress span{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--mod),var(--mod-2))}
+.topbar{position:sticky;top:env(safe-area-inset-top,0px);z-index:50;background:color-mix(in srgb,var(--bg) 86%,transparent);backdrop-filter:saturate(1.4) blur(10px);-webkit-backdrop-filter:saturate(1.4) blur(10px);border-bottom:1px solid var(--border)}
+.topbar-inner{display:flex;align-items:center;gap:12px;height:58px}
+.brand{display:flex;align-items:center;gap:10px;font-weight:700;color:var(--text);text-decoration:none;white-space:nowrap;flex:none}
+.brand-mark{width:30px;height:30px;border-radius:9px;background:linear-gradient(135deg,var(--accent),var(--purple));color:#fff;display:grid;place-items:center;font:800 11.5px var(--mono)}
+.crumb{flex:none;color:var(--mod);font-weight:700;font-size:14px;white-space:nowrap}
+.chapters{display:flex;gap:2px;overflow-x:auto;scrollbar-width:none;flex:1;min-width:0}
+.chapters::-webkit-scrollbar{display:none}
+.chapters a{flex:none;padding:5px 11px;border-radius:999px;color:var(--muted);text-decoration:none;font-size:13.5px;white-space:nowrap;transition:color .2s,background .2s}
+.chapters a:hover{color:var(--text);background:var(--surface-2)}
+.chapters a.on{color:var(--mod);background:var(--mod-soft);font-weight:600}
+.icon-btn{flex:none;width:36px;height:36px;border-radius:10px;border:1px solid var(--border);background:var(--surface);color:var(--text);cursor:pointer;display:grid;place-items:center}
+.icon-btn svg{width:18px;height:18px}
+@media (max-width:760px){.brand-text{display:none}}
+
+/* buttons */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:10px 18px;border-radius:999px;border:1px solid var(--border);background:var(--surface);color:var(--text);font:600 15px/1.2 var(--sans);cursor:pointer;text-decoration:none;transition:transform .15s,background .2s,box-shadow .2s,border-color .2s}
+.btn:hover:not(:disabled){transform:translateY(-1px);box-shadow:var(--shadow)}
+.btn.primary{background:var(--mod);border-color:var(--mod);color:#fff}
+.btn.small{padding:6px 13px;font-size:13px}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+button:focus-visible,.btn:focus-visible,[role="button"]:focus-visible,a:focus-visible,input:focus-visible{outline:2px solid var(--mod);outline-offset:2px}
+
+/* hero */
+.hero{padding:68px 0 64px;position:relative}
+.hero::before{content:"";position:absolute;inset:0;background-image:radial-gradient(var(--border) 1.2px,transparent 1.2px);background-size:22px 22px;-webkit-mask-image:radial-gradient(ellipse at 72% 40%,#000 15%,transparent 68%);mask-image:radial-gradient(ellipse at 72% 40%,#000 15%,transparent 68%);animation:drift 40s linear infinite;pointer-events:none}
+@keyframes drift{to{background-position:220px 110px}}
+.hero-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:48px;align-items:center;position:relative}
+.eyebrow{display:inline-block;font:700 12.5px var(--sans);letter-spacing:.06em;color:var(--mod);background:var(--mod-soft);padding:4px 12px;border-radius:999px;margin-bottom:18px}
+.hero h1{font-size:clamp(34px,5.6vw,60px);letter-spacing:-.02em;margin-bottom:18px}
+.grad{background:linear-gradient(90deg,var(--mod),var(--mod-2));-webkit-background-clip:text;background-clip:text;color:transparent}
+.lead{font-size:18px;color:var(--muted);max-width:32em}
+.hero-cta{display:flex;flex-wrap:wrap;gap:10px;margin:26px 0 22px}
+.meta{display:flex;flex-wrap:wrap;gap:8px 18px;font-size:13px;color:var(--muted)}
+.meta span{display:inline-flex;align-items:center;gap:6px}
+
+/* chapters */
+.chapter{padding:84px 0;border-top:1px solid var(--border)}
+.ch-head{display:flex;gap:18px;align-items:flex-start;margin-bottom:34px}
+.ch-num{font:800 14px var(--mono);color:var(--mod);background:var(--mod-soft);padding:6px 10px;border-radius:10px;flex:none;margin-top:5px}
+.ch-head h2{font-size:clamp(25px,3.4vw,36px);letter-spacing:-.01em}
+.ch-head p{margin:.45em 0 0;color:var(--muted);max-width:46em}
+.js .reveal{transition:transform .7s cubic-bezier(.2,.7,.2,1)}.js .reveal:not(.in){transform:translateY(14px)}
+
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:32px;align-items:start}
+.panel-card{background:var(--surface);border:1px solid var(--border);border-radius:18px;padding:22px;box-shadow:var(--shadow)}
+.panel-title{display:flex;justify-content:space-between;align-items:baseline;gap:4px 10px;flex-wrap:wrap;font-weight:700;font-size:14px;margin-bottom:10px}
+.sub-h{font-size:20px;margin:0 0 12px}
+.callout{display:flex;gap:12px;align-items:flex-start;padding:14px 18px;border-radius:14px;background:var(--c-soft,var(--mod-soft));border:1px solid var(--c,var(--mod));font-size:15px;margin-top:18px}
+.callout b{color:var(--c,var(--mod))}
+.callout a{color:var(--c,var(--mod));font-weight:700}
+.seg{display:inline-flex;flex-wrap:wrap;gap:4px;padding:4px;background:var(--surface-2);border-radius:12px;border:1px solid var(--border)}
+.seg button{border:0;background:transparent;color:var(--muted);font:600 14px var(--sans);padding:8px 14px;border-radius:9px;cursor:pointer;transition:.2s}
+.seg button.on{background:var(--surface);color:var(--mod);box-shadow:var(--shadow)}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip-btn{border:1px solid var(--border);background:var(--surface);color:var(--muted);font:600 13px var(--sans);padding:5px 12px;border-radius:999px;cursor:pointer;transition:.2s}
+.chip-btn.on{border-color:var(--c,var(--mod));color:var(--c,var(--mod));background:var(--c-soft,var(--mod-soft))}
+.empty{color:var(--muted);font-size:13px;border:1px dashed var(--border);border-radius:10px;padding:22px 12px;text-align:center}
+
+/* terminal */
+.term{background:var(--term-bg);border-radius:14px;overflow:hidden;font:13px/1.75 var(--mono);color:var(--term-text);min-width:0}
+.term-bar{display:flex;align-items:center;gap:7px;padding:10px 14px;background:rgba(255,255,255,.05)}
+.term-bar i{width:11px;height:11px;border-radius:50%;background:#ff5f57}
+.term-bar i:nth-child(2){background:#febc2e}.term-bar i:nth-child(3){background:#28c840}
+.term-bar span{margin-left:8px;color:var(--term-muted);font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.term-body{padding:14px 16px 16px}
+.tl{white-space:pre-wrap;word-break:break-word}
+.tl .ps{color:#f2a581}
+.tl.ok{color:#7ee2a8}.tl.warn{color:#f5c26b}.tl.muted{color:var(--term-muted)}.tl.info{color:#8ab8ff}.tl.bad{color:#ff8a98}.tl.hl{color:#d3b8ff}
+.caret{display:inline-block;width:8px;height:1.05em;background:var(--term-text);vertical-align:-2px;margin-left:1px;animation:blink 1s steps(1) infinite}
+.hero .term{box-shadow:0 24px 60px rgba(20,10,0,.28);transform:rotate(-.6deg);animation:float 7s ease-in-out infinite}
+.hero .term .term-body{min-height:260px;font-size:13.5px}
+
+/* code block */
+.code{border-radius:12px;overflow:hidden;background:var(--term-bg);color:var(--term-text);margin:12px 0}
+.code-bar{display:flex;justify-content:space-between;align-items:center;padding:6px 8px 6px 14px;background:rgba(255,255,255,.06);font:12px var(--mono);color:var(--term-muted)}
+.copy{border:1px solid rgba(255,255,255,.18);background:transparent;color:var(--term-text);font:600 12px var(--sans);padding:3px 10px;border-radius:7px;cursor:pointer}
+.copy:hover{background:rgba(255,255,255,.1)}
+.code pre{margin:0;padding:12px 16px 14px;font:13.5px/1.8 var(--mono);white-space:pre-wrap;word-break:break-word}
+.code .cm{color:var(--term-muted)}
+.code .ps{color:#f2a581}
+
+/* quiz */
+.quiz{max-width:780px;margin:0 auto;padding:26px}
+.q-anim{animation:slideIn .45s cubic-bezier(.2,.7,.2,1)}
+.q-top{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:14px;font-size:13.5px;color:var(--muted)}
+.q-dots{display:flex;gap:6px}
+.q-dots i{width:10px;height:10px;border-radius:50%;background:var(--border);transition:.3s}
+.q-dots i.ok{background:var(--green)}.q-dots i.no{background:var(--red)}
+.q-dots i.cur{outline:2px solid var(--mod);outline-offset:2px}
+.q-text{font-size:clamp(18px,2.2vw,21px);font-weight:700;margin:0 0 18px;line-height:1.55}
+.q-opts{display:flex;flex-direction:column;gap:10px}
+.q-opt{text-align:left;padding:12px 16px;border-radius:12px;border:1px solid var(--border);background:var(--bg);color:var(--text);font:15px/1.55 var(--sans);cursor:pointer;display:flex;gap:12px;align-items:center;transition:transform .2s,border-color .2s,background .2s}
+.q-opt .k{font:700 13px var(--mono);width:28px;height:28px;border-radius:8px;background:var(--surface-2);display:grid;place-items:center;flex:none;transition:.2s}
+.q-opt:hover:not(:disabled){border-color:var(--mod);transform:translateX(4px)}
+.q-opt.correct{border-color:var(--green);background:var(--green-soft)}
+.q-opt.correct .k{background:var(--green);color:#fff}
+.q-opt.wrong{border-color:var(--red);background:var(--red-soft);animation:shake .4s}
+.q-opt.wrong .k{background:var(--red);color:#fff}
+.q-opt:disabled{cursor:default}
+.q-exp{margin-top:14px;padding:12px 16px;border-radius:12px;background:var(--surface-2);font-size:14.5px;display:none}
+.q-exp.show{display:block;animation:popIn .35s}
+.q-next{margin-top:16px}
+.q-result{text-align:center;padding:10px 0}
+.ring{width:150px;height:150px;margin:0 auto 10px;position:relative}
+.ring svg{width:100%;height:100%;transform:rotate(-90deg)}
+.ring circle{fill:none;stroke-width:12}
+.ring .bg{stroke:var(--surface-2)}
+.ring .fg{stroke:var(--mod);stroke-linecap:round;transition:stroke-dashoffset 1.3s cubic-bezier(.2,.7,.2,1)}
+.ring .val{position:absolute;inset:0;display:grid;place-items:center;font:800 32px var(--sans)}
+.q-result h3{font-size:22px;margin:8px 0}
+.q-result p{color:var(--muted)}
+.q-result .row-btns{display:flex;flex-wrap:wrap;gap:10px;justify-content:center}
+
+/* module nav */
+.mod-nav{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:8px}
+.mod-nav a{display:block;padding:18px 20px;border-radius:16px;border:1px solid var(--border);background:var(--surface);color:var(--text);text-decoration:none;transition:.2s}
+.mod-nav a:hover{border-color:var(--mod);transform:translateY(-2px);box-shadow:var(--shadow)}
+.mod-nav small{display:block;color:var(--muted);font-size:13px}
+.mod-nav b{font-size:17px}
+.mod-nav .next{text-align:right}
+
+footer{padding:56px 0 70px;border-top:1px solid var(--border);color:var(--muted);font-size:14.5px}
+footer h3{color:var(--text);font-size:17px;margin:0 0 10px}
+footer ul{padding-left:20px;margin:0 0 18px}
+footer li{margin:4px 0}
+.confetti{position:fixed;width:8px;height:12px;border-radius:2px;pointer-events:none;z-index:100}
+
+@keyframes popIn{from{opacity:0;transform:translateY(5px)}}
+@keyframes blink{50%{opacity:0}}
+@keyframes bump{40%{transform:scale(1.13)}}
+@keyframes shake{20%{transform:translateX(-6px)}40%{transform:translateX(6px)}60%{transform:translateX(-4px)}80%{transform:translateX(3px)}}
+@keyframes chipIn{from{opacity:0;transform:scale(.85)}}
+@keyframes slideIn{from{opacity:0;transform:translateX(18px)}}
+@keyframes float{50%{transform:rotate(-.6deg) translateY(-8px)}}
+@keyframes pulse{50%{box-shadow:0 0 0 6px var(--c-soft,var(--mod-soft))}}
+
+@media (max-width:900px){
+  .hero-grid,.grid-2{grid-template-columns:1fr}
+  .hero-grid{gap:36px}
+}
+@media (max-width:600px){
+  .wrap{padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+  .chapter{padding:60px 0}
+  .hero{padding:44px 0 48px}
+  .panel-card,.quiz{padding:16px}
+  .ch-head{gap:12px}
+  .mod-nav{grid-template-columns:1fr}
+  .crumb{font-size:13px}
+}
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}
+}
+
+
+/* loop flow */
+.lf{display:grid;grid-template-columns:1fr 26px 1fr 26px auto 26px 1fr;align-items:center;gap:6px}
+.lf-node{padding:14px;border-radius:14px;border:2px solid var(--border);background:var(--surface);text-align:center;transition:border-color .3s,box-shadow .3s,transform .3s;min-width:0}
+.lf-node b{display:block;font-size:15px}
+.lf-node small{color:var(--muted);font-size:12.5px}
+.lf-ic{display:grid;place-items:center;width:40px;height:40px;margin:0 auto 6px;border-radius:12px;background:var(--c-soft);color:var(--c)}
+.lf-ic svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.lf-node.active{border-color:var(--c);box-shadow:0 0 0 5px var(--c-soft);transform:translateY(-3px)}
+.lf-node.active .lf-ic svg{animation:spin 1.6s linear infinite}
+#lfEval.active .lf-ic svg,#lfDone.active .lf-ic svg{animation:bump .6s ease}
+@keyframes spin{to{transform:rotate(360deg)}}
+.lf-arr{text-align:center;color:var(--muted);font-weight:800}
+.lf-dec{width:62px;height:62px;transform:rotate(45deg);border:2px solid var(--border);border-radius:12px;display:grid;place-items:center;background:var(--surface);transition:.3s;margin:0 6px}
+.lf-dec span{transform:rotate(-45deg);font:800 15px var(--sans);color:var(--muted)}
+.lf-dec.no{border-color:var(--red);background:var(--red-soft)}.lf-dec.no span{color:var(--red)}
+.lf-dec.yes{border-color:var(--green);background:var(--green-soft)}.lf-dec.yes span{color:var(--green)}
+.lf-back{margin:16px auto 0;width:fit-content;max-width:100%;padding:6px 16px;border-radius:999px;border:2px dashed var(--border);color:var(--muted);font-size:13.5px;font-weight:700;transition:.3s}
+.lf-back.on{border-color:var(--red);color:var(--red);background:var(--red-soft);animation:bump .5s}
+.cond{display:grid;grid-template-columns:auto 1fr auto;gap:8px 14px;align-items:center;margin-top:20px;padding:12px 14px;border-radius:12px;background:var(--surface-2);font-size:14px}
+.meter{height:10px;border-radius:999px;background:var(--surface);overflow:hidden;border:1px solid var(--border)}
+.meter span{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--green),var(--blue));transition:width .7s cubic-bezier(.2,.7,.2,1)}
+.loop-actions{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:14px;flex-wrap:wrap}
+
+/* usage */
+.facts{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:10px}
+.facts li{display:flex;gap:12px;align-items:flex-start;padding:12px 14px;border-radius:12px;border:1px solid var(--border);background:var(--surface);font-size:15px}
+.facts .fi{width:30px;height:30px;border-radius:9px;background:var(--c-soft);color:var(--c);display:grid;place-items:center;font:800 13px var(--mono);flex:none}
+.ver{display:inline-flex;align-items:center;gap:6px;font:700 12.5px var(--mono);padding:3px 10px;border-radius:999px;background:var(--green-soft);color:var(--green);border:1px solid var(--green)}
+
+/* simulator */
+.g-input{display:flex;align-items:center;gap:0;border:2px solid var(--border);border-radius:12px;background:var(--term-bg);overflow:hidden;transition:border-color .2s}
+.g-input:focus-within{border-color:var(--mod)}
+.g-input .pfx{font:700 14px var(--mono);color:#7ee2a8;padding:0 6px 0 14px;white-space:nowrap}
+.g-input input{flex:1;min-width:0;border:0;background:transparent;color:var(--term-text);font:14px var(--mono);padding:12px 12px 12px 4px;outline:none}
+.presets{margin:10px 0 14px}
+.g-actions{display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center}
+.g-state{margin-left:auto;font:700 12.5px var(--sans);padding:3px 12px;border-radius:999px;background:var(--surface-2);color:var(--muted);border:1px solid var(--border)}
+.g-state.run{background:var(--blue-soft);color:var(--blue);border-color:var(--blue)}
+.g-state.ok{background:var(--green-soft);color:var(--green);border-color:var(--green)}
+.g-state.stop{background:var(--red-soft);color:var(--red);border-color:var(--red)}
+.g-tl{margin-top:16px;display:flex;flex-direction:column;gap:10px;position:relative;padding-left:22px;max-height:420px;overflow-y:auto}
+.g-tl::before{content:"";position:absolute;left:8px;top:6px;bottom:6px;border-left:2px dashed var(--border)}
+.g-tl .empty{margin-left:-22px}
+.turn{position:relative;padding:10px 14px;border-radius:12px;border:1px solid var(--border);background:var(--bg);animation:slideIn .4s cubic-bezier(.2,.7,.2,1)}
+.turn::before{content:"";position:absolute;left:-19px;top:15px;width:10px;height:10px;border-radius:50%;background:var(--blue);box-shadow:0 0 0 3px var(--blue-soft)}
+.turn .th{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;font-size:14px}
+.turn .th b{font-family:var(--mono)}
+.ev{display:inline-flex;gap:6px;align-items:center;margin-top:6px;font:700 12px var(--sans);padding:2px 10px;border-radius:999px;animation:popIn .3s}
+.ev.no{background:var(--surface-2);color:var(--muted);border:1px solid var(--border)}
+.ev.ok{background:var(--green-soft);color:var(--green);border:1px solid var(--green)}
+.ev.wait{color:var(--blue);background:var(--blue-soft)}
+.turn.done-card{border-color:var(--green);background:var(--green-soft)}
+.turn.done-card::before{background:var(--green);box-shadow:0 0 0 3px var(--green-soft)}
+.turn.stop-card{border-color:var(--red);background:var(--red-soft)}
+.turn.stop-card::before{background:var(--red);box-shadow:0 0 0 3px var(--red-soft)}
+
+/* compare */
+.tri{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.tcard{padding:20px;border-radius:18px;border:1px solid var(--border);background:var(--surface);box-shadow:var(--shadow);border-top:4px solid var(--c)}
+.tcard code{font-size:15px;color:var(--c);background:var(--c-soft);border-color:transparent}
+.tcard b{display:block;font-size:20px;margin:8px 0 4px}
+.tcard p{margin:0;color:var(--muted);font-size:14.5px}
+.t-anim{height:92px;display:grid;place-items:center;margin-bottom:10px}
+.t-anim svg{height:88px;width:auto;overflow:visible}
+.t-anim .st{stroke:var(--c);fill:none;stroke-width:3}
+.t-anim .fl{fill:var(--c)}
+.t-anim .soft{fill:var(--c-soft)}
+.arrow-fly{animation:fly 2.6s cubic-bezier(.5,0,.3,1) infinite}
+@keyframes fly{0%{transform:translate(-70px,0);opacity:0}15%{opacity:1}45%,85%{transform:translate(0,0);opacity:1}100%{transform:translate(0,0);opacity:0}}
+.hit{animation:hit 2.6s ease infinite;transform-origin:44px 44px}
+@keyframes hit{0%,44%{transform:scale(1)}50%{transform:scale(1.12)}58%,100%{transform:scale(1)}}
+.hand{transform-origin:44px 44px;animation:spin 4s linear infinite}
+.tool{animation:toolOn 3.2s ease infinite;animation-delay:var(--dl)}
+@keyframes toolOn{0%,15%{fill:var(--c-soft)}25%,85%{fill:var(--c)}100%{fill:var(--c-soft)}}
+.tri-note{margin:18px 0 0;padding:14px 18px;border-radius:14px;background:var(--surface-2);font-size:15px}
+.pick{margin-top:30px}
+.pick h3{font-size:20px;margin-bottom:6px}
+.pick-row{display:grid;grid-template-columns:1fr auto;gap:8px 16px;align-items:center;padding:12px 14px;border-radius:12px;border:1px solid var(--border);background:var(--surface);margin-top:10px;transition:border-color .3s}
+.pick-row .q{font-size:15px}
+.pick-row .opts{display:flex;gap:6px;flex-wrap:wrap}
+.pick-row .opts button{font:600 13px var(--mono);padding:5px 11px;border-radius:9px;border:1px solid var(--border);background:var(--bg);color:var(--text);cursor:pointer;transition:.2s}
+.pick-row .opts button:hover:not(:disabled){border-color:var(--mod)}
+.pick-row .opts button.right{background:var(--green);border-color:var(--green);color:#fff}
+.pick-row .opts button.wrong{background:var(--red-soft);border-color:var(--red);color:var(--red);animation:shake .4s}
+.pick-row .fb{grid-column:1/-1;font-size:13.5px;color:var(--muted);display:none}
+.pick-row.answered .fb{display:block;animation:popIn .3s}
+.pick-row.ok{border-color:var(--green)}
+
+/* techniques */
+.quote-src{font-size:13.5px;color:var(--muted);margin-top:10px}
+.claims{margin:0 0 14px;padding-left:20px;color:var(--muted);font-size:15px}
+.steps-mini{list-style:none;padding:0;margin:0 0 14px;counter-reset:s;display:flex;flex-direction:column;gap:8px}
+.steps-mini li{counter-increment:s;display:flex;gap:12px;align-items:flex-start;font-size:15px}
+.steps-mini li::before{content:counter(s);width:26px;height:26px;border-radius:50%;background:var(--mod);color:#fff;display:grid;place-items:center;font:800 13px var(--mono);flex:none;margin-top:1px}
+.chat{display:flex;flex-direction:column;gap:10px;min-height:300px;max-height:460px;overflow-y:auto;padding:4px}
+.msg{max-width:90%;padding:10px 14px;border-radius:14px;font-size:14.5px;animation:popIn .35s}
+.msg.you{align-self:flex-end;background:var(--mod);color:#fff;border-bottom-right-radius:4px}
+.msg.ai{align-self:flex-start;background:var(--surface-2);border:1px solid var(--border);border-bottom-left-radius:4px}
+.msg .who{display:block;font:700 11.5px var(--sans);opacity:.75;margin-bottom:2px}
+.cands{display:flex;flex-direction:column;gap:8px;margin-top:8px}
+.cand{text-align:left;padding:10px 12px;border-radius:10px;border:1.5px solid var(--border);background:var(--surface);color:var(--text);font:14px/1.5 var(--sans);cursor:pointer;transition:.2s}
+.cand:hover:not(:disabled){border-color:var(--mod);transform:translateX(3px)}
+.cand.picked{border-color:var(--mod);background:var(--mod-soft)}
+.cand:disabled{cursor:default}
+.cand b{font-family:var(--mono);color:var(--mod);margin-right:6px}
+.goal-out{font:600 13.5px/1.6 var(--mono);background:var(--term-bg);color:#7ee2a8;padding:10px 12px;border-radius:10px;margin-top:6px;word-break:break-word}
+.flow-ctrl{display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap;margin-top:12px;border-top:1px solid var(--border);padding-top:12px}
+.switch{display:inline-flex;align-items:center;gap:10px;font-size:14px;cursor:pointer;user-select:none;margin-bottom:6px}
+.switch input{position:absolute;opacity:0;pointer-events:none}
+.slider{width:40px;height:23px;border-radius:999px;background:var(--border);position:relative;transition:.25s;flex:none}
+.slider::after{content:"";position:absolute;top:3px;left:3px;width:17px;height:17px;border-radius:50%;background:#fff;transition:.25s;box-shadow:0 1px 3px rgba(0,0,0,.25)}
+.switch input:checked+.slider{background:var(--mod)}
+.switch input:checked+.slider::after{transform:translateX(17px)}
+.switch input:focus-visible+.slider{outline:2px solid var(--mod);outline-offset:2px}
+.addon{color:#f5c26b}
+.morph{margin-top:16px;padding:14px;border-radius:14px;border:1px solid var(--border);background:var(--bg)}
+.morph-box{font:14px/1.7 var(--mono);padding:12px 14px;border-radius:10px;background:var(--term-bg);color:var(--term-text);word-break:break-word;margin-top:8px}
+.mg-prefix{color:#13110f;background:#7ee2a8;border-radius:5px;padding:0 4px;font-weight:800;display:none}
+.mg-prefix.on{display:inline}
+.morph-box.flash{animation:pulse 1s ease 2;--c-soft:rgba(126,226,168,.35)}
+.hero .term .tl.turnline{color:#8ab8ff}
+
+@media (max-width:900px){
+  .lf{grid-template-columns:1fr;justify-items:stretch}
+  .lf-arr{transform:rotate(90deg);line-height:1}
+  .lf-dec{margin:8px auto}
+  .tri{grid-template-columns:1fr}
+}
+@media (max-width:600px){
+  .cond{grid-template-columns:1fr}
+  .pick-row{grid-template-columns:1fr}
+  .g-state{margin-left:0}
+}
+</style>
+</head>
+<body class="m-goal">
+<div class="progress"><span id="progressBar"></span></div>
+<header class="topbar">
+  <div class="wrap topbar-inner">
+    <a class="brand" href="index.html" title="回到學院首頁"><span class="brand-mark">CC</span><span class="brand-text">互動學院</span></a>
+    <span class="crumb">› /goal</span>
+    <nav class="chapters" id="chapterNav" aria-label="章節">
+      <a href="#g1">01 概念</a>
+      <a href="#g2">02 用法</a>
+      <a href="#g3">03 比較</a>
+      <a href="#g4">04 技巧一</a>
+      <a href="#g5">05 技巧二</a>
+      <a href="#g6">06 測驗</a>
+    </nav>
+    <button class="icon-btn" id="themeBtn" aria-label="切換深色／淺色"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="8"/><path d="M12 4a8 8 0 0 0 0 16z" fill="currentColor"/></svg></button>
+  </div>
+</header>
+
+<main>
+<section id="hero" class="hero">
+  <div class="wrap hero-grid">
+    <div>
+      <span class="eyebrow">模組 03 · Goal 實作</span>
+      <h1>/goal<br><span class="grad">做到達標為止</span></h1>
+      <p class="lead"><code>/goal</code> 讓你的代理<b>跨回合持續工作，直到某個條件被滿足</b> —— Claude Code、Codex 與 Hermes Agent 都支援。社群也正逐漸收斂出幾個與它搭配極佳的高槓桿 prompt 技巧。</p>
+      <div class="hero-cta">
+        <a class="btn primary" href="#g1">開始學習 ↓</a>
+        <a class="btn" href="#g2">試玩 /goal 模擬器</a>
+      </div>
+      <div class="meta"><span>狀態：已實作</span><span>原文最後更新：2026-05-13</span><span><a href="https://github.com/kevin801221/claude-code-zh-tw/blob/main/implementation/claude-goal-implementation.md" target="_blank" rel="noopener">原文</a></span></div>
+    </div>
+    <div class="term" aria-hidden="true"><div class="term-bar"><i></i><i></i><i></i><span>claude — /goal（示意）</span></div><div class="term-body" id="heroTerm"></div></div>
+  </div>
+</section>
+
+<!-- G1 -->
+<section id="g1" class="chapter">
+  <div class="wrap">
+    <header class="ch-head reveal"><span class="ch-num">01</span><div><h2>/goal 怎麼運作？</h2><p>不是做一回合就停，而是每一回合結束後由 <b>Haiku</b> 檢查條件：還沒成立就繼續，成立才停。</p></div></header>
+    <div class="panel-card reveal" id="loopCard">
+      <div class="lf">
+        <div class="lf-node c-green" id="lfWork"><span class="lf-ic"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M2 12h3M19 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1"/></svg></span><b>Claude 工作一回合</b><small>回合 <span id="lfTurn">0</span></small></div>
+        <div class="lf-arr">→</div>
+        <div class="lf-node c-blue" id="lfEval"><span class="lf-ic"><svg viewBox="0 0 24 24"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg></span><b>Haiku 評估條件</b><small>條件成立了嗎？</small></div>
+        <div class="lf-arr">→</div>
+        <div class="lf-dec" id="lfDec"><span>？</span></div>
+        <div class="lf-arr">→</div>
+        <div class="lf-node c-purple" id="lfDone"><span class="lf-ic"><svg viewBox="0 0 24 24"><path d="M5 21V4M5 4h11l-2 4 2 4H5"/></svg></span><b>完成</b><small>條件成立，停止</small></div>
+      </div>
+      <div class="lf-back" id="lfBack">↺ 未成立 → 進入下一回合</div>
+      <div class="cond"><span>條件（示意）：<code>12 個測試全部通過</code></span><div class="meter"><span id="lfMeter"></span></div><span class="hint" id="lfPct">0 / 12 通過</span></div>
+      <div class="loop-actions"><span class="hint" id="lfCap">捲到這裡會自動播放</span><button class="btn small" id="lfReplay">↻ 重播</button></div>
+    </div>
+  </div>
+</section>
+
+<!-- G2 -->
+<section id="g2" class="chapter">
+  <div class="wrap">
+    <header class="ch-head reveal"><span class="ch-num">02</span><div><h2>用法</h2><p>兩個指令就夠：設定目標、清除目標。</p></div></header>
+    <div class="grid-2">
+      <div class="reveal">
+        <div class="code" style="margin-top:0"><div class="code-bar"><span>Claude Code</span><button class="copy" data-copy>複製</button></div><pre><span class="ps">$</span> claude
+&gt; /goal &lt;condition&gt;
+&gt; /goal clear</pre></div>
+        <p style="margin-top:14px"><span class="ver">需要 Claude Code v2.1.139+</span></p>
+        <p class="hint">完整行為請見<a href="https://code.claude.com/docs/en/goal" target="_blank" rel="noopener">官方文件</a>。</p>
+      </div>
+      <ul class="facts reveal">
+        <li class="c-green"><span class="fi">1</span><span><code>/goal &lt;condition&gt;</code> 讓 Claude <b>跨回合持續工作</b>，直到條件成立。</span></li>
+        <li class="c-blue"><span class="fi">2</span><span>條件是否成立，由小型快速模型（預設 <b>Haiku</b>）評估。</span></li>
+        <li class="c-red"><span class="fi">3</span><span><code>/goal clear</code> 清除目前的目標。</span></li>
+        <li class="c-purple"><span class="fi">4</span><span>與 <code>/loop</code>（時間驅動）和 auto 模式（逐工具）<b>互補</b>（見第 03 章）。</span></li>
+      </ul>
+    </div>
+    <div class="callout reveal"><span>想照官方文件把完整流程看一遍？到<a href="demos.html#goal">功能演示館：/goal</a>和<a href="demos.html#loop">/loop</a>逐步播放。</span></div>
+    <div class="panel-card reveal" style="margin-top:26px">
+      <div class="panel-title">/goal 模擬器 <span class="hint">示意：回合內容為模擬，實際行為以官方文件為準</span></div>
+      <div class="g-input"><span class="pfx">&gt; /goal</span><input id="gCond" type="text" value="所有單元測試都通過，且 README 已更新" aria-label="目標條件"></div>
+      <div class="chips presets" id="gPresets"></div>
+      <div class="g-actions">
+        <button class="btn primary" id="gStart">▶ 送出 /goal</button>
+        <button class="btn" id="gClear" disabled>/goal clear</button>
+        <span class="g-state" id="gState">閒置</span>
+      </div>
+      <div class="g-tl" id="gTl"><div class="empty">送出 /goal 後，每一回合與 Haiku 的評估結果會出現在這裡</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- G3 -->
+<section id="g3" class="chapter">
+  <div class="wrap">
+    <header class="ch-head reveal"><span class="ch-num">03</span><div><h2>/goal、/loop、auto 模式</h2><p>三種「讓 Claude 自己往前走」的方式，驅動力各不相同，彼此互補。</p></div></header>
+    <div class="tri reveal">
+      <div class="tcard c-green">
+        <div class="t-anim"><svg viewBox="0 0 120 88"><g class="hit"><circle class="st" cx="44" cy="44" r="36"/><circle class="st" cx="44" cy="44" r="22"/><circle class="fl" cx="44" cy="44" r="8"/></g><g class="arrow-fly"><path class="st" d="M50 40 L104 14"/><path class="fl" d="M44 44 l12 -2 l-5 -8z"/></g></svg></div>
+        <code>/goal</code><b>條件驅動</b><p>跨回合持續工作，直到條件成立（由 Haiku 評估）。</p>
+      </div>
+      <div class="tcard c-blue">
+        <div class="t-anim"><svg viewBox="0 0 88 88"><circle class="st" cx="44" cy="44" r="36"/><circle class="soft" cx="44" cy="44" r="30"/><g class="hand"><path class="st" d="M44 44 L44 18" stroke-linecap="round"/></g><circle class="fl" cx="44" cy="44" r="4"/></svg></div>
+        <code>/loop</code><b>時間驅動</b><p>以時間為節奏，反覆觸發工作。</p>
+      </div>
+      <div class="tcard c-purple">
+        <div class="t-anim"><svg viewBox="0 0 136 88"><rect class="tool" style="--dl:0s" x="2" y="30" width="26" height="26" rx="6"/><rect class="tool" style="--dl:.5s" x="38" y="30" width="26" height="26" rx="6"/><rect class="tool" style="--dl:1s" x="74" y="30" width="26" height="26" rx="6"/><rect class="tool" style="--dl:1.5s" x="110" y="30" width="26" height="26" rx="6"/><path class="st" d="M28 43h10M64 43h10M100 43h10" stroke-width="2"/></svg></div>
+        <code>auto 模式</code><b>逐工具</b><p>以每一次工具呼叫為單位運作。</p>
+      </div>
+    </div>
+    <p class="tri-note reveal">三者<b>互補</b>，不是互相取代：<code>/goal</code> 管「做到什麼程度才停」、<code>/loop</code> 管「依時間節奏觸發」、auto 模式則落在「每一次工具呼叫」這一層。</p>
+    <div class="pick reveal">
+      <h3>該用哪一個？</h3>
+      <p class="hint">依「驅動方式」判斷每個情境最適合哪一個。</p>
+      <div id="pickRows"></div>
+    </div>
+  </div>
+</section>
+
+<!-- G4 -->
+<section id="g4" class="chapter">
+  <div class="wrap">
+    <header class="ch-head reveal"><span class="ch-num">04</span><div><h2>社群技巧一：請代理自己提出目標</h2><p>不知道該跑什麼 /goal？讓最了解你專案的代理先提案。</p></div></header>
+    <div class="grid-2">
+      <div class="reveal">
+        <p>Alex Finn 在 X 上分享的做法：先請代理根據對你的了解，<b>提出 3 個</b>能長時間執行、產出最好成果的 /goal；<b>選一個</b>，再<b>請它幫你寫 prompt</b>。</p>
+        <p class="hint" style="margin-bottom:8px">貼文中提到：</p>
+        <ul class="claims">
+          <li>Claude Code、Codex 與 Hermes agent 現在都有 /goal</li>
+          <li>它讓代理能完成長時間執行的任務，有時長達數天</li>
+          <li>建議挪出 15 分鐘做這件事</li>
+        </ul>
+        <div class="code"><div class="code-bar"><span>prompt</span><button class="copy" data-copy="promptA">複製</button></div><pre id="promptA">根據你對我、我的目標、企圖心，以及我們已經一起做出的東西的了解，現在有哪 3 個 /goal 是我們可以跑的、能長時間執行並產出最好成果的？</pre></div>
+        <p class="quote-src">來源：<a href="https://x.com/AlexFinn/status/2053976411296452887" target="_blank" rel="noopener">Alex Finn (@AlexFinn) on X</a></p>
+      </div>
+      <div class="panel-card reveal">
+        <div class="panel-title">走一遍流程 <span class="hint">對話內容為示意</span></div>
+        <div class="chat" id="chatA"></div>
+        <div class="flow-ctrl"><span class="hint" id="flowHint">共 4 步</span><div style="display:flex;gap:8px"><button class="btn small" id="flowReset">↺ 重來</button><button class="btn small primary" id="flowNext">開始 →</button></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- G5 -->
+<section id="g5" class="chapter">
+  <div class="wrap">
+    <header class="ch-head reveal"><span class="ch-num">05</span><div><h2>社群技巧二：讓代理幫你草擬 /goal prompt</h2><p>已經有工作中的 session 與 repo？請代理深挖意圖，替你寫出 /goal。</p></div></header>
+    <div class="grid-2">
+      <div class="reveal">
+        <p>Meta Alchemist 在 X 上分享的 Codex 技巧，同樣的思路也適用於其他支援 /goal 的代理：</p>
+        <ol class="steps-mini">
+          <li><span>請代理讀這個 session 和 repo，深入分析你想達成的確切意圖與目標，寫出對應的 /goal prompt；要求它深挖歷史與文件，做到 100% 清楚。</span></li>
+          <li><span>可以再加一句：不確定的地方，歡迎先問你幾個問題來釐清。</span></li>
+          <li><span>把代理給的內容複製貼上，<b>把開頭改成 /goal</b>。</span></li>
+        </ol>
+        <p>貼文的說法是：這樣它就會完全照你在那個 session／repo 中想做的事去做，不間斷直到完成。</p>
+        <p class="quote-src">來源：<a href="https://x.com/meta_alchemist/status/2054214497443995694" target="_blank" rel="noopener">Meta Alchemist (@meta_alchemist) on X</a></p>
+      </div>
+      <div class="panel-card reveal">
+        <div class="panel-title">Prompt 產生器</div>
+        <label class="switch"><input type="checkbox" id="addAsk" checked><span class="slider"></span>加上「不確定就問我」</label>
+        <div class="code"><div class="code-bar"><span>給代理的 prompt</span><button class="copy" data-copy="promptB">複製</button></div><pre id="promptB"></pre></div>
+        <div class="morph">
+          <div class="panel-title">最後一步：把開頭改成 /goal <button class="btn small" id="morphBtn">▶ 示範</button></div>
+          <div class="hint">代理寫好的 prompt（示意）：</div>
+          <div class="morph-box" id="morphBox"><span class="mg-prefix" id="mgPrefix"></span><span id="mgText">完成使用者設定頁：所有欄位都有驗證與單元測試，文件同步更新，持續進行直到 CI 全部通過。</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- G6 -->
+<section id="g6" class="chapter">
+  <div class="wrap">
+    <header class="ch-head reveal"><span class="ch-num">06</span><div><h2>小測驗</h2><p>7 題，作答後立即看解析。成績會記錄在學院首頁。</p></div></header>
+    <div class="panel-card quiz reveal" id="quizBox"></div>
+    <div class="mod-nav reveal" style="margin-top:40px">
+      <a href="agent-teams.html"><small>← 上一個模組</small><b>Agent Teams 實作</b></a>
+      <a class="next" href="index.html"><small>完成全部模組 →</small><b>回到學院首頁</b></a>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <h3>資料來源</h3>
+    <ul>
+      <li><a href="https://github.com/kevin801221/claude-code-zh-tw/blob/main/implementation/claude-goal-implementation.md" target="_blank" rel="noopener">claude-code-zh-tw — implementation/claude-goal-implementation.md（本頁內容來源）</a></li>
+      <li><a href="https://code.claude.com/docs/en/goal" target="_blank" rel="noopener">Claude Code 官方文件 — /goal</a></li>
+      <li><a href="https://x.com/AlexFinn/status/2053976411296452887" target="_blank" rel="noopener">Alex Finn (@AlexFinn) on X</a></li>
+      <li><a href="https://x.com/meta_alchemist/status/2054214497443995694" target="_blank" rel="noopener">Meta Alchemist (@meta_alchemist) on X</a></li>
+    </ul>
+    <p>迴圈動畫、模擬器回合與對話範例皆為示意，用來呈現原文描述的概念。</p>
+  </div>
+</footer>
+
+<script>
+(() => {
+'use strict';
+const $ = (s, r = document) => r.querySelector(s);
+const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
+const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+const sleep = ms => new Promise(r => setTimeout(r, reduced ? Math.min(ms, 40) : ms));
+const restart = (el, cls) => { el.classList.remove(cls); void el.offsetWidth; el.classList.add(cls); };
+const root = document.documentElement;
+
+/* theme */
+const tb = $('#themeBtn');
+if (tb) tb.addEventListener('click', () => {
+  const cur = root.dataset.theme || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+  const next = cur === 'dark' ? 'light' : 'dark';
+  root.dataset.theme = next;
+  try { localStorage.setItem('cm-theme', next); } catch (e) {}
+});
+
+/* scroll progress */
+const bar = $('#progressBar');
+const onScroll = () => {
+  if (!bar) return;
+  const h = document.documentElement;
+  bar.style.width = (h.scrollTop / Math.max(1, h.scrollHeight - h.clientHeight) * 100).toFixed(2) + '%';
+};
+addEventListener('scroll', onScroll, { passive: true }); onScroll();
+
+/* chapter nav highlight */
+const nav = $('#chapterNav');
+if (nav) {
+  const links = $$('a', nav);
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (!e.isIntersecting) return;
+      links.forEach(a => {
+        const on = a.getAttribute('href') === '#' + e.target.id;
+        a.classList.toggle('on', on);
+        if (on && nav.scrollTo) nav.scrollTo({ left: a.offsetLeft - nav.clientWidth / 2 + a.clientWidth / 2, behavior: reduced ? 'auto' : 'smooth' });
+      });
+    });
+  }, { rootMargin: '-45% 0px -50% 0px' });
+  $$('section[id]').forEach(s => obs.observe(s));
+}
+
+/* reveal */
+const revObs = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (!e.isIntersecting) return;
+    e.target.classList.add('in');
+    revObs.unobserve(e.target);
+    e.target.dispatchEvent(new CustomEvent('revealed'));
+  });
+}, { threshold: 0.12 });
+$$('.reveal').forEach(el => revObs.observe(el));
+
+/* confetti */
+function confetti(el) {
+  if (reduced || !el) return;
+  const r = el.getBoundingClientRect();
+  const x = r.left + r.width / 2, y = r.top + r.height / 2;
+  const colors = ['var(--accent)', 'var(--green)', 'var(--blue)', 'var(--purple)', '#f2c14e'];
+  for (let i = 0; i < 40; i++) {
+    const p = document.createElement('i');
+    p.className = 'confetti';
+    p.style.left = x + 'px'; p.style.top = y + 'px';
+    p.style.background = colors[i % colors.length];
+    document.body.appendChild(p);
+    const ang = Math.random() * Math.PI * 2, dist = 70 + Math.random() * 150;
+    const dx = Math.cos(ang) * dist, dy = Math.sin(ang) * dist - 70;
+    p.animate([
+      { transform: 'translate(0,0) rotate(0deg)', opacity: 1 },
+      { transform: 'translate(' + dx + 'px,' + (dy + 140) + 'px) rotate(' + (Math.random() * 720) + 'deg)', opacity: 0 }
+    ], { duration: 1100 + Math.random() * 600, easing: 'cubic-bezier(.2,.6,.4,1)' }).finished.then(() => p.remove());
+  }
+}
+
+/* copy buttons */
+function copyText(text) {
+  if (navigator.clipboard && window.isSecureContext !== false) {
+    return navigator.clipboard.writeText(text).catch(() => fallbackCopy(text));
+  }
+  return fallbackCopy(text);
+}
+function fallbackCopy(text) {
+  return new Promise(res => {
+    const ta = document.createElement('textarea');
+    ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
+    document.body.appendChild(ta); ta.select();
+    try { document.execCommand('copy'); } catch (e) {}
+    ta.remove(); res();
+  });
+}
+document.addEventListener('click', e => {
+  const b = e.target.closest('[data-copy]');
+  if (!b) return;
+  const src = b.dataset.copy ? document.getElementById(b.dataset.copy) : b.closest('.code').querySelector('pre');
+  if (!src) return;
+  copyText(src.innerText.trim()).then(() => {
+    const old = b.dataset.label || b.textContent;
+    b.dataset.label = old;
+    b.textContent = '已複製 ✓';
+    setTimeout(() => { b.textContent = old; }, 1500);
+  });
+});
+
+/* progress storage (shared across pages) */
+function getProgress() {
+  try { return JSON.parse(localStorage.getItem('cca-progress') || '{}') || {}; } catch (e) { return {}; }
+}
+function saveProgress(key, score, total) {
+  try {
+    const p = getProgress();
+    if (!p[key] || score >= p[key].score) p[key] = { score, total };
+    localStorage.setItem('cca-progress', JSON.stringify(p));
+  } catch (e) {}
+}
+
+/* quiz engine */
+function quiz(box, QUIZ, key, nextLink) {
+  let qi = 0, qScore = 0, qRes = [];
+  function render() {
+    if (qi >= QUIZ.length) return result();
+    const Q = QUIZ[qi];
+    box.innerHTML = '<div class="q-anim"><div class="q-top"><span>第 ' + (qi + 1) + ' / ' + QUIZ.length + ' 題</span><div class="q-dots">' +
+      QUIZ.map((_, i) => '<i class="' + (qRes[i] === true ? 'ok' : qRes[i] === false ? 'no' : '') + (i === qi ? ' cur' : '') + '"></i>').join('') + '</div></div>' +
+      '<p class="q-text">' + Q.q + '</p><div class="q-opts">' +
+      Q.o.map((o, i) => '<button class="q-opt" data-i="' + i + '"><span class="k">' + 'ABCD'[i] + '</span><span>' + o + '</span></button>').join('') +
+      '</div><div class="q-exp"></div><button class="btn primary q-next" hidden>' + (qi === QUIZ.length - 1 ? '看結果' : '下一題') + ' →</button></div>';
+  }
+  function answer(i) {
+    const Q = QUIZ[qi], ok = i === Q.a;
+    const opts = $$('.q-opt', box);
+    opts.forEach(o => { o.disabled = true; });
+    opts[Q.a].classList.add('correct');
+    if (!ok) opts[i].classList.add('wrong');
+    qRes[qi] = ok; if (ok) qScore++;
+    $$('.q-dots i', box)[qi].classList.add(ok ? 'ok' : 'no');
+    const exp = $('.q-exp', box);
+    exp.innerHTML = (ok ? '<b style="color:var(--green)">✓ 答對了！</b> ' : '<b style="color:var(--red)">✕ 差一點。</b> ') + Q.e;
+    exp.classList.add('show');
+    const nx = $('.q-next', box); nx.hidden = false; nx.focus({ preventScroll: true });
+  }
+  function result() {
+    const pct = qScore / QUIZ.length, C = 2 * Math.PI * 60;
+    saveProgress(key, qScore, QUIZ.length);
+    const msg = qScore === QUIZ.length ? '滿分！這個模組你已經完全掌握。'
+      : pct >= 0.7 ? '很棒！回頭看看答錯的題目，就更完整了。'
+      : '建議再玩一次上面的互動區，加深印象後再挑戰。';
+    box.innerHTML = '<div class="q-anim q-result"><div class="ring"><svg viewBox="0 0 140 140"><circle class="bg" cx="70" cy="70" r="60"/><circle class="fg" cx="70" cy="70" r="60" stroke-dasharray="' + C + '" stroke-dashoffset="' + C + '"/></svg><div class="val">' + qScore + '/' + QUIZ.length + '</div></div>' +
+      '<h3>' + (qScore === QUIZ.length ? '完美通關' : '測驗完成') + '</h3><p>' + msg + '</p><div class="row-btns"><button class="btn q-retry">↻ 再測一次</button>' +
+      (nextLink ? '<a class="btn primary" href="' + nextLink[0] + '">' + nextLink[1] + ' →</a>' : '') + '</div></div>';
+    requestAnimationFrame(() => requestAnimationFrame(() => { $('.ring .fg', box).style.strokeDashoffset = C * (1 - pct); }));
+    if (pct >= 0.7) setTimeout(() => confetti($('.ring', box)), 700);
+  }
+  box.addEventListener('click', e => {
+    const o = e.target.closest('.q-opt');
+    if (o && !o.disabled) return answer(+o.dataset.i);
+    if (e.target.closest('.q-next')) { qi++; render(); return; }
+    if (e.target.closest('.q-retry')) { qi = 0; qScore = 0; qRes = []; render(); }
+  });
+  render();
+}
+
+/* typing helper for terminals */
+async function typeInto(el, text, speed) {
+  for (const ch of text) { el.textContent += ch; await sleep(speed || 45); }
+}
+
+window.CC = { $, $$, reduced, sleep, restart, confetti, quiz, getProgress, saveProgress, typeInto, copyText };
+})();
+
+</script>
+<script>
+(() => {
+'use strict';
+const { $, $$, sleep, restart, confetti, quiz, typeInto, reduced } = CC;
+
+/* ---------- hero terminal ---------- */
+const heroTerm = $('#heroTerm');
+const HL = [
+  { t: 'cmd', s: 'claude' },
+  { t: 'in', s: '/goal 所有測試都通過，且 lint 沒有錯誤' },
+  { s: '● 回合 1：分析失敗的測試…', c: 'info' },
+  { s: '  Haiku 評估 → 尚未成立', c: 'muted' },
+  { s: '● 回合 2：修正測試並重跑…', c: 'info' },
+  { s: '  Haiku 評估 → 尚未成立', c: 'muted' },
+  { s: '● 回合 3：修正 lint、全部重跑…', c: 'info' },
+  { s: '  Haiku 評估 → ✓ 條件成立', c: 'ok' },
+  { s: '目標完成，停止持續工作。', c: 'ok' }
+];
+(async function heroLoop() {
+  const render = L => L.t === 'cmd' ? '<span class="ps">$</span> ' + L.s : L.t === 'in' ? '<span style="color:#7ee2a8">&gt;</span> ' + L.s : L.s;
+  if (reduced) { heroTerm.innerHTML = HL.map(L => '<div class="tl ' + (L.c || '') + '">' + render(L) + '</div>').join(''); return; }
+  for (;;) {
+    heroTerm.innerHTML = '';
+    for (const L of HL) {
+      const line = document.createElement('div');
+      line.className = 'tl ' + (L.c || '');
+      heroTerm.appendChild(line);
+      if (L.t) {
+        line.innerHTML = (L.t === 'cmd' ? '<span class="ps">$</span> ' : '<span style="color:#7ee2a8">&gt;</span> ') + '<span class="ty"></span><span class="caret"></span>';
+        await typeInto($('.ty', line), L.s, 50);
+        await sleep(350); $('.caret', line).remove();
+      } else { line.textContent = L.s; line.classList.add('pop'); await sleep(L.c === 'muted' ? 700 : 520); }
+    }
+    await sleep(3600);
+  }
+})();
+
+/* ---------- 01 loop ---------- */
+const lf = { work: $('#lfWork'), ev: $('#lfEval'), dec: $('#lfDec'), done: $('#lfDone'), back: $('#lfBack') };
+let lfRun = 0;
+async function playLoop() {
+  const my = ++lfRun, alive = () => my === lfRun;
+  const PASS = [4, 8, 11, 12], TOTAL = 12;
+  const cap = $('#lfCap');
+  [lf.work, lf.ev, lf.done].forEach(n => n.classList.remove('active'));
+  lf.dec.className = 'lf-dec'; $('span', lf.dec).textContent = '？';
+  lf.back.classList.remove('on');
+  $('#lfTurn').textContent = 0; $('#lfMeter').style.width = '0'; $('#lfPct').textContent = '0 / 12 通過';
+  for (let i = 0; i < PASS.length; i++) {
+    lf.back.classList.remove('on'); lf.dec.className = 'lf-dec'; $('span', lf.dec).textContent = '？';
+    lf.work.classList.add('active');
+    $('#lfTurn').textContent = i + 1;
+    cap.textContent = '回合 ' + (i + 1) + '：Claude 繼續工作…';
+    await sleep(1000); if (!alive()) return;
+    $('#lfMeter').style.width = (PASS[i] / TOTAL * 100) + '%';
+    $('#lfPct').textContent = PASS[i] + ' / 12 通過';
+    lf.work.classList.remove('active');
+    lf.ev.classList.add('active');
+    cap.textContent = 'Haiku 檢查：條件成立了嗎？';
+    await sleep(900); if (!alive()) return;
+    lf.ev.classList.remove('active');
+    const ok = PASS[i] === TOTAL;
+    lf.dec.className = 'lf-dec ' + (ok ? 'yes' : 'no');
+    $('span', lf.dec).textContent = ok ? '是' : '否';
+    if (!ok) {
+      lf.back.classList.add('on');
+      cap.textContent = '還沒達標（' + PASS[i] + ' / 12）→ 自動進入下一回合';
+      await sleep(1100); if (!alive()) return;
+    } else {
+      await sleep(500); if (!alive()) return;
+      lf.done.classList.add('active');
+      cap.textContent = '條件成立！共 ' + (i + 1) + ' 回合，/goal 停止持續工作。';
+      confetti(lf.done);
+    }
+  }
+}
+$('#loopCard').addEventListener('revealed', () => setTimeout(playLoop, 300));
+$('#lfReplay').addEventListener('click', playLoop);
+
+/* ---------- 02 simulator ---------- */
+const PRESETS = ['所有單元測試都通過，且 README 已更新', '文件的每一節都附上可執行的範例', '首頁 Lighthouse 效能分數達到 90 以上', '把專案裡所有 TODO 註解處理完'];
+const ACTS = ['閱讀相關檔案，規劃下一步', '實作第一批修改', '執行驗證，找出未達標的部分', '修正發現的問題', '再次驗證並整理成果', '補齊剩餘細節'];
+const gCond = $('#gCond'), gStart = $('#gStart'), gClear = $('#gClear'), gState = $('#gState'), gTl = $('#gTl');
+$('#gPresets').innerHTML = PRESETS.map(p => '<button class="chip-btn" data-p="' + p + '">' + p + '</button>').join('');
+$('#gPresets').addEventListener('click', e => { const b = e.target.closest('[data-p]'); if (b && !gRunning) { gCond.value = b.dataset.p; gCond.focus(); } });
+let gRun = 0, gRunning = false;
+function setState(text, cls) { gState.textContent = text; gState.className = 'g-state ' + (cls || ''); }
+function addCard(html, cls) {
+  const empty = $('.empty', gTl); if (empty) empty.remove();
+  const c = document.createElement('div');
+  c.className = 'turn ' + (cls || '');
+  c.innerHTML = html;
+  gTl.appendChild(c);
+  gTl.scrollTop = gTl.scrollHeight;
+  return c;
+}
+async function startGoal() {
+  const cond = gCond.value.trim();
+  if (!cond) { restart(gCond.parentElement, 'shake'); gCond.focus(); return; }
+  const my = ++gRun, alive = () => my === gRun;
+  gRunning = true; gStart.disabled = true; gClear.disabled = false; gCond.disabled = true;
+  gTl.innerHTML = '';
+  const N = 3 + Math.floor(Math.random() * 3);
+  addCard('<div class="th"><b>&gt; /goal ' + cond.replace(/</g, '&lt;') + '</b></div><span class="ev wait">目標已設定，開始跨回合工作</span>');
+  for (let k = 1; k <= N; k++) {
+    setState('進行中・回合 ' + k, 'run');
+    await sleep(700); if (!alive()) return;
+    const act = k === N ? ACTS[4] : ACTS[Math.min(k - 1, 3) + (k > 4 ? 1 : 0)];
+    const card = addCard('<div class="th"><b>回合 ' + k + '</b><span class="hint">' + act + '</span></div><span class="ev wait">Haiku 評估中…</span>');
+    await sleep(1000); if (!alive()) return;
+    const ev = $('.ev', card);
+    if (k < N) { ev.className = 'ev no'; ev.textContent = 'Haiku 評估：尚未成立 → 繼續'; }
+    else { ev.className = 'ev ok'; ev.textContent = 'Haiku 評估：✓ 條件成立'; }
+  }
+  await sleep(500); if (!alive()) return;
+  const done = addCard('<div class="th"><b>✓ 目標完成</b><span class="hint">共 ' + N + ' 回合</span></div><div style="font-size:14px;margin-top:4px">條件「' + cond.replace(/</g, '&lt;') + '」已成立，停止持續工作。</div>', 'done-card');
+  setState('已達成', 'ok');
+  confetti(done);
+  gRunning = false; gStart.disabled = false; gStart.textContent = '▶ 再送出一次'; gClear.disabled = true; gCond.disabled = false;
+}
+function clearGoal() {
+  if (!gRunning) return;
+  gRun++;
+  gRunning = false;
+  $$('.ev.wait', gTl).forEach(e => { e.className = 'ev no'; e.textContent = '已中止'; });
+  addCard('<div class="th"><b>&gt; /goal clear</b></div><div style="font-size:14px;margin-top:4px">目標已清除，Claude 不再為這個條件持續工作。</div>', 'stop-card');
+  setState('已清除', 'stop');
+  gStart.disabled = false; gStart.textContent = '▶ 再送出一次'; gClear.disabled = true; gCond.disabled = false;
+}
+gStart.addEventListener('click', startGoal);
+gClear.addEventListener('click', clearGoal);
+gCond.addEventListener('keydown', e => { if (e.key === 'Enter' && !gRunning) startGoal(); });
+
+/* ---------- 03 pick ---------- */
+const PICKS = [
+  { q: '一直修，直到 CI 全部綠燈為止', a: 0, e: '「直到某個條件成立」→ 條件驅動，用 /goal。' },
+  { q: '每隔一段固定時間，就重新跑一次檢查', a: 1, e: '依時間節奏反覆觸發 → 時間驅動，用 /loop。' },
+  { q: '讓 Claude 在每一次工具呼叫時自行判斷，而不是每步都等我按核准', a: 2, e: '單位是「每一次工具呼叫」→ 逐工具，屬於 auto 模式。' },
+  { q: '把文件寫到每一節都附上範例才停', a: 0, e: '有明確的完成條件 → /goal。' }
+];
+const OPTS = ['/goal', '/loop', 'auto 模式'];
+$('#pickRows').innerHTML = PICKS.map((p, i) => '<div class="pick-row" data-i="' + i + '"><div class="q">' + p.q + '</div><div class="opts">' + OPTS.map((o, k) => '<button data-k="' + k + '">' + o + '</button>').join('') + '</div><div class="fb"></div></div>').join('');
+$('#pickRows').addEventListener('click', e => {
+  const b = e.target.closest('button[data-k]'); if (!b || b.disabled) return;
+  const row = b.closest('.pick-row'), P = PICKS[+row.dataset.i], k = +b.dataset.k;
+  if (k === P.a) {
+    b.classList.add('right'); row.classList.add('answered', 'ok');
+    $$('button', row).forEach(x => { x.disabled = true; });
+    $('.fb', row).innerHTML = '<b style="color:var(--green)">✓ 正確。</b>' + P.e;
+    if ($$('.pick-row.ok').length === PICKS.length) confetti($('#pickRows'));
+  } else {
+    restart(b, 'wrong'); b.disabled = true;
+    row.classList.add('answered');
+    $('.fb', row).innerHTML = '<b style="color:var(--red)">✕ 再想想：</b>看看它是「條件」、「時間」還是「每次工具呼叫」驅動的？';
+  }
+});
+
+/* ---------- 04 flow ---------- */
+const chat = $('#chatA'), flowNext = $('#flowNext'), flowHint = $('#flowHint');
+const CANDS = ['把核心模組的測試覆蓋率補到 90% 以上', '為所有公開 API 補齊文件與可執行範例', '把舊設定系統完整遷移到新架構，所有測試通過'];
+let fStep = 0, picked = -1;
+function msg(who, html) {
+  const m = document.createElement('div');
+  m.className = 'msg ' + who;
+  m.innerHTML = '<span class="who">' + (who === 'you' ? '你' : '代理') + '</span>' + html;
+  chat.appendChild(m);
+  chat.scrollTop = chat.scrollHeight;
+  return m;
+}
+function resetFlow() {
+  fStep = 0; picked = -1;
+  chat.innerHTML = '<div class="empty">按「開始」，模擬這個技巧的 4 個步驟</div>';
+  flowNext.disabled = false; flowNext.textContent = '開始 →'; flowHint.textContent = '共 4 步';
+}
+async function nextFlow() {
+  if (fStep === 0) {
+    chat.innerHTML = '';
+    msg('you', '根據你對我、我的目標、企圖心，以及我們已經一起做出的東西的了解，現在有哪 3 個 /goal 是我們可以跑的、能長時間執行並產出最好成果的？');
+    fStep = 1; flowHint.textContent = '步驟 1 / 4：請代理提案'; flowNext.textContent = '下一步 →';
+  } else if (fStep === 1) {
+    flowNext.disabled = true;
+    const m = msg('ai', '這裡有 3 個適合長時間執行的 /goal 候選：<div class="cands">' + CANDS.map((c, i) => '<button class="cand" data-i="' + i + '"><b>' + 'ABC'[i] + '</b>' + c + '</button>').join('') + '</div>');
+    fStep = 2; flowHint.textContent = '步驟 2 / 4：點選一個候選目標';
+    m.addEventListener('click', e => {
+      const c = e.target.closest('.cand'); if (!c || fStep !== 2) return;
+      picked = +c.dataset.i;
+      $$('.cand', m).forEach(x => { x.classList.toggle('picked', x === c); x.disabled = true; });
+      msg('you', '選 ' + 'ABC'[picked] + '。幫我把它寫成 /goal prompt。');
+      fStep = 3; flowHint.textContent = '步驟 3 / 4：選好了，請它寫 prompt'; flowNext.disabled = false;
+    });
+  } else if (fStep === 3) {
+    flowNext.disabled = true;
+    const m = msg('ai', '<span class="hint">撰寫中…</span>');
+    await sleep(900);
+    m.innerHTML = '<span class="who">代理</span>這是可以直接使用的指令：<div class="goal-out">/goal ' + CANDS[picked] + '</div>';
+    chat.scrollTop = chat.scrollHeight;
+    fStep = 4; flowHint.textContent = '步驟 4 / 4：貼上 /goal，讓代理長時間執行'; flowNext.textContent = '完成 ✓';
+    confetti(m);
+  }
+}
+flowNext.addEventListener('click', nextFlow);
+$('#flowReset').addEventListener('click', resetFlow);
+resetFlow();
+
+/* ---------- 05 prompt builder ---------- */
+const BASE = '讀這個 session 和這個 repo，深入分析我們在這裡想達成的確切意圖與目標，然後幫我寫出對應的 /goal prompt。\n\n務必深挖我們的歷史與文件，做到 100% 清楚';
+const ADD = '如果你對某些部分不確定，或想問我幾個問題來進一步釐清某些目標，別客氣';
+function buildB() {
+  const pre = $('#promptB');
+  pre.innerHTML = BASE + ($('#addAsk').checked ? '\n\n<span class="addon">' + ADD + '</span>' : '');
+  restart(pre, 'q-anim');
+}
+$('#addAsk').addEventListener('change', buildB);
+buildB();
+let morphRun = 0;
+$('#morphBtn').addEventListener('click', async () => {
+  const my = ++morphRun;
+  const pfx = $('#mgPrefix'), box = $('#morphBox');
+  pfx.textContent = ''; pfx.classList.add('on');
+  box.classList.remove('flash');
+  await typeInto(pfx, '/goal ', 120);
+  if (my !== morphRun) return;
+  restart(box, 'flash');
+});
+
+/* ---------- 06 quiz ---------- */
+quiz($('#quizBox'), [
+  { q: '/goal 的作用是什麼？', o: ['每隔固定時間執行一次指令', '讓 Claude 跨回合持續工作，直到某個條件成立', '讓每一次工具呼叫自動核准', '在專案裡建立一份目標文件'], a: 1, e: '/goal <condition> 讓 Claude 跨回合持續工作，直到條件成立。' },
+  { q: '誰負責評估 /goal 的條件是否成立？', o: ['使用者手動確認', 'Haiku', '另一個 agent team 隊友', '不需要評估'], a: 1, e: '條件是否成立由 Haiku 評估。' },
+  { q: '想清除目前的目標，要輸入什麼？', o: ['/goal end', '/goal done', '/goal clear', '/goal exit'], a: 2, e: '用 /goal clear 清除目標；官方文件也接受 stop、off、reset、none、cancel 作為別名。' },
+  { q: '/goal、/loop、auto 模式的驅動方式分別是？', o: ['時間／條件／逐工具', '條件／時間／逐工具', '逐工具／時間／條件', '三者完全相同'], a: 1, e: '/goal 條件驅動、/loop 時間驅動、auto 模式逐工具，三者互補。' },
+  { q: '使用 /goal 需要的 Claude Code 版本是？', o: ['任何版本都可以', 'v1.0 以上', 'v2.1.139 以上', '只有網頁版支援'], a: 2, e: '原文註明需要 Claude Code v2.1.139+。' },
+  { q: '技巧一「請代理自己提出目標」的流程是？', o: ['直接自己寫 /goal', '請代理提出 3 個 /goal 候選 → 選一個 → 請它幫你寫 prompt', '先跑 /loop 再跑 /goal', '請代理一次跑完 3 個目標'], a: 1, e: '先讓代理依對你的了解提出 3 個候選，選一個，再請它寫成 /goal prompt。' },
+  { q: '技巧二拿到代理草擬的 prompt 之後，要怎麼做？', o: ['再請代理重寫一次', '複製貼上，把開頭改成 /goal', '存成 CLAUDE.md', '交給子代理執行'], a: 1, e: '把代理給的內容複製貼上，開頭改成 /goal，它就會不間斷地做到完成。' }
+], 'goal', ['index.html', '回到學院首頁']);
+})();
+</script>
+</body>
+</html>
